@@ -1,0 +1,323 @@
+Definition: Concurrency is the ability of software to do multiple tasks seemingly at the same time. Example: A streaming app → must read network data, decompress audio, play it, and update UI at the same time.
+
+Concurrency in the Java Platform: 
+    The Java language → Thread, Runnable, synchronized, volatile.
+    Java class libraries → Utility classes like Thread, Timer, Object.wait(), Object.notify().
+
+    High-level APIs (since Java 5.0):
+        java.util.concurrent package introduced powerful abstractions:
+              Executor Framework → Manages thread pools (ExecutorService, ScheduledExecutorService).
+              Concurrent Collections → e.g. ConcurrentHashMap, CopyOnWriteArrayList.
+              Locks and Synchronizers → ReentrantLock, CountDownLatch, CyclicBarrier, Semaphore.
+              Atomic Variables → e.g. AtomicInteger, AtomicLong.
+              Fork/Join Framework → Divide tasks into smaller subtasks and run them in parallel.
+
+Concurrency vs Parallelism:
+    Concurrency → Can be single-threaded or multi-threaded, focus is on making progress on multiple tasks (time slicing, cooperative scheduling, async calls, etc.).
+    Parallelism → Always multi-threaded (or multi-process), focus is on doing multiple things at the exact same time.
+
+Processes and Threads:
+    In concurrent programming, there are two basic units of execution: processes and threads. In the Java programming language, concurrent programming is mostly concerned with threads. However, processes are also important.
+      Process: A process has a self-contained execution environment. A process generally has a complete, private set of basic run-time resources; in particular, each process has its own memory space.
+      Thread: Threads are sometimes called lightweight processes. Both processes and threads provide an execution environment, but creating a new thread requires fewer resources than creating a new process. 
+              Threads exist within a process — every process has at least one. Threads share the process's resources, including memory and open files.
+              Multithreaded execution is an essential feature of the Java platform. Every application has at least one thread — or several, if you count "system" threads that do things like memory management and signal handling. But from the application programmer's point of view, you start with just one thread, called the main thread. 
+              This thread has the ability to create additional threads, as we'll demonstrate in the next section.
+Thread Objects:
+    Each thread is associated with an instance of the class Thread. There are two basic strategies for using Thread objects to create a concurrent application.
+        Direct Thread Management (Manual Way): To directly control thread creation and management, simply instantiate Thread each time the application needs to initiate an asynchronous task. 
+                                               Here, you directly create and start threads whenever you want to do something in the background. You’re in full control, but also responsible for: Creating thread, starting them, stopping them and Handling Error.
+                                               Code Example:
+                                               public class DirectThreadExample {
+                                                    public static void main(String[] args) {
+                                                        // Task 1
+                                                        Thread t1 = new Thread(() -> {
+                                                            System.out.println("Task 1 is running in: " + Thread.currentThread().getName());
+                                                        });
+                                                
+                                                        // Task 2
+                                                        Thread t2 = new Thread(() -> {
+                                                            System.out.println("Task 2 is running in: " + Thread.currentThread().getName());
+                                                        });
+                                                
+                                                        t1.start();
+                                                        t2.start();
+                                                    }
+                                                }
+                                                Problem With Direct thread management: If your app needs 100 tasks, you’ll create 100 threads → heavy on memory and CPU, and difficult to manage.
+        Executor Framework (Managed Way): To abstract thread management from the rest of your application, pass the application's tasks to an executor. Instead of creating threads yourself, you just define the task, Then, hand over the task to an ExecutorService, which:
+                                              Manages a pool of threads for you.
+                                              Decides when and how to run tasks.
+                                              Reuses existing threads (better performance).
+                                              Provides ways to schedule, cancel, or wait for tasks.
+                                          Code:
+                                              import java.util.concurrent.ExecutorService;
+                                              import java.util.concurrent.Executors;
+                                              public class ExecutorExample {
+                                                  public static void main(String[] args) {
+                                                      // Create a thread pool with 2 threads
+                                                      ExecutorService executor = Executors.newFixedThreadPool(2);
+                                              
+                                                      // Submit tasks (Runnable)
+                                                      executor.submit(() -> {
+                                                          System.out.println("Task 1 is running in: " + Thread.currentThread().getName());
+                                                      });
+                                              
+                                                      executor.submit(() -> {
+                                                          System.out.println("Task 2 is running in: " + Thread.currentThread().getName());
+                                                      });
+                                              
+                                                      executor.shutdown(); // Graceful shutdown
+                                                  }
+                                              }
+Thread Creation in Java: 
+    To create direct threads → use Thread class or Runnable.
+    //By extending Thread class:
+    class MyThread extends Thread {
+        @Override
+        public void run() {
+            System.out.println("Thread is running: " + Thread.currentThread().getName());
+        }
+    }
+    
+    public class ThreadExample1 {
+        public static void main(String[] args) {
+            MyThread t1 = new MyThread();
+            t1.start(); // starts a new thread
+        }
+    }
+    //By implementing Runnable interface:
+    class MyRunnable implements Runnable {
+        @Override
+        public void run() {
+            System.out.println("Thread is running: " + Thread.currentThread().getName());
+        }
+    }
+    
+    public class ThreadExample2 {
+        public static void main(String[] args) {
+            MyRunnable task = new MyRunnable();
+            Thread t1 = new Thread(task);
+            t1.start();
+        }
+    }
+
+    To use executor → define tasks (Runnable or Callable), submit them to ExecutorService, and the executor handles the rest.
+        Code:
+        //Using Runnable:
+        import java.util.concurrent.ExecutorService;
+        import java.util.concurrent.Executors;
+        public class ExecutorRunnableExample {
+            public static void main(String[] args) {
+                // Create a thread pool of 2 threads
+                ExecutorService executor = Executors.newFixedThreadPool(2);
+        
+                Runnable task = () -> {
+                    System.out.println("Task is running in: " + Thread.currentThread().getName());
+                };
+        
+                executor.submit(task);
+                executor.submit(task);
+        
+                executor.shutdown(); // Graceful shutdown
+            }
+        }
+        //Using Callable
+        import java.util.concurrent.*;
+        
+        public class ExecutorCallableExample {
+            public static void main(String[] args) throws Exception {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+        
+                Callable<String> task = () -> {
+                    return "Result from: " + Thread.currentThread().getName();
+                };
+        
+                Future<String> future = executor.submit(task);
+        
+                System.out.println("Task Output: " + future.get()); // blocks until result is ready
+                executor.shutdown();
+            }
+        }
+Interrupts: An interrupt is an indication to a thread that it should stop what it is doing and do something else. It's up to the programmer to decide exactly how a thread responds to an interrupt, but it is very common for the thread to terminate.
+             If the thread is frequently invoking methods that throw InterruptedException, it simply returns from the run method after it catches that exception.
+              for (int i = 0; i < importantInfo.length; i++) {
+                  // Pause for 4 seconds
+                  try {
+                      Thread.sleep(4000);
+                  } catch (InterruptedException e) {
+                      // We've been interrupted: no more messages.
+                      return;
+                  }
+                  // Print a message
+                  System.out.println(importantInfo[i]);
+              }
+          Many methods that throw InterruptedException, such as sleep, are designed to cancel their current operation and return immediately when an interrupt is received.
+          for (int i = 0; i < inputs.length; i++) {
+              heavyCrunch(inputs[i]);
+              if (Thread.interrupted()) {
+                  // We've been interrupted: no more crunching.
+                  return;
+              }
+          }
+        In this simple example, the code simply tests for the interrupt and exits the thread if one has been received. In more complex applications, it might make more sense to throw an InterruptedException, This allows interrupt handling code to be centralized in a catch clause.
+
+Thread Communication in Java: In Java, threads share memory → they communicate by reading and writing shared variables/objects.
+                              class SharedData {
+                                  int counter = 0;
+                              }
+                              SharedData data = new SharedData();
+                              
+                              Thread t1 = new Thread(() -> data.counter++);
+                              Thread t2 = new Thread(() -> data.counter++);
+                              Problems with Shared Access: Thread Interference and Memory Consistency Errors
+    
+    Thread Interference: Happens when two threads modify shared data at the same time, and results interleave incorrectly. Example: Above Expected: counter = 2 (both increment once). But Actual: counter = 1 (due to lost updates).
+    Memory Consistency Errors: Happens when one thread’s changes are not visible to another thread, due to caching or reordering.
+                              boolean flag = false;
+                              
+                              new Thread(() -> {
+                                  flag = true;  // writer thread
+                              }).start();
+                              
+                              new Thread(() -> {
+                                  while (!flag) {
+                                      // reader thread may never see flag = true
+                                  }
+                              }).start();
+Intrinsic Locks and Synchronization: Synchronization is built around an internal entity known as the intrinsic lock or monitor lock. (The API specification often refers to this entity simply as a "monitor.") Intrinsic locks play a role in both aspects of synchronization: enforcing exclusive access to an object's state and establishing happens-before relationships that are essential to visibility.
+                                      Every object has an intrinsic lock associated with it. By convention, a thread that needs exclusive and consistent access to an object's fields has to acquire the object's intrinsic lock before accessing them, and then release the intrinsic lock when it's done with them. A thread is said to own the intrinsic lock between the time it has acquired the lock and released the lock. As long as a thread owns an intrinsic lock, no other thread can acquire the same lock. The other thread will block when it attempts to acquire the lock.
+                                      When a thread releases an intrinsic lock, a happens-before relationship is established between that action and any subsequent acquisition of the same lock.
+
+Synchronized Methods: When one thread is executing a synchronized method for an object, all other threads that invoke synchronized methods for the same object block (suspend execution) until the first thread is done with the object.
+                      Second, when a synchronized method exits, it automatically establishes a happens-before relationship with any subsequent invocation of a synchronized method for the same object. This guarantees that changes to the state of the object are visible to all threads.
+                      Note that constructors cannot be synchronized — using the synchronized keyword with a constructor is a syntax error. Synchronizing constructors doesn't make sense, because only the thread that creates an object should have access to it while it is being constructed.
+
+Locks In Synchronized Methods: When a thread invokes a synchronized method, it automatically acquires the intrinsic lock for that method's object and releases it when the method returns. The lock release occurs even if the return was caused by an uncaught exception.
+                               You might wonder what happens when a static synchronized method is invoked, since a static method is associated with a class, not an object. In this case, the thread acquires the intrinsic lock for the Class object associated with the class. Thus access to class's static fields is controlled by a lock that's distinct from the lock for any instance of the class.
+
+Synchronized Statements: Another way to create synchronized code is with synchronized statements. Unlike synchronized methods, synchronized statements must specify the object that provides the intrinsic lock:
+
+                          public void addName(String name) {
+                              synchronized(this) {
+                                  lastName = name;
+                                  nameCount++;
+                              }
+                              nameList.add(name);
+                          }
+
+Deadlock: Deadlock describes a situation where two or more threads are blocked forever, waiting for each other. Here's an example.
+          public class DeadlockExample {
+              private static final Object lock1 = new Object();
+              private static final Object lock2 = new Object();
+          
+              public static void main(String[] args) {
+                  Thread t1 = new Thread(() -> {
+                      synchronized (lock1) {
+                          System.out.println("Thread 1: Holding lock1...");
+                          try { Thread.sleep(100); } catch (InterruptedException e) {}
+                          
+                          System.out.println("Thread 1: Waiting for lock2...");
+                          synchronized (lock2) {
+                              System.out.println("Thread 1: Acquired lock2!");
+                          }
+                      }
+                  });
+          
+                  Thread t2 = new Thread(() -> {
+                      synchronized (lock2) {
+                          System.out.println("Thread 2: Holding lock2...");
+                          try { Thread.sleep(100); } catch (InterruptedException e) {}
+                          
+                          System.out.println("Thread 2: Waiting for lock1...");
+                          synchronized (lock1) {
+                              System.out.println("Thread 2: Acquired lock1!");
+                          }
+                      }
+                  });
+          
+                  t1.start();
+                  t2.start();
+              }
+          }
+
+Executors: Objects that encapsulate thread management (creation, scheduling, reuse, shutdown) so the rest of your application only needs to focus on defining tasks.
+    Executor Interfaces: The java.util.concurrent package defines three executor interfaces: Executor, ExecutorService and ScheduledExecutorService
+                          Executor, a simple interface that supports launching new tasks.
+                          ExecutorService, a subinterface of Executor, which adds features that help manage the life cycle, both of the individual tasks and of the executor itself.
+                          ScheduledExecutorService, a subinterface of ExecutorService, supports future and/or periodic execution of tasks.
+                          Example:
+                          Traditional Way (Before Executors): If you had a task: Runnable r = () -> System.out.println("Task running: " + Thread.currentThread().getName());
+                                                              Execute the task: (new Thread(r)).start();
+                                                              Problem: Too many tasks = too many threads = high memory/CPU cost.
+                          With Executor Interface: Executor e = Executors.newFixedThreadPool(2);
+                                                   e.execute(r);  //Here, the Executor decides how to run the task:
+                          Instead of making a new thread for each task, executors reuse worker threads from the pool. A worker thread = a pre-created thread waiting for tasks. A thread pool maintains multiple worker threads.
+    
+    ExecutorService Interface in Java: The Executor interface is simple — it just runs tasks (execute(Runnable)), but it doesn’t return results from tasks, doesn't allow task cancellation and also doesn't manage executor’s lifecycle. That’s where ExecutorService comes in.
+                                        Key Features of ExecutorService:
+                                            submit(): Accepts Runnable (no result) or Callable<V> (returns result). Returns a Future object.
+                                            Future: Represents the result of an asynchronous computation.
+                                                    Methods:
+                                                    get() → waits and retrieves result (for Callable).
+                                                    isDone() → check if task finished.
+                                                    cancel() → cancel the task.
+                                        
+                                            Batch submission methods
+                                                invokeAll(Collection<Callable>) → runs all tasks, returns list of Futures.
+                                                invokeAny(Collection<Callable>) → runs all, returns the result of the first successful task.
+                                        
+                                            Shutdown methods
+                                                shutdown() → stops accepting new tasks, lets existing finish.
+                                                shutdownNow() → tries to stop all tasks immediately (interrupts worker threads).
+    ScheduledExecutorService in Java: ExecutorService lets us submit tasks, but not at a specific time. ScheduledExecutorService allows delayed execution and periodic execution, replacing the old Timer and TimerTask with a more powerful, thread-pool–based solution.
+                                        import java.util.concurrent.*;
+                                        
+                                        public class ScheduledExecutorExample {
+                                            public static void main(String[] args) {
+                                                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                                        
+                                                // Task 1: Run once after 3 seconds
+                                                scheduler.schedule(() -> 
+                                                    System.out.println("Task executed after 3 seconds"), 
+                                                    3, TimeUnit.SECONDS);
+                                        
+                                                // Task 2: Run every 2 seconds (fixed rate)
+                                                scheduler.scheduleAtFixedRate(() -> 
+                                                    System.out.println("Fixed Rate: " + System.currentTimeMillis()), 
+                                                    1, 2, TimeUnit.SECONDS);
+                                        
+                                                // Task 3: Run with 2 seconds delay after each completion
+                                                scheduler.scheduleWithFixedDelay(() -> {
+                                                    try {
+                                                        Thread.sleep(1000); // simulate work
+                                                        System.out.println("Fixed Delay: " + System.currentTimeMillis());
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                }, 1, 2, TimeUnit.SECONDS);
+                                            }
+                                        }
+
+Thread Pools: A Thread Pool is a collection of pre-initialized, reusable worker threads that are managed by a framework (like ExecutorService in Java). Instead of creating a new thread for every task, tasks are submitted to the pool, and the available worker threads execute them.
+              Type: There are 4 types of thread pool:
+                    FixedThreadPool: Fixed number of threads. Extra tasks go to queue. Example:
+                                      ExecutorService executor = Executors.newFixedThreadPool(3);
+                                      for (int i = 0; i < 5; i++) {
+                                          executor.execute(() -> {
+                                              System.out.println(Thread.currentThread().getName() + " is working");
+                                          });
+                                      }
+                                      executor.shutdown();
+                    
+                    CachedThreadPool: Dynamically grows/shrinks.Best for many short-lived tasks.Example:
+                                      ExecutorService executor = Executors.newCachedThreadPool();
+                    
+                    SingleThreadExecutor: Only one thread executes at a time. Tasks run sequentially. Example: ExecutorService executor = Executors.newSingleThreadExecutor();
+                    
+                    ScheduledThreadPool: Allows delayed or periodic tasks. Example:
+                                        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
+                                        scheduler.scheduleAtFixedRate(
+                                            () -> System.out.println("Task running..."), 
+                                            1, 3, TimeUnit.SECONDS
+                                        );
