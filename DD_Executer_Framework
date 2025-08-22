@@ -1,0 +1,17 @@
+Hierarchical structure of the Executor framework in Java:
+=>Executor (interface)
+          -->ExecutorService (interface)
+                      -->  AbstractExecutorService (abstract class)
+                                    --> ThreadPoolExecutor (concrete Class)
+                                    --> ForkJoinPool (concrete Class)
+                      -->  ScheduledExecutorService (interface)
+                                    --> ScheduledThreadPoolExecutor (concrete class, extends ThreadPoolExecutor)
+=>Executors (utility class with static factory methods)
+          -->Provides factory methods like:
+                      -->  newFixedThreadPool()
+                      --> newCachedThreadPool()
+                      --> newSingleThreadExecutor()
+                      --> newScheduledThreadPool()
+                      --> newWorkStealingPool()
+
+Executors: Objects that encapsulate thread management (creation, scheduling, reuse, shutdown) so the rest of your application only needs to focus on defining tasks.
