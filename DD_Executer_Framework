@@ -8,10 +8,289 @@ Hierarchical structure of the Executor framework in Java:
                                     --> ScheduledThreadPoolExecutor (concrete class, extends ThreadPoolExecutor)
 =>Executors (utility class with static factory methods)
           -->Provides factory methods like:
-                      -->  newFixedThreadPool()
-                      --> newCachedThreadPool()
-                      --> newSingleThreadExecutor()
-                      --> newScheduledThreadPool()
-                      --> newWorkStealingPool()
+                      -->  newFixedThreadPool(int nThreads) -> internally creates a ThreadPoolExecutor.
+                      --> newCachedThreadPool() -> internally creates a ThreadPoolExecutor with unbounded threads.
+                      --> newSingleThreadExecutor() 
+                      --> newScheduledThreadPool(int corePoolSize) -> internally creates a ScheduledThreadPoolExecutor
+                      --> newWorkStealingPool() -> internally creates a ForkJoinPool.
 
-Executors: Objects that encapsulate thread management (creation, scheduling, reuse, shutdown) so the rest of your application only needs to focus on defining tasks.
+Factory Method (General Meaning): A factory method is a method whose main job is to create and return objects (instead of you directly using new everywhere). It hides the object creation logic from the caller.
+                                  In Java, a factory method is usually a static method inside a utility class that: Creates an object of a class (often implementing some interface) and return it to the caller.
+                                  Example: Instead of:
+                                        ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 5, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                                  You can write:
+                                        ExecutorService pool = Executors.Executors.newFixedThreadPool(5);
+                                  Here, newFixedThreadPool(5) is a factory method because, It creates a ThreadPoolExecutor internally, returns it as an ExecutorService and you don't care about construction details.
+
+Future: A Future is an interface which represents the result of an asynchronous computation. Methods are provided to check if the computation is complete, to wait for its completion, and to retrieve the result of the computation. 
+          In short, Future is a handle for a task submitted to an Executor, letting you: cancel it, Check if it’s done, Wait for and retrieve the result.
+          All subinterface of Future is: Response<T>, RunnableFuture<V>, RunnableScheduledFuture<V>, ScheduledFuture<V>
+          Key Method for Future:
+                    -> cancel(boolean mayInterruptIfRunning): Attempts to cancel execution of this task.
+                    -> get(): Waits if necessary for the computation to complete, and then retrieves its result. throws InterruptedException, ExecutionException;
+                              If the task was created with a Runnable, get() returns null.
+                              If the task was created with a Callable<V>, get() returns the result of call() (the type V).
+                              If the task throws an exception, get() will throw an ExecutionException.
+                    -> get(long timeout, TimeUnit unit): Waits if necessary for at most the given time for the computation to complete, and then retrieves its result, if available. throws InterruptedException, ExecutionException, TimeoutException;
+                    -> isCancelled(): Returns true if this task was cancelled before it completed normally.
+                    -> isDone(): Returns true if this task completed.
+                              package MultiThreading;
+                              
+                              import java.util.concurrent.ExecutionException;
+                              import java.util.concurrent.ExecutorService;
+                              import java.util.concurrent.Executors;
+                              import java.util.concurrent.Future;
+                              
+                              public class FutureExample {
+                                  public static void main(String[] args) {
+                                      ExecutorService executor = Executors.newFixedThreadPool(1);
+                              
+                                      //callable task(return result)
+                                      Future<String> future =executor.submit(()->{
+                                          Thread.sleep(2000);
+                                          return "Task Completed";
+                                      });
+                                      System.out.println("Doing other work.............");
+                              
+                                      //wait for the result
+                                      try {
+                                          String result = future.get();
+                                          System.out.println("Result : "+result);
+                                      } catch (InterruptedException | ExecutionException e) {
+                                          throw new RuntimeException(e);
+                                      }
+                                  }
+                              }
+ScheduledFuture: It is a subinterface of Future. So it inherits all methods from Future, including get(). get() is not defined by schedule(), it comes from the Future interface.
+Executors: Executors is a utility class in Java that provides factory methods for creating and managing different types of ExecutorService instances. It simplifies the process of instantiating thread pools and allows developers to easily create and manage executor instances with various configurations.
+          Static factory method of Executors utility class:
+          1. FixedThreadPool: Creates an ExecutorService with a fixed number of threads. Tasks submitted to this executor are executed concurrently by the specified number of threads. If a thread is idle and no tasks are available, it remains alive but dormant until needed.
+                              Example: ExecutorService executor = Executors.newFixedThreadPool(5);
+                              code:
+                                        public class FixedThreadPoolExample {
+                                            public static void main(String[] args) {
+                                                ExecutorService executor = Executors.newFixedThreadPool(3); // exactly 3 threads
+                                        
+                                                for (int i = 0; i < 6; i++) {
+                                                    int taskId = i;
+                                                    executor.submit(() -> {
+                                                        System.out.println("Task " + taskId + " executed by " + Thread.currentThread().getName());
+                                                        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+                                                    });
+                                                }
+                                        
+                                                executor.shutdown();
+                                            }
+                                        }
+                              output:
+                                        Task 1 executed by pool-1-thread-2
+                                        Task 0 executed by pool-1-thread-1
+                                        Task 2 executed by pool-1-thread-3
+                                        Task 3 executed by pool-1-thread-2(after Task 0 finished)
+                                        Task 4 executed by pool-1-thread-3
+                                        Task 5 executed by pool-1-thread-1
+                              =>Behaviour: Thread count is fixed (3 here). If 6 tasks are submitted: First 3 tasks → run immediately (1 task per thread). Next 3 tasks → wait in the queue until a thread is free.
+
+          2. CachedThreadPool: In a cached thread pool, submitted tasks are not queued but immediately handed off to a thread for execution. If no threads are available, a new one is created. If a server is so heavily loaded that all of its CPUs are fully utilized, and more tasks arrive, more threads will be created, which will only make matters worse. 
+                               Idle time of threads is default to 60s, after which if they don't have any task thread will be terminated.
+                               Therefore, in a heavily loaded production server, you are much better off using Executors.newFixedThreadPool, which gives you a pool with a fixed number of threads, or using the ThreadPoolExecutor class directly, for maximum control.
+                               Example: ExecutorService executor = Executors.newCachedThreadPool();
+                              code:
+                                        public class CachedThreadPoolExample {
+                                            public static void main(String[] args) {
+                                                ExecutorService executor = Executors.newCachedThreadPool();
+                                        
+                                                for (int i = 0; i < 6; i++) {
+                                                    int taskId = i;
+                                                    executor.submit(() -> {
+                                                        System.out.println("Task " + taskId + " executed by " + Thread.currentThread().getName());
+                                                        try { Thread.sleep(2000); } catch (InterruptedException e) {}
+                                                    });
+                                                }
+                                        
+                                                executor.shutdown();
+                                            }
+                                        }  
+                              Output:
+                                        Task 2 executed by pool-1-thread-3
+                                        Task 5 executed by pool-1-thread-6
+                                        Task 1 executed by pool-1-thread-2
+                                        Task 0 executed by pool-1-thread-1
+                                        Task 3 executed by pool-1-thread-4
+                                        Task 4 executed by pool-1-thread-5
+                              Behaviour:
+                                        Unbounded pool of threads:Creates a new thread for each task if all threads are busy. Reuses idle threads if available.
+                                        If you later submit another task and thread-1 is free, it will reuse it instead of creating thread-7.
+          3. SingleThreadExecutor: Creates an ExecutorService with a single worker thread. Tasks are executed sequentially by this thread in the order they are submitted. This executor is useful for tasks that require serialization or have dependencies on each other.
+                               Example: ExecutorService executor = Executors.newSingleThreadExecutor();
+                              code:
+                                        public class SingleThreadExecutorExample {
+                                            public static void main(String[] args) {
+                                                ExecutorService executor = Executors.newSingleThreadExecutor();
+                                        
+                                                for (int i = 0; i < 6; i++) {
+                                                    int taskId = i;
+                                                    executor.submit(() -> {
+                                                        System.out.println("Task " + taskId + " executed by " + Thread.currentThread().getName());
+                                                        try { Thread.sleep(500); } catch (InterruptedException ignored) {}
+                                                    });
+                                                }
+                                        
+                                                executor.shutdown();
+                                            }
+                                        }
+                              Output:
+                                        Task 0 executed by pool-1-thread-1
+                                        Task 1 executed by pool-1-thread-1
+                                        Task 2 executed by pool-1-thread-1
+                                        Task 3 executed by pool-1-thread-1
+                                        Task 4 executed by pool-1-thread-1
+                                        Task 5 executed by pool-1-thread-1
+                              Behaviour:
+                                        Only one thread executes tasks. Tasks are executed sequentially, in order of submission. Output will always be ordered:
+          4. ScheduledThreadPool: Create a ScheduledExecutorService instance which can schedule tasks with a delay (schedule method) Or periodically (scheduleAtFixedRate method, scheduleWithFixedDelay method).
+                                  In this tasks with the same scheduled time are executed in FIFO order. Cancelled tasks are normally kept in the queue until their delay passes. So, To free memory immediately: setRemoveOnCancelPolicy(true).
+                                  When parameter type is Runnable (or Callable), schedule method creates and executes a one-shot action that becomes enabled after the given delay. "one-shot action" means the task is executed only once after the delay, not periodically.
+                                  For repeated tasks (scheduleAtFixedRate, scheduleWithFixedDelay), executions do not overlap. If a run takes longer, the next one waits.
+
+                                  schedule() method syntax:
+                                        ->public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) : It returns a ScheduledFuture<?> — but the result of a Runnable is always null (since Runnable.run() does not return anything).
+                                                  Parameters:
+                                                  command - the task to execute
+                                                  delay - the time from now to delay execution
+                                                  unit - the time unit of the delay parameter
+                                        ->public ScheduledFuture<V> schedule(Callable command, long delay, TimeUnit unit)
+                                                  Parameters:
+                                                  command - the task to execute
+                                                  delay - the time from now to delay execution
+                                                  unit - the time unit of the delay parameter
+
+                                 scheduleAtFixedRate method:
+                                        ->scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit) : It returns a ScheduledFuture<?> — but the result of a Runnable is always null (since Runnable.run() does not return anything).
+                                                  Parameters:
+                                                  command - the task to execute
+                                                  initialDelay - the time from now to delay execution
+                                                  period - the time between the start of each execution
+                                                  unit - the time unit for initialDelay and period
+                                        ->Example: Train leaves at 10:00, 10:15, 10:30, no matter how many people boarded or how long it took to clean the train. If one train is late, the next is still expected at the scheduled time.
+                                 scheduleWithFixedDelay method:
+                                        ->scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit) : It returns a ScheduledFuture<?> — but the result of a Runnable is always null (since Runnable.run() does not return anything).
+                                                  Parameters:
+                                                  command - the task to execute
+                                                  initialDelay - the time from now to delay execution
+                                                  delay - the delay between the termination of one execution and the start of the next
+                                                  unit -  the time unit for initialDelay and delay
+                                        ->Example: Think of it like taking a tea break after work, You finish one task, then you take a break (delay), then start the next. So the gap is always measured from the end of the last task.
+                                        Period = Punctual (runs at fixed “clock times”)
+                                        Delay = Done → then Delay (wait after finishing work)
+                                 Code:
+                                        package MultiThreading.Executors;
+                                        
+                                        import java.util.concurrent.*;
+                                        
+                                        public class ScheduledThreadPoolExample {
+                                            public static void main(String[] args) throws ExecutionException, InterruptedException {
+                                        
+                                                ScheduledExecutorService scheduler=
+                                                                    Executors.newScheduledThreadPool(5);
+                                        
+                                                //schedule() - One-shot Runnable: Task after 3 second
+                                                ScheduledFuture<?> runnableSchedule =
+                                                scheduler.schedule(()->
+                                                                System.out.println("Run task after 3 second: "+Thread.currentThread().getName()),3, TimeUnit.SECONDS
+                                                        );
+                                                System.out.println(runnableSchedule.get()); //null
+                                        
+                                                //schedule() - One-shot Callable
+                                                ScheduledFuture<String> callableSchedule =
+                                                scheduler.schedule(()-> "callable - Run once after 4 second: "+Thread.currentThread().getName(),4,TimeUnit.SECONDS);
+                                                System.out.println(callableSchedule.get());
+                                        
+                                                //create a Runnable task
+                                                Runnable taskForscheduleAtFixedRate = ()->{
+                                                    System.out.println("Task(taskForscheduleAtFixedRate) running at " + System.currentTimeMillis()/1000);
+                                                    try {
+                                                        Thread.sleep(2000); // simulate work taking 2 seconds
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                };
+                                        
+                                                //scheduleAtFixedRate() - Runnable
+                                                scheduler.scheduleAtFixedRate(taskForscheduleAtFixedRate,1,3,TimeUnit.SECONDS);
+                                        
+                                                //create a Runnable task
+                                                Runnable taskForscheduleAtFixedDelay = ()->{
+                                                    System.out.println("Task(taskForscheduleAtFixedDelay) running at " + System.currentTimeMillis()/1000);
+                                                    try {
+                                                        Thread.sleep(2000); // simulate work taking 2 seconds
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+                                                };
+                                                //scheduleWithFixedDelay
+                                                scheduler.scheduleWithFixedDelay(taskForscheduleAtFixedDelay,1,4,TimeUnit.SECONDS);
+                                            }
+                                        }
+                              
+                                 outpt:
+                                        Run task after 3 second: pool-1-thread-1
+                                        null
+                                        callable - Run once after 4 second: pool-1-thread-1
+                                        Task(taskForscheduleAtFixedRate) running at 1756032731
+                                        Task(taskForscheduleAtFixedDelay) running at 1756032731
+                                        Task(taskForscheduleAtFixedRate) running at 1756032734
+                                        Task(taskForscheduleAtFixedRate) running at 1756032737
+                                        Task(taskForscheduleAtFixedDelay) running at 1756032737
+                                        Task(taskForscheduleAtFixedRate) running at 1756032740
+                                        Task(taskForscheduleAtFixedRate) running at 1756032743
+                                        Task(taskForscheduleAtFixedDelay) running at 1756032743
+          5. newWorkStealingPool: It creates a ForkJoinPool (a special kind of thread pool) that uses the work-stealing algorithm.
+                                  In a normal thread pool, if one thread is idle, it just waits.
+                                  In a work-stealing pool, Each worker thread has its own queue of tasks. If a thread finishes its own tasks early, it can steal tasks from other threads’ queues. This improves CPU utilization and reduces idle time.
+                                  Method Variants:
+                                        -> newWorkStealingPool(): Creates a pool with parallelism level = number of available processors. (Runtime.getRuntime().availableProcessors()).
+                                        -> newWorkStealingPool(int parallelism): Creates a pool with a specified number of worker threads.
+                                  Code:
+                                        package MultiThreading.Executors;
+                                        
+                                        import java.util.concurrent.ExecutorService;
+                                        import java.util.concurrent.Executors;
+                                        import java.util.concurrent.TimeUnit;
+                                        
+                                        public class WorkStealingExample {
+                                            public static void main(String[] args) throws InterruptedException {
+                                                ExecutorService executor = Executors.newWorkStealingPool();
+                                        
+                                                // Submit all tasks BEFORE shutting down
+                                                for (int i = 0; i < 10; i++) {
+                                                    int taskId = i;
+                                                    executor.submit(() -> {
+                                                        System.out.println("Task " + taskId + " executed by "
+                                                                + Thread.currentThread().getName());
+                                                        try { Thread.sleep(500); } catch (InterruptedException e) {}
+                                                    });
+                                                }
+                                        
+                                                // Now shutdown, no more tasks allowed after this point
+                                                executor.shutdown();
+                                        
+                                                // Wait until all tasks finish
+                                                executor.awaitTermination(5, TimeUnit.SECONDS);
+                                            }
+                                        }
+                              
+                                   output:
+                                        Task 7 executed by ForkJoinPool-1-worker-8
+                                        Task 3 executed by ForkJoinPool-1-worker-4
+                                        Task 6 executed by ForkJoinPool-1-worker-7
+                                        Task 5 executed by ForkJoinPool-1-worker-6
+                                        Task 4 executed by ForkJoinPool-1-worker-5
+                                        Task 2 executed by ForkJoinPool-1-worker-3
+                                        Task 0 executed by ForkJoinPool-1-worker-1
+                                        Task 1 executed by ForkJoinPool-1-worker-2
+                                        Task 8 executed by ForkJoinPool-1-worker-5
+                                        Task 9 executed by ForkJoinPool-1-worker-3
+                    =>Here You’re running with Executors.newWorkStealingPool() which internally creates a ForkJoinPool. This type of pool uses multiple worker threads (number = number of available processors by default, usually your CPU cores).
+                    =>Work Stealing: If one worker finishes early, it can steal tasks from another worker’s queue to balance the load. That’s why Task 8 and Task 9 show up being executed by workers that already executed something else earlier.
+                      So, Tasks 0–9 were submitted in order. But the execution order depends on how the threads got scheduled and stolen among workers. That’s why you don’t see sequential output like Task 0, Task 1, Task 2 ….
