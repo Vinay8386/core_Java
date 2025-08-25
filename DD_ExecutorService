@@ -1,1 +1,220 @@
-https://dzone.com/articles/deep-dive-into-java-executorservice
+=>Executor (interface)
+          -->ExecutorService (interface)
+                      -->  AbstractExecutorService (abstract class)
+                                    --> ThreadPoolExecutor (concrete Class)
+                                    --> ForkJoinPool (concrete Class)
+                      -->  ScheduledExecutorService (interface)
+                                    --> ScheduledThreadPoolExecutor (concrete class, extends ThreadPoolExecutor)
+
+Executor (interface): The Executor is a simple interface that decouples task submission from task execution. It has just one method: void execute(Runnable command);
+                      Purpose: Instead of creating and starting threads manually (new Thread(r).start()), you pass tasks (Runnable) to an Executor which decides how and when they will be executed.
+                      code Example:
+                          class Task implements Runnable {
+                              private String name;
+                          
+                              public Task(String name) {
+                                  this.name = name;
+                              }
+                          
+                              @Override
+                              public void run() {
+                                  System.out.println("Executing task: " + name + " by " + Thread.currentThread().getName());
+                              }
+                          }
+                          public class ThreadWithoutExecutor {
+                              public static void main(String[] args) {
+                                  // Manually creating and executing threads without executor
+                                  new Thread(()->new Task("Task-1")).start(); //Thread-1
+                                  new Thread(()->new Task("Task-1")).start(); //Thread-2
+                                  new Thread(()->new Task("Task-1")).start(); //Thread-3
+                              }
+                          }
+                      output(Manually creating threads without executor):
+                          Executing task: Task-1 by Thread-0
+                          Executing task: Task-2 by Thread-1
+                          Executing task: Task-3 by Thread-2
+                      With Executor:
+                          public class ThreadWithExecutor {
+                              public static void main(String[] args) {
+                                  //create an Executor (Single-threaded) : All tasks run sequentially on one thread.
+                                  Executor executor = Executors.newSingleThreadExecutor();
+                                  //At most 3 tasks run in parallel.
+                                  //ExecutorService executor = Executors.newFixedThreadPool(3);
+                                  // Submit 6 tasks
+                                  for (int i = 1; i <= 6; i++) {
+                                      executor.execute(new Task("Task-" + i));
+                                  }
+                                  ((ExecutorService) executor).shutdown(); // Always shutdown after use
+                                  //Cast may be removed by changing the type of 'executor' to 'ExecutorService' 
+                              }
+                          }
+                      
+                      output(With Executor):
+                          Executing task: Task-1 by pool-1-thread-1
+                          Executing task: Task-2 by pool-1-thread-1
+                          Executing task: Task-3 by pool-1-thread-1
+
+ExecutorService (interface): ExecutorService is a subinterface of Executor that adds lifecycle management and task result tracking (via Future). It’s a complete task execution framework. It will manages a pool of threads internally.
+                             It supports asynchronous execution, result tracking, and lifecycle control. In short we can say ExecutorService is a full featured Executor.
+                             Extra feature over Executor:
+                                  -> shutdown() → allows submitted tasks to finish but rejects new tasks. graceful stop (finish submitted tasks).
+                                  -> shutdownNow() → tries to stop running tasks immediately. force stop (interrupt running tasks).
+                                      codeExample:
+                                            public class ShutdownExample {
+                                                public static void main(String[] args) {
+                                                    ExecutorService executorService = Executors.newFixedThreadPool(2);
+                                            
+                                                    for (int i = 0; i < 5; i++) {
+                                                        executorService.execute(new SimpleTask("Task - "+i));
+                                                    }
+                                            
+                                                    // Option 1: Graceful shutdown
+                                                    executorService.shutdown();  // waits for submitted tasks to complete, rejects new ones
+                                                    //executorService.shutdownNow(); // <-- Forceful shutdown: interrupts running tasks
+                                                }
+                                            }
+                                      output difference: 
+                                            With shutdown:
+                                                Task-0 started...
+                                                Task-0 finished
+                                                Task-1 started...
+                                                Task-1 finished
+                                                ...
+                                            Without shutdown:
+                                                Task-0 started...
+                                                Task-1 started...
+                                                Task-0 was interrupted! Cleaning up...
+                                                Task-1 was interrupted! Cleaning up...
+
+                                  -> submit(Callable/Runnable) → returns a Future to check result, cancel, or wait for completion. returns Future to track result/status.
+                                      Code Example:
+                                            public class SubmitExample {
+                                                public static void main(String[] args) throws ExecutionException, InterruptedException {
+                                                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                                            
+                                                    // Runnable → Future but no result (returns null)
+                                                    Future<?> future1 = executor.submit(() -> {
+                                                        System.out.println("Runnable executed by " + Thread.currentThread().getName());
+                                                    });
+                                                    System.out.println("Result from Runnable = " + future1.get()); // null
+                                            
+                                                    // Callable → Future with result
+                                                    Future<String> future2 = executor.submit(() -> {
+                                                        Thread.sleep(1000);
+                                                        return "Callable Result";
+                                                    });
+                                            
+                                                    System.out.println("Result from Callable = " + future2.get()); // waits until done
+                                                    executor.shutdown();
+                                                }
+                                            }
+                                  -> invokeAll(Collection) → runs all tasks, waits for all to finish, returns List<Future>.
+                                      Code Example:
+                                              public class InvokeAllExample {
+                                                  public static void main(String[] args) throws InterruptedException, ExecutionException {
+                                                      ExecutorService executor = Executors.newFixedThreadPool(3);
+                                              
+                                                      List<Callable<String>> tasks = Arrays.asList(
+                                                              () -> { Thread.sleep(1000); return "Task-1"; },
+                                                              () -> { Thread.sleep(2000); return "Task-2"; },
+                                                              () -> { Thread.sleep(1500); return "Task-3"; }
+                                                      );
+                                              
+                                                      List<Future<String>> futures = executor.invokeAll(tasks);
+                                              
+                                                      for (Future<String> f : futures) {
+                                                          System.out.println("Result: " + f.get());
+                                                      }
+                                              
+                                                      executor.shutdown();
+                                                  }
+                                              }
+                                      Code Output:
+                                            Result: Task-1
+                                            Result: Task-2
+                                            Result: Task-3
+
+                                  -> invokeAny(Collection) → runs all tasks, returns result of first completed task, cancels the rest. 
+                                      Code Example:
+                                              public class InvokeAllExample {
+                                                  public static void main(String[] args) throws InterruptedException, ExecutionException {
+                                                      ExecutorService executor = Executors.newFixedThreadPool(3);
+                                              
+                                                      List<Callable<String>> tasks = Arrays.asList(
+                                                              () -> { Thread.sleep(1000); return "Task-1"; },
+                                                              () -> { Thread.sleep(2000); return "Task-2"; },
+                                                              () -> { Thread.sleep(1500); return "Task-3"; }
+                                                      );
+                                              
+                                                      String result = executor.invokeAny(tasks);
+                                              
+                                                      System.out.println("Result: " + result);
+                                              
+                                                      executor.shutdown();
+                                                  }
+                                              }
+                                      Code Output:
+                                            Result: Task-1
+                                            Process finished with exit code 0
+                                  -> awaitTermination(x, TimeUnit.SECONDS) → waits at most x seconds for tasks to finish. Return, true if all tasks finished within timeout and false if timeout expired, some tasks still running.
+                                      Code Example:
+                                              public class AwaitTerminationExample {
+                                                  public static void main(String[] args) {
+                                                      ExecutorService executor = Executors.newFixedThreadPool(2);
+                                              
+                                                      // submit 2 long tasks
+                                                      executor.execute(new LongTask("Task-1"));
+                                                      executor.execute(new LongTask("Task-2"));
+                                              
+                                                      executor.shutdown(); // no new tasks accepted
+                                              
+                                                      try {
+                                                          // wait only 3 seconds (less than task duration)
+                                                          if (executor.awaitTermination(3, TimeUnit.SECONDS)) {
+                                                              System.out.println("✅ All tasks completed within 3 seconds");
+                                                          } else {
+                                                              System.out.println("⏰ Timeout! Some tasks are still running");
+                                                          }
+                                                      } catch (InterruptedException e) {
+                                                          e.printStackTrace();
+                                                      }
+                                              
+                                                      System.out.println("Main thread exiting...");
+                                                  }
+                                              }
+                                              
+                                              class LongTask implements Runnable {
+                                                  private final String name;
+                                              
+                                                  public LongTask(String name) {
+                                                      this.name = name;
+                                                  }
+                                              
+                                                  @Override
+                                                  public void run() {
+                                                      try {
+                                                          System.out.println(name + " started by " + Thread.currentThread().getName());
+                                                          Thread.sleep(6000); // long task: 6 seconds
+                                                          System.out.println(name + " finished by " + Thread.currentThread().getName());
+                                                      } catch (InterruptedException e) {
+                                                          System.out.println(name + " was interrupted!");
+                                                      }
+                                                  }
+                                              }
+                                      Code Output:
+                                              Task-1 started by pool-1-thread-1
+                                              Task-2 started by pool-1-thread-2
+                                              ⏰ Timeout! Some tasks are still running
+                                              Main thread exiting...
+                                              Task-1 finished by pool-1-thread-1
+                                              Task-2 finished by pool-1-thread-2
+                                      Behaviour:
+                                              Both tasks need 6 seconds to complete.
+                                              But awaitTermination(3, TimeUnit.SECONDS) waits only 3 seconds.
+                                              Since tasks are not finished in 3 seconds, it returns false → "Timeout!" message.
+                                              Main thread exits, but background worker threads continue until tasks are done.
+TaskQueues: When tasks are submitted to ExecutorService, if none of the threads in pool are available to process the tasks, they get stored in a queue, below are the different queue options to choose from.
+            -> Unbounded Queue (LinkedBlockingQueue)
+            -> Bounded  Queue (ArrayBlockingQueue)
+            -> Priority  Queue (PriorityBlockingQueue)
+            -> Synchronous  Queue (SynchronousQueue)
