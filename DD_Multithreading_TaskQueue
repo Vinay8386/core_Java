@@ -2,7 +2,7 @@
             -> https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html
             -> https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/LinkedBlockingQueue.html
 
-BlockingQueue: 
+BlockingQueue<E>: 
 TaskQueues: When tasks are submitted to ExecutorService, if none of the threads in pool are available to process the tasks, they get stored in a queue, below are the different queue options to choose from.
             -> Unbounded Queue (LinkedBlockingQueue)
             -> Bounded  Queue (ArrayBlockingQueue)
