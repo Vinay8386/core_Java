@@ -1,1 +1,7 @@
+TaskQueues: When tasks are submitted to ExecutorService, if none of the threads in pool are available to process the tasks, they get stored in a queue, below are the different queue options to choose from.
+            -> Unbounded Queue (LinkedBlockingQueue)
+            -> Bounded  Queue (ArrayBlockingQueue)
+            -> Priority  Queue (PriorityBlockingQueue)
+            -> Synchronous  Queue (SynchronousQueue)
 
+1. Unbounded Queue (LinkedBlockingQueue): 
