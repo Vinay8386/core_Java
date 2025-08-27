@@ -324,6 +324,6 @@ Thread Pools: A Thread Pool is a collection of pre-initialized, reusable worker 
 Java Concurrent Queue Classes Overview: Java provides multiple concurrent queue classes inside the java.util.concurrent package. They differ in blocking vs non-blocking, bounded vs unbounded, and FIFO vs LIFO behavior.
             -> Non-blocking Queue (Lock-free): A non-blocking queue is a thread-safe queue where operations like offer() and poll() never block the calling thread. If the queue is empty, retrieval methods return immediately (e.g., null), and if it is full (if bounded), insertion methods return false.
                                                 These queues are usually lock-free, using Compare-And-Swap (CAS) for efficiency and scalability. Example: ConcurrentLinkedQueue, ConcurrentLinkedDeque.
-            -> Blocking Queue: A blocking queue is a thread-safe queue where operations like put() and take() block the calling thread until the operation can succeed. A producer thread blocks if the queue is full (for bounded queues).
+            -> BlockingQueue: A BlockingQueue is a thread-safe queue where operations like put() and take() block the calling thread until the operation can succeed. A producer thread blocks if the queue is full (for bounded queues).
                                 A consumer thread blocks if the queue is empty. Blocking queues provide backpressure support in producer-consumer systems. Example: LinkedBlockingQueue, ArrayBlockingQueue, SynchronousQueue, PriorityBlockingQueue, DelayQueue.
             
