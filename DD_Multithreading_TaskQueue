@@ -135,3 +135,261 @@ TaskQueues: When tasks are submitted to ExecutorService, if none of the threads 
                                                 }
 3. PriorityBlockingQueue(Unbounded, but tasks are ordered by priority (not FIFO)): it grows dynamically (no fixed capacity). Tasks are ordered according to their natural ordering (if Comparable) or by a provided **Comparator`.
                                     even if Task-1 comes before Task-2, Task-2 might be consumed first if it has higher priority. It is also thread-safe and blocking behaviour is like other BlockingQueue(producers block if memory exhausted, consumers block if empty).
+                                    code:
+                                    public class Task implements Comparable<Task>{
+                                    
+                                        private int priority;
+                                        private final String name;
+                                    
+                                        public Task(int priority, String name) {
+                                            this.priority=priority;
+                                            this.name = name;
+                                        }
+                                    
+                                        @Override
+                                        public int compareTo(Task other) {
+                                            //lower number = higher priority
+                                            return Integer.compare(this.priority,other.priority);
+                                        }
+                                    
+                                        @Override
+                                        public String toString() {
+                                            return "Task{name='" + name + "', priority=" + priority + "}";
+                                        }
+                                    
+                                        public int getPriority() {
+                                            return priority;
+                                        }
+                                    
+                                        public String getName() {
+                                            return name;
+                                        }
+                                    }
+
+                                    public class PriorityBlockingQueueExample {
+                                        public static void main(String[] args) {
+                                    
+                                            BlockingQueue<Task> queue=new PriorityBlockingQueue<>();
+                                    
+                                            //producer
+                                            Thread producer = new Thread(()->{
+                                                try {
+                                                    queue.put(new Task(3, "Low Priority"));
+                                                    queue.put(new Task(2, "Medium Priority"));
+                                                    queue.put(new Task(5, "Very Low Priority"));
+                                                    queue.put(new Task(4, "Lower Priority"));
+                                                    queue.put(new Task(1, "High Priority"));
+                                                    queue.put(new Task(Integer.MAX_VALUE, "END")); // termination marker
+                                                } catch (InterruptedException e) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            });
+                                    
+                                            //consumer
+                                            Thread consumer = new Thread(()->{
+                                                try {
+                                                    while (true){
+                                                        Task task = queue.take();
+                                                        if ("END".equals(task.getName())) {
+                                                            System.out.println("Termination signal received. Exiting...");
+                                                            break;
+                                                        }
+                                                        System.out.println("Task Consumed: " + task);
+                                                    }
+                                                } catch (InterruptedException e) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            });
+                                    
+                                            producer.start();
+                                            consumer.start();
+                                    
+                                            try {
+                                                producer.join();
+                                                consumer.join();
+                                            } catch (InterruptedException e) {
+                                                Thread.currentThread().interrupt();
+                                            }
+                                            System.out.println("Application Stopped.");
+                                        }
+                                    }
+
+4. SynchronousQueue(Capacity = 0): A special kind of BlockingQueue in Java where capacity = 0. It never stores elements. Each put() must wait until a take() happens, and each take() must wait until a put() happens.
+                                    It acts as a direct handoff between producer and consumer. Unlike ArrayBlockingQueue or LinkedBlockingQueue, there is no internal buffer.
+                                    code:
+                                    public class Task implements Comparable<Task>{
+                                    
+                                        private int priority;
+                                        private final String name;
+                                    
+                                        public Task(int priority, String name) {
+                                            this.priority=priority;
+                                            this.name = name;
+                                        }
+                                    
+                                        @Override
+                                        public int compareTo(Task other) {
+                                            //lower number = higher priority
+                                            return Integer.compare(this.priority,other.priority);
+                                        }
+                                    
+                                        @Override
+                                        public String toString() {
+                                            return "Task{name='" + name + "', priority=" + priority + "}";
+                                        }
+                                    
+                                        public int getPriority() {
+                                            return priority;
+                                        }
+                                    
+                                        public String getName() {
+                                            return name;
+                                        }
+                                    }
+                                    public class SynchronousQueueExample {
+                                        public static void main(String[] args) {
+                                    
+                                            BlockingQueue<Task> queue = new PriorityBlockingQueue<>();
+                                    
+                                            String[] taskNames = {
+                                                    "Low Priority", "Medium Priority", "Very Low Priority",
+                                                    "Lower Priority", "High Priority"
+                                            };
+                                            int[] taskPriorities = {3, 2, 5, 4, 1}; // matching priorities
+                                    
+                                            // Producer
+                                            Thread producer = new Thread(() -> {
+                                                try {
+                                                    for (int i = 0; i < taskNames.length; i++) {
+                                                        queue.put(new Task(taskPriorities[i], taskNames[i]));
+                                                        System.out.println("Produced: " + taskNames[i]);
+                                                    }
+                                                } catch (InterruptedException e) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            });
+                                    
+                                            // Consumer
+                                            Thread consumer = new Thread(() -> {
+                                                try {
+                                                    for (int i = 0; i < taskNames.length; i++) { // consume exact number of tasks
+                                                        Task task = queue.take();
+                                                        System.out.println("Consumed: " + task);
+                                                    }
+                                                } catch (InterruptedException e) {
+                                                    Thread.currentThread().interrupt();
+                                                }
+                                            });
+                                    
+                                            producer.start();
+                                            consumer.start();
+                                    
+                                            try {
+                                                producer.join();
+                                                consumer.join(); // wait until consumer is done
+                                            } catch (InterruptedException e) {
+                                                Thread.currentThread().interrupt();
+                                            }
+                                    
+                                            System.out.println("✅ Application closed.");
+                                        }
+                                    }
+                                    //Both producer and consumer run for a fixed number of iterations (taskNames.length).
+                                    //Once done, both threads exit naturally. main waits with join() for them to finish.
+                                    //JVM shuts down cleanly without needing "END" marker. ✅
+5. DelayQueue(Unbounded): A blocking queue of elements that implement the Delayed interface. An element can only be taken when its delay has expired. Internally it’s backed by a priority queue, ordering elements by remaining delay.
+                        code:
+                        public class DelayedTask implements Delayed {
+                        
+                            private final long startTime;
+                            private final String name;
+                        
+                            public DelayedTask(long delayInMillis, String name){
+                                this.startTime = System.currentTimeMillis()+delayInMillis;
+                                this.name=name;
+                            }
+                            @Override
+                            public int compareTo(@NotNull Delayed o) {
+                                return Long.compare(this.getDelay(TimeUnit.MILLISECONDS),
+                                        o.getDelay(TimeUnit.MILLISECONDS));
+                            }
+                        
+                            @Override
+                            public long getDelay(@NotNull TimeUnit unit) {
+                                long diff = startTime - System.currentTimeMillis();
+                                return unit.convert(diff, TimeUnit.MILLISECONDS);
+                            }
+                        
+                            @Override
+                            public String toString() {
+                                return "Task{" + "name='" + name + '\'' + '}';
+                            }
+                        }
+
+                        public class DelayQueueExample {
+                            public static void main(String[] args) {
+                                DelayQueue<DelayedTask> queue = new DelayQueue<>();
+                        
+                                // Producer
+                                Thread producer = new Thread(() -> {
+                                    System.out.println("Producing tasks...");
+                                    queue.put(new DelayedTask(3000, "Task 1")); // 3 sec delay
+                                    queue.put(new DelayedTask(1000, "Task 2")); // 1 sec delay
+                                    queue.put(new DelayedTask(5000, "Task 3")); // 5 sec delay
+                                });
+                        
+                                // Consumer
+                                Thread consumer = new Thread(() -> {
+                                    try {
+                                        for (int i = 0; i < 3; i++) {
+                                            DelayedTask task = queue.take(); // waits until delay expires
+                                            System.out.println("Consumed: " + task + " at " + System.currentTimeMillis());
+                                        }
+                                    } catch (InterruptedException e) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                });
+                        
+                                producer.start();
+                                consumer.start();
+                        
+                                try {
+                                    producer.join();
+                                    consumer.join();
+                                } catch (InterruptedException e) {
+                                    Thread.currentThread().interrupt();
+                                }
+                        
+                                System.out.println("✅ Application closed.");
+                            }
+                        }
+                        //queue.take() blocks until the next task’s delay has expired.
+                        //Order of consumption is based on time-to-release, not insertion order.
+                        //Since we know how many tasks we inserted, the consumer loop runs exactly that many times → program exits cleanly.
+
+Summary of Special Blocking Queues in Java:
+
+-> ArrayBlockingQueue
+            Bounded → Fixed size, set at creation.
+            FIFO order (first-in-first-out).
+            Useful when you want to limit queue capacity and apply backpressure.
+
+-> LinkedBlockingQueue
+            Optionally bounded (default: unbounded, unless capacity is given).
+            FIFO order.
+            Typically has higher throughput than ArrayBlockingQueue because of its linked-node structure.
+
+-> PriorityBlockingQueue
+            Unbounded, but elements are ordered by priority, not insertion order.
+            Does not block on put() (always succeeds).
+            Consumers get the highest-priority element first.
+
+-> SynchronousQueue
+            Capacity = 0 → Each put() must wait for a take().
+            No element is ever stored inside.
+            Perfect for hand-off scenarios (one thread hands work directly to another).
+
+-> DelayQueue
+            Unbounded, but elements can only be taken after their delay has expired.
+            Backed by a priority queue sorted by delay time.
+            Great for scheduled tasks, caching with TTL, or time-based message scheduling.
