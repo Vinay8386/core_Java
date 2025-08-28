@@ -1,19 +1,137 @@
--> Official documentation links: 
+that-> Official documentation links: 
             -> https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/package-summary.html
             -> https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/concurrent/LinkedBlockingQueue.html
 
-BlockingQueue<E>: 
-TaskQueues: When tasks are submitted to ExecutorService, if none of the threads in pool are available to process the tasks, they get stored in a queue, below are the different queue options to choose from.
-            -> Unbounded Queue (LinkedBlockingQueue)
-            -> Bounded  Queue (ArrayBlockingQueue)
-            -> Priority  Queue (PriorityBlockingQueue)
-            -> Synchronous  Queue (SynchronousQueue)
+BlockingQueue<E>: A Queue that additionally supports operation that wait for the queue to become non-empty when retrieving an element and wait for space to become available in the queue when storing an element.
+                  BlockingQueue doesn't allow null value because in some methods like poll(), Java uses null to mean nothing was found.
+                  A BlockingQueue can be bounded (fixed size). Some Queue like LinkedBlockingQueue are unbounded (no fixed size) and there remaining capacity is treated as Integer.MAX_VALUE( A huge number).
+                  BlockingQueue implementation are designed to be used primarily for producer consumer queues, but additionally support the collection interface like remove(x) (removing a specific item) but:
+                        -> These method are not very fast and efficient.
+                        -> They are meant to be used only sometimes, like if you want to cancel a specific task that is already queued.
+                  There is  no built-in shutdown feature in BlockingQueue. There is no default method to say "I am done adding item" to the queue.
+TaskQueues: When tasks are submitted to ExecutorService, if none of the threads in pool are available to process the tasks, they get stored in a BlockingQueue type, below are the different queue options to choose from.
+            -> LinkedBlockingQueue(Unbounded default : no fixed size)
+            -> ArrayBlockingQueue(Bounded : fixed size)
+            -> PriorityBlockingQueue(Unbounded, but tasks are ordered by priority (not FIFO))
+            -> SynchronousQueue(Capacity = 0)
+            -> DelayQueue(Unbounded)
 
-1. Unbounded Queue (LinkedBlockingQueue): An optionally-bounded blocking queue based on linked nodes. This queue orders elements FIFO (first-in-first-out). The head of the queue is that element that has been on the queue the longest time. 
-                                          The tail of the queue is that element that has been on the queue the shortest time. New elements are inserted at the tail of the queue, and the queue retrieval operations obtain elements at the head of the queue. 
-                                          Linked queues typically have higher throughput than array-based queues but less predictable performance in most concurrent applications. BlockingQueue interface ensures thread-safe queue operations with blocking behavior.
-                                    -> Syntax: public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E>, Serializable //E - the type of elements held in this collection
-                                    -> A BlockingQueue is an interface which supports waiting (blocking) for space to become available (for producer) or for elements to be present (for consumer).
-                                    -> Implementations classes: ArrayBlockingQueue, LinkedBlockingQueue, PriorityBlockingQueue, etc.
+1. LinkedBlockingQueue(Unbounded default : no fixed size): An optionally-bounded blocking queue based on linked nodes. This queue orders elements FIFO (first-in-first-out). The head of the queue is that element that has been on the queue the longest time. 
+                                                      The tail of the queue is that element that has been on the queue the shortest time. New elements are inserted at the tail of the queue, and the queue retrieval operations obtain elements at the head of the queue. 
+                                                      Linked queues typically have higher throughput than array-based queues but less predictable performance in most concurrent applications. BlockingQueue interface ensures thread-safe queue operations with blocking behavior.
+                                                            -> Syntax: public class LinkedBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E>, Serializable //E - the type of elements held in this collection
+                                                            -> A BlockingQueue is an interface which supports waiting (blocking) for space to become available (for producer) or for elements to be present (for consumer).
+                                                            -> Implementations classes: ArrayBlockingQueue, LinkedBlockingQueue, PriorityBlockingQueue, etc.
+                                                            Code:
+                                                            import java.util.concurrent.BlockingQueue;
+                                                            import java.util.concurrent.LinkedBlockingQueue;
+                                                            
+                                                            public class UnboundedQueueExample {
+                                                                public static void main(String[] args) throws InterruptedException {
+                                                            
+                                                                    BlockingQueue<String> blockingQueue = new LinkedBlockingQueue<>();//unbounded
+                                                            
+                                                                    //create a producer thread. since blockingQueue is unbounded, producer is always free to insert.
+                                                                    //Producer never blocks in unbounded queue.
+                                                                    Thread producer = new Thread(()->{
+                                                                        try {
+                                                                            for (int i = 0; i < 1000; i++) {
+                                                                                blockingQueue.put("Task-"+i);
+                                                                                System.out.println("Produced: Task-" + i);
+                                                                            }
+                                                                            // signal that production is done by adding a special marker (poison pill)
+                                                                            blockingQueue.put("END");
+                                                                        } catch (InterruptedException e) {
+                                                                            Thread.currentThread().interrupt();
+                                                                        }
+                                                                    });
+                                                            
+                                                                    //create consumer thread
+                                                                    //Consumer blocks if empty.
+                                                                    Thread consumer = new Thread(()->{
+                                                                        try {
+                                                                            while (true){
+                                                                                String task=blockingQueue.take(); //block if empty, Even after producer finishes, the consumer keeps waiting forever for new tasks.
+                                                                                if ("END".equals(task)) {
+                                                                                    break; // exit loop when poison pill is received
+                                                                                }
+                                                                                System.out.println("Consumed: " + task);
+                                                                                Thread.sleep(10); // After consuming a task, it sleeps for 10 ms → simulates slower processing.
+                                                                                //Since consumer is slower, queue may grow if producer is much faster.
+                                                                                //But because queue is unbounded, producer never stops → memory can keep filling.
+                                                                            }
+                                                                        } catch (InterruptedException e) {
+                                                                            Thread.currentThread().interrupt();
+                                                                        }
+                                                                    });
+                                                            
+                                                                    producer.start(); //starts producer thread (running independently).
+                                                                    consumer.start(); //starts consumer thread (also running independently). Then the main thread immediately goes to producer.join().
+                                                            
+                                                                    producer.join(); //main thread waits until producer finishes.
+                                                                    consumer.join(); //Main thread will wait forever, since consumer never exits. So If you are using this, stop consumer using poison pill
+                                                            
+                                                                    //Stop consumer like below if you are not using consumer.join()
+                                                                    //Thread.sleep(2000); //main thread sleeps for 2 seconds only and lets consumer process some tasks in this 2 second
+                                                                    //consumer.interrupt(); //After 2 seconds, the consumer was interrupted, even if it hadn’t consumed all tasks and stops consumer gracefully.
+                                                            
+                                                                    //If producer speed > consumer speed → queue grows bigger and bigger (risk of OutOfMemoryError).
+                                                                    //If consumer speed ≈ producer speed → queue remains balanced.
+                                                                }
+                                                            }
                                     
+2. ArrayBlockingQueue(Bounded : fixed size): ArrayBlockingQueue is a bounded blocking queue backed by an array. "Bounded" means it has a fixed capacity that is set at the time of creation and cannot grow later. 
+                                             If the queue is full, a producer trying to put() will block until space becomes available. If the queue is empty, a consumer trying to take() will block until an item is available.
+                                             Key-Point:
+                                                ->  Backed by an array → fixed size.
+                                                -> First-In-First-Out (FIFO) ordering.
+                                                -> Supports blocking methods: put(E e) → waits if queue is full. take() → waits if queue is empty.
+                                                -> Useful when you want backpressure between producer and consumer → prevents producer from overwhelming consumer.
+                                                -> Can optionally use fairness policy (true) → threads access in FIFO order.
+                                                Code:
+                                                import java.util.concurrent.ArrayBlockingQueue;
+                                                import java.util.concurrent.BlockingQueue;
+
+                                                public class ArrayBlockingQueueExample {
+                                                    public static void main(String[] args) {
+                                                        // Create a bounded queue of size 5
+                                                        BlockingQueue<String> queue = new ArrayBlockingQueue<>(5);
                                                 
+                                                        // Producer thread
+                                                        Thread producer = new Thread(() -> {
+                                                            try {
+                                                                for (int i = 1; i <= 20; i++) {
+                                                                    queue.put("Task-" + i); // blocks if queue is full
+                                                                    System.out.println("Produced: Task-" + i);
+                                                                }
+                                                                queue.put("END"); // special marker after producer finishes
+                                                            } catch (InterruptedException e) {
+                                                                Thread.currentThread().interrupt();
+                                                            }
+                                                        });
+                                                
+                                                        // Consumer thread
+                                                        Thread consumer = new Thread(() -> {
+                                                            try {
+                                                                while (true) {
+                                                                    String task = queue.take(); // blocks if queue is empty
+                                                                    if (task.equals("END")) break; // stop consumer
+                                                                    System.out.println("Consumed: " + task);
+                                                                    Thread.sleep(500); // simulate slow processing
+                                                                }
+                                                            } catch (InterruptedException e) {
+                                                                Thread.currentThread().interrupt();
+                                                            }
+                                                        });
+                                                
+                                                        producer.start();
+                                                        consumer.start();
+                                                        try {
+                                                            consumer.join();
+                                                        } catch (InterruptedException e) {
+                                                            Thread.currentThread().interrupt();
+                                                        }
+                                                    }
+                                                }
+3. PriorityBlockingQueue(Unbounded, but tasks are ordered by priority (not FIFO)): it grows dynamically (no fixed capacity). Tasks are ordered according to their natural ordering (if Comparable) or by a provided **Comparator`.
+                                    even if Task-1 comes before Task-2, Task-2 might be consumed first if it has higher priority. It is also thread-safe and blocking behaviour is like other BlockingQueue(producers block if memory exhausted, consumers block if empty).
