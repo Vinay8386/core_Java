@@ -1,0 +1,57 @@
+This is a step-by-step Git branching and merging workflow that helps developers safely create, work on, and integrate new features into a project without affecting the main code. 
+It can be used by anyone working on software projects, from beginners learning Git to experienced developers managing collaborative code.
+
+Step 0 – Verify you are in your repository
+    -> "pwd"
+    -> "ls -la"
+    -> "git status"
+    ->pwd → shows your current directory.
+    ->ls -la → lists files to verify it’s your project folder.
+    ->"git status" → checks current branch and staged/unstaged changes.
+
+Step 1 – Check existing branches
+    -> "git branch"
+    -> This lists all local branches.
+    -> The current branch is highlighted with *.
+    -> "git branch -r" (This lists remote branches.)
+
+Step 2 – Create a new branch
+    -> "git checkout -b feature-branch"
+    -> feature-branch → name of your new branch.
+    -> -b → creates a new branch and switches to it automatically.
+    -> "git branch" (Verify: you should see * feature-branch.)
+
+Step 3 – Make changes to your code
+    -> Edit or add files in your project folder.
+    -> Save changes.
+    -> "git status" (Verify: you should see modified or untracked files.)
+
+Step 4 – Stage your changes
+    -> "git add ." (Stages all modified files for commit.)
+    -> "git status" (Verify: files are now in staged state.)
+
+Step 5 – Commit your changes
+    -> "git commit -m "Added new feature in feature-branch"" (-m → your commit message.)
+    -> "git log --oneline" (Verify: your commit appears at the top of the log.)
+
+Step 6 – Push branch to remote
+    -> "git push -u origin feature-branch" (-u → sets the upstream so next time you can just use git push. Verify on GitHub (or your remote repo) that feature-branch exists.)
+
+Step 7 – Switch back to main branch
+    -> "git checkout main" (Verify: git branch shows * main.)
+
+Step 8 – Merge your feature branch into main
+    -> "git merge feature-branch" (If no conflicts → merge will succeed automatically.)
+    -> If conflicts → Git will tell you which files need manual resolution.
+    -> "git status" (Verify: working tree is clean and merge is done.)
+
+Step 9 – Push main branch to remote
+    -> "git push origin main" (Verify on GitHub that main branch now has your feature merged.)
+
+Optional Step 10 – Delete feature branch
+    -> Local branch: "git branch -d feature-branch"
+    -> Remote branch: "git push origin --delete feature-branch"
+    -> Verify: branch is deleted locally and on GitHub.
+    
+
+
