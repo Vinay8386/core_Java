@@ -54,4 +54,70 @@ Optional Step 10 – Delete feature branch
     -> Verify: branch is deleted locally and on GitHub.
     
 
-
+Git Issues and Resolutions:
+    -> Issue: Branch Divergence : 
+        -> Observation : Your branch and 'origin/main' have diverged, and have 1 and 1 different commits each, respectively.
+        -> Cause: Local main branch and remote main both had different commits. Git prevents pushing to avoid overwriting remote changes.
+    -> Resolution: 
+        -> Pull the latest changes from remote to merge with local: "git pull origin main"
+        -> Resolve any merge conflicts, stage, and commit: "git add ." then "git commit"
+        -> Push the updated branch: "git push origin main"
+    
+    -> Issue: Deleting other branches in Windows: 
+        -> Observation : 'grep' is not recognized as an internal or external command
+        -> Cause: grep is a Linux command, not available in Windows cmd/PowerShell.
+    -> Resolution: 
+        -> Delete a specific branch : "git branch -D DSA_code_commit"
+        -> Or use PowerShell to delete multiple branches (excluding main): 'git branch | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "main" } | ForEach-Object { git branch -D $_ }"
+    
+    -> Issue: Feature branch commit not happening: 
+        -> Observation : nothing added to commit but untracked files present
+        -> Cause: Changes were made in files that were untracked or Git was in a wrong directory (Tree/) instead of repo root.
+    -> Resolution: 
+        -> Create a feature branch : "git checkout -b local_dsa_branch"
+        -> Stage only the files you want: "git add ABC/FileName.java"
+        -> Commit the changes: "git commit -m "Added new code for ValidateBST"
+    
+    -> Issue: Merge failure: 
+        -> Observation : merge: feature_branch - not something we can merge
+        -> Cause: The branch feature_branch did not exist; you were using local_dsa_branch.
+    -> Resolution: 
+        -> Verify branches : "git branch"
+        -> Merge the correct branch: "git checkout main" then "git merge local_dsa_branch"
+    
+    -> Issue: Push rejected due to non-fast-forward: 
+        -> Observation : Updates were rejected because the tip of your current branch is behind
+        -> Cause: Remote had new commits that local didn’t..
+    -> Resolution: 
+        -> Pull remote changes first : "git pull origin main"
+        -> Resolve conflicts if any.
+        -> Push after merge/rebase : "git push origin main"
+    
+    -> Issue: Untracked stray files: 
+        -> Observation : Untracked files:  ../../h origin main
+        -> Cause: An accidental or temporary file outside the repo structure.
+    -> Resolution: 
+        -> If not needed, delete it : "git clean -f"
+        -> If you want to keep it locally but ignore in Git, add to .gitignore: "h origin main"
+    
+    ->Successful Commit & Merge Sequence: After resolving the issues, the final working sequence was:
+        # Create and switch to feature branch
+        git checkout -b local_dsa_branch
+        
+        # Stage the file(s)
+        git add BST/ValidateBST.java
+        
+        # Commit changes
+        git commit -m "Added new code for ValidateBST"
+        
+        # Switch back to main
+        git checkout main
+        
+        # Pull remote changes
+        git pull origin main
+        
+        # Merge feature branch
+        git merge local_dsa_branch
+        
+        # Push merged code
+        git push origin main
