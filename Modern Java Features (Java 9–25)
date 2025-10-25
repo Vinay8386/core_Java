@@ -42,13 +42,13 @@ Key Highlights:
     -> var data = null; // ❌ Compilation Error: Cannot infer type for local variable initialized to 'null'
   -> USECASE:
     -> Local variable with initializer: In traditional Java, you must explicitly declare the type of a variable. Using var, the compiler infers the type from the initializer, making the code cleaner.
-        -> Code Example: 
+        -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/TypeInferenceExample.java
     -> Enhance For-Loops: In for-each loops, var can simplify type declaration. In traditional, you can also use var for the index variable.
-        -> Code Example: 
+        -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/ForEachWithVarExample.java
     -> Try-With-Resources: Try-With-Resources automatically closes resources (like files, streams) after use, eliminating the need for explicit finally blocks. Java 10 allows using 'var' inside the try-with-resources declaration, making the code more concise while still strongly typed.
-        -> Code Example: 
+        -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/TryWithResourcesExample.java
     -> Lambda Expressions: Starting with JDK 11, var can be used for parameters in lambda expression. This ensures consistency between lambda parameters and local variable declarations. In other words, just as local variables can use var for the compiler to infer their type, lambda parameters can also use var to let the compiler deduce their type based on context.
-        -> Code Example: 
+        -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/LambdaVarExample.java
     
   -> Guidelines and Restrictions: 
     -> Consistency: You cannot mix var and explicitly typed parameters or inferred types in lambda expressions:
@@ -59,7 +59,7 @@ Key Highlights:
   -> Method Signature: "public String repeat(int count)"
     -> count → the number of times the string should be repeated.
     -> Returns → a new string consisting of the original string repeated count times.
-    -> Code Example: 
+    -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/StringRepeatExample.java
 
 
 
