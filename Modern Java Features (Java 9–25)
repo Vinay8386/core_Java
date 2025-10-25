@@ -149,10 +149,35 @@ Key Highlights:
 	-> From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
 		
 
-==========================================================================! Java 13 : Text Block Introduction (Multiline String Literals) !======================================================================
-==========================================================================! Java 14: Record Class and Pattern Matching for instance of !======================================================================
-==========================================================================! Java 15: Sealed Classes !======================================================================
-==========================================================================! Java 21: String Templates, Unnamed Patterns and Variables, Simple Source Files and Instance Main Methods !======================================================================
+==========================================================================! Java 15 : Text Block Introduction (Multiline String Literals) !======================================================================
+=> Text Block: New way to represent String in Java. A text block starts with three double-quote characters (""") followed by a line terminator (newline).
+=> Purpose: Simplify working with multiline strings by minimizing the required syntax, making the code more readable and less cluttered. Text blocks make multiline strings easier to read by removing clutter like +, \n, and quotation marks.
+=> How text blocks handle new-line and white-space?
+	-> Final New Line Handling: If the closing """ is on a new line, a newline character (\n) is added at the end of the string. To remove the final newline, place the closing """ right after the last line. Use a backslash (\) at the end of a line to suppress the implicit newline
+	-> Handling Indentation (Incidental White Space): Incidental white space refers to the unnecessary leading spaces (indentation) in a text block that match the least-indented line. The Java compiler automatically removes these spaces to avoid affecting the content of the text block. Example:
+	-> Disabling Incidental White Space Stripping: By default, Java text blocks automatically remove incidental white spaces (leading spaces) that align with the least-indented line in the block. This makes it easier to write neatly indented text blocks without worrying about unintentional leading spaces affecting your output. 
+		-> However, if you don't want Java to remove those spaces, you can disable the automatic stripping of incidental white spaces. You can disable incidental white space stripping by placing the closing delimiter (""") on a new line without any indentation (i.e., at the first column of the line).
+	-> Adding Indentation Explicitly: Use the indent(int n) method to add consistent indentation to all lines
+	-> Text blocks include newlines by default: Each line break in a text block is translated to \n in the resulting string.
+	-> Whitespace handling is critical: Ensure that the strings you compare are formatted identically by removing or adjusting spaces and newlines.
+	-> String methods like .replace() and .strip(): Use these to normalize the strings for comparison when dealing with text blocks.
+	-> Usecase: Perfect for embedding code or structured data. Great for JSON, HTML, XML, and code snippets. Before the text block when using traditional strings in Java, you had to:
+		-> 	Escape double quotes (") with a backslash (\").
+		->	Manually add line breaks (\n) to represent multiline text.
+		-> But now If you're working with code snippets, HTML, JSON, or any structured text, text blocks save time and make your code more readable.
+	-> Trailing White Space in Java Text Blocks: The Java compiler removes trailing white spaces in text blocks to ensure consistency and avoid invisible changes caused by text editors. If trailing white space is required, use one of these techniques to preserve trailing white space:
+	-> Character Substitution: Replace a placeholder character with a space after the text block.
+	-> Character Fence: Use a marker (e.g., |) and replace it after defining the text block.
+	-> Octal Escape Sequence: Use \040 to represent spaces.
+	-> \s Escape Sequence: Use \s to denote spaces.
+=> Code example: 
+
+==========================================================================! Java 16: Record Class and Pattern Matching for instance of !======================================================================
+==========================================================================! Java 17: Sealed Classes !======================================================================
+==========================================================================! Java 21: Pattern Matching with switch & Record Pattern !======================================================================
+==========================================================================! Java 22: Unnamed Variables and Patterns !======================================================================
+==========================================================================! Java 25: Compact Source Files and Instance main Methods & Flexible Constructor Bodies & Module Import Declarations !======================================================================
+
 https://docs.oracle.com/en/java/javase/23/language/java-language-changes-summary.html
 
 https://openjdk.org/jeps/394
