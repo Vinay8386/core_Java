@@ -52,7 +52,7 @@ Key Highlights:
 	-> Before Java 7: Developers had to use a finally block to manually close resources. This was verbose and error-prone, as forgetting to close a resource could lead to memory leaks.
 	-> Java 7: Introduced try-with-resources, allowing resources to be declared directly in the try statement. The resource is automatically closed when execution exits the try block, eliminating the need for a finally block.
 	-> Java 9: Enhanced try-with-resources by allowing effectively final resources declared outside the try block. This is useful when a resource needs to be initialized earlier but still benefits from automatic closing.
-	-> Example Code link: 
+	-> Example Code link: https://github.com/Vinay8386/core_Java/blob/main/Java9/TryWithResourcesExample.java
 
 => @SafeVarargs Annotation Allowed on Private Instance Methods (Java 7)
 	-> Purpose: The @SafeVarargs annotation is used to suppress warnings about potentially unsafe operations when using varargs with generics.
@@ -62,8 +62,7 @@ Key Highlights:
 		-> Without @SafeVarargs, Java will give a “possible heap pollution” warning when passing generic varargs.
 		-> Cannot Be Applied to Non-Private, Non-Final Instance Methods: Only static, final, or private instance methods are allowed.
 		-> Safe Usage Requirement: The method must not modify or store the varargs array in an unsafe way.
-		-> Code Example DiamondAnonymousJava7: 
-		-> Code Example DiamondAnonymousJava9: 
+		-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/SafeVarargsDemo.java 
 
 => Diamond Syntax with Anonymous Inner Classes (Java 7):
 	-> Before Java 7, when you wrote generics, you had to repeat the type on both sides: List<String> list = new ArrayList<String>(); // old way
@@ -71,19 +70,21 @@ Key Highlights:
 		-> The compiler automatically infers the type String from the left-hand side.
 	-> But In Java 7, diamond <> cannot be used with anonymous inner classes. Java 9 allows diamond <> even for anonymous inner classes, if the type can be inferred:
 		-> The compiler figures out that it’s ArrayList<String> from the left-hand side (List<String>).
-		-> Code Example: 
+		-> Code Example DiamondAnonymousJava7: https://github.com/Vinay8386/core_Java/blob/main/Java9/DiamondAnonymousJava7.java
+		-> Code Example DiamondAnonymousJava9: https://github.com/Vinay8386/core_Java/blob/main/Java9/DiamondAnonymousJava9.java
 
 => Underscore Character Not Legal Name (Java 9)
 	-> In Java, an underscore '_' was historically allowed as an identifier (variable name, method name, etc.).
 	-> Java 9 **disallows using a single underscore '_' as an identifier**.
-	-> Code Example: 
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/UnderscoreExample.java
 
 => Support for Private Interface Methods (Java 9)
 	-> Before Java 8, interfaces could only have abstract methods (no body).
 	-> Java 8 introduced: Default methods (methods with body), Static methods
 	-> Problem in Java 8: Default methods often had **duplicate code** across multiple default methods. No way to **reuse code internally** within the interface.
 	-> Java 9 allows **private methods in interfaces**. Private methods can be used **only inside the interface** to reduce code duplication. They **cannot be accessed** from implementing classes.
-	-> Code Example: 
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/Car.java
+
 ======================================================================================! Java 10-11 !====================================================================================
 
 => Local Variable Type: var
@@ -113,132 +114,39 @@ Key Highlights:
     -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/StringRepeatExample.java
 
 
-==========================================================================! Java 12: Switch Expression !======================================================================
-Switch Expression: 
-	1. fall-through: In regular switch statements, if you forget to add a break statement, your code might run into the next case unexpectedly called "fall-through".
-	public class FallThroughExample {
-	    public static void main(String[] args) {
-	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
-	        switch (day) {
-	            case 1: 
-	                System.out.println("Monday");
-	            case 2: 
-	                System.out.println("Tuesday");  // This will execute even if day = 1 due to fall-through
-	            case 3: 
-	                System.out.println("Wednesday");
-	        }
-	    }
-	}
-	2. "case L ->" : labels that eliminate the need for break statements to prevent fall through. 
-	public class SwitchExpressionExample {
-	    public static void main(String[] args) {
-	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
-	        switch (day) {
-	            case 1 -> System.out.println("Monday");
-	            case 2 -> System.out.println("Tuesday");  // No fall-through, directly prints for Tuesday
-	            case 3 -> System.out.println("Wednesday");
-	        }
-	    }
-	}
-	Explanation: Here, case L -> eliminates fall-through by design. Each case executes directly, and no further cases are executed unless specifically defined.
-	3. Switch Expressions: switch expressions are a more modern and safer way to write switch statements in Java, reducing mistakes and making the code more readable. In a switch expression, each case can directly return a value using the -> syntax. This is a key difference from traditional switch statements.
-	public class SwitchExpression {
-	    public static void main(String[] args) {
-	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
-	        int result = switch (day) {
-	            case 1 -> 6;
-	            case 2 -> 7;
-	            case 3 -> 8;
-	            default -> throw new IllegalStateException("Invalid day: " + day);
-	        };
-	        System.out.println(result);  // Prints the result, like 7 for Tuesday
-	    }
-	}
-	4. What is the yield keyword?
-	When you want to do more than just returning a value (for example, running some code and then returning a value), you can use yield in the body of a "case:". The yield keyword was introduced in Java 12 to address a specific need when using switch expressions with blocks of code (i.e., when you have multiple statements inside a case label like When you need to run more than just a simple expression (like calling methods, printing to the console, or doing multiple steps), you may need a block of code instead of just a single expression.).
-	
-	int day = 2; // Example: 1 = Monday, 2 = Tuesday, etc.	public class SwitchWithYield {
-	int result = switch (day) {	    public static void main(String[] args) {
-	    case 1 -> 6;	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
-	    case 2 -> 7;	        int result = switch (day) {
-	    case 3 -> 8;	            case 1 -> {
-	    default -> -1;	                System.out.println("Monday");
-	};	                yield 6;  // Use yield to return the value after the code
-	System.out.println(result); // Prints 7 for Tuesday	            }
-		            case 2 -> {
-		                System.out.println("Tuesday");
-		                yield 7;
-		            }
-		            default -> {
-		                System.out.println("Invalid day");
-		                yield -1;
-		            }
-		        };
-		        System.out.println(result);  // Prints 7 after executing "Tuesday"
-		    }
-		}
-		
-		        
-	5. Difference Between Switch statements (regular switch) and switch expressions?
-		• Switch statements use case L: and can have fall-through, meaning you need to use break to prevent running into the next case.
-		• Switch expressions use case L -> and automatically return a value for that case, making your code cleaner and easier to read.
-		Regular switch statement:	Switch expression:
-		public class SwitchStatement {	public class SwitchExpression {
-		    public static void main(String[] args) {	    public static void main(String[] args) {
-		        int day = 2;	        int day = 2;
-		        int result = 0;	        int result = switch (day) {
-		        switch (day) {	            case 1 -> 6;
-		            case 1: 	            case 2 -> 7;
-		                result = 6;	            case 3 -> 8;
-		                break;  // Prevent fall-through	            default -> -1;
-		            case 2: 	        };
-		                result = 7;	        System.out.println(result);  // Prints 7 for Tuesday
-		                break;	    }
-		            case 3: 	}
-		                result = 8;
-		                break;
-		            default:
-		                result = -1;
-		        }
-		        System.out.println(result);  // Prints 7 for Tuesday
-		    }
-		}
-	6. How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
-		a. In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
-		b. In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
-		public class SwitchStatementExample {	public class SwitchExpressionExample {
-		    public static void main(String[] args) {	    public static void main(String[] args) {
-		        int day = 2; // 1 = Monday, 2 = Tuesday, etc.	        int day = 2; // 1 = Monday, 2 = Tuesday, etc.
-		        	
-		        // Calling the method that uses the switch statement	        // Calling the method that uses the switch expression
-		        System.out.println(getDayLength(day)); // Output will be 7 for Tuesday	        System.out.println(getDayLength(day)); // Output will be 7 for Tuesday
-		    }	    }
+==========================================================================! Java 14: Switch Expressions and Statements !======================================================================
+=> Switch Expressions: 
+	-> Switch expressions are a modern and safer way to write switch statements in Java.
+	-> They reduce mistakes like accidental fall-through and make the code more readable.
+	-> In a switch expression, each case can directly return a value using the -> syntax.
+	-> This is a key difference from traditional switch statements, which cannot return values directly from a case.
+
+=> Fall-Through 
+	-> In traditional switch statements, if you forget to add a break statement, the program will continue executing the next case unexpectedly. This is called fall-through.
+	-> Switch expressions use case L -> labels, which eliminate the need for break statements.
+	-> Each case executes directly, and no further cases are executed unless explicitly defined.
+	-> This prevents unintended execution and makes the code safer and clearer.
+	-> Code Example: 
+
+=> Yield Keyword:
+	-> The yield keyword is used when you want to execute multiple statements in a case block and still return a value.
+	-> Introduced in Java 12, it addresses the need for returning values from a block of statements inside a switch expression.
+	-> Without yield, the compiler cannot determine what value to return when a case contains more than one statement (like printing, calculations, or method calls).
+	-> yield explicitly specifies the value to be returned from the case block.
+	-> Code Example: 
+
+=> How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
+	-> In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
+	-> In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
+	-> Code Example:	
+
+=> Difference Between Switch statements (regular switch) and switch expressions?
+	-> Switch statements use case L: and can have fall-through, meaning you need to use break to prevent running into the next case.
+	-> Switch expressions use case L -> and automatically return a value for that case, making your code cleaner and easier to read.
 			
-		    // Method that uses a traditional switch statement	    // Method that uses a switch expression (Java 12+)
-		    public static int getDayLength(int day) {	    public static int getDayLength(int day) {
-		        int result = 0; // Variable to store the result	        // Switch expression (Java 12+)
-			        return switch (day) {
-		        // Traditional switch statement	            case 1 -> 6;  // Directly returns the value for this case
-		        switch (day) {	            case 2 -> 7;  // Directly returns the value for this case
-		            case 1: 	            case 3 -> 8;  // Directly returns the value for this case
-		                result = 6; // Assign value to variable	            default -> -1;  // Default value
-		                break;	        };
-		            case 2: 	    }
-		                result = 7; // Assign value to variable	}
-		                break;
-		            case 3: 
-		                result = 8; // Assign value to variable
-		                break;
-		            default: 
-		                result = -1; // Assign default value
-		        }
-		
-		        return result;  // Return the result from the method
-		    }
-		}
-	7. Summary: 
-		• Before Java 12: No yield keyword. Traditional switch statements had case L: labels with optional break statements and no direct value returns from cases.
-		• From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
+=> Summary: 
+	-> Before Java 12: No yield keyword. Traditional switch statements had case L: labels with optional break statements and no direct value returns from cases.
+	-> From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
 		
 
 ==========================================================================! Java 13 : Text Block Introduction (Multiline String Literals) !======================================================================
