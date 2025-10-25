@@ -6,6 +6,7 @@ This document captures the evolution of Java from version 9 to 25, providing an 
 From module systems and var keyword to pattern matching, sealed classes, records, switch expressions, and virtual threads, the modern Java ecosystem is now faster, cleaner, and more aligned with functional and reactive programming needs.
 This documentation aims to serve as a comprehensive learning and reference guide for developers transitioning from legacy Java (≤8) to Modern Java (9–25) — helping you master the syntax, internal behavior, and design philosophy behind each update.
 Key Highlights:
+
 => Permanent Feature with version: (official documentation: https://docs.oracle.com/en/java/javase/25/language/java-language-changes-summary.html)
   → Local Variable Type Inference : Java 10 (https://openjdk.org/jeps/286)
   → Local-Variable Syntax for Lambda Parameters: see Local Variable Type Inference : Java 11 (https://openjdk.org/jeps/323)
@@ -13,13 +14,13 @@ Key Highlights:
   → Text Blocks : Java 15 (https://openjdk.org/jeps/378)
   →	Pattern Matching with instanceof : Java 16 (https://docs.oracle.com/en/java/javase/25/language/pattern-matching-instanceof.html#GUID-843060B5-240C-4F47-A7B0-95C42E5B08A7)
   → Record Classes: Java 16 (https://docs.oracle.com/en/java/javase/25/language/records.html#GUID-6699E26F-4A9B-4393-A08B-1E47D4B2D263)
-  → Sealed Classes : Java 17 (
-  → Pattern Matching with switch : Java 21 (
-  → Record Patterns : Java 21 (
-  → Unnamed Variables and Patterns : Java 22 (
-  → Compact Source Files and Instance main Methods : Java 25 (
-  → Flexible Constructor Bodies  : Java 25 (
-  → Module Import Declarations : Java 25 (
+  → Sealed Classes : Java 17 (https://openjdk.org/jeps/409)
+  → Pattern Matching with switch : Java 21 (https://openjdk.org/jeps/441)
+  → Record Patterns : Java 21 (https://openjdk.org/jeps/440)
+  → Unnamed Variables and Patterns : Java 22 (https://openjdk.org/jeps/456)
+  → Compact Source Files and Instance main Methods : Java 25 (https://openjdk.org/jeps/512)
+  → Flexible Constructor Bodies  : Java 25 (https://openjdk.org/jeps/513)
+  → Module Import Declarations : Java 25 (https://openjdk.org/jeps/511)
 
 => Language Enhancements : var, Records, Sealed Classes, Pattern Matching, Text Blocks, Switch Expressions
   → Description: Simplify syntax, improve readability, and support modern programming paradigms.
@@ -170,7 +171,7 @@ Key Highlights:
 	-> Character Fence: Use a marker (e.g., |) and replace it after defining the text block.
 	-> Octal Escape Sequence: Use \040 to represent spaces.
 	-> \s Escape Sequence: Use \s to denote spaces.
-=> Code example: 
+=> Code example: https://github.com/Vinay8386/core_Java/blob/main/Java15/TextBlocksDemo.java
 
 ==========================================================================! Java 16: Record Class and Pattern Matching for instance of !======================================================================
 ==========================================================================! Java 17: Sealed Classes !======================================================================
