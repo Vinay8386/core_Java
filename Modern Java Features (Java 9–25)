@@ -126,19 +126,19 @@ Key Highlights:
 	-> Switch expressions use case L -> labels, which eliminate the need for break statements.
 	-> Each case executes directly, and no further cases are executed unless explicitly defined.
 	-> This prevents unintended execution and makes the code safer and clearer.
-	-> Code Example: 
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchEnhancementDemo.java
+
+=> How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
+	-> In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
+	-> In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchReturnDemo.java
 
 => Yield Keyword:
 	-> The yield keyword is used when you want to execute multiple statements in a case block and still return a value.
 	-> Introduced in Java 12, it addresses the need for returning values from a block of statements inside a switch expression.
 	-> Without yield, the compiler cannot determine what value to return when a case contains more than one statement (like printing, calculations, or method calls).
 	-> yield explicitly specifies the value to be returned from the case block.
-	-> Code Example: 
-
-=> How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
-	-> In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
-	-> In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
-	-> Code Example:	
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchYieldDemo.java
 
 => Difference Between Switch statements (regular switch) and switch expressions?
 	-> Switch statements use case L: and can have fall-through, meaning you need to use break to prevent running into the next case.
