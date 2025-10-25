@@ -63,10 +63,424 @@ Key Highlights:
 
 
 ==========================================================================! Java 12: Switch Expression !======================================================================
+Switch Expression: 
+	1. fall-through: In regular switch statements, if you forget to add a break statement, your code might run into the next case unexpectedly called "fall-through".
+	public class FallThroughExample {
+	    public static void main(String[] args) {
+	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
+	        switch (day) {
+	            case 1: 
+	                System.out.println("Monday");
+	            case 2: 
+	                System.out.println("Tuesday");  // This will execute even if day = 1 due to fall-through
+	            case 3: 
+	                System.out.println("Wednesday");
+	        }
+	    }
+	}
+	2. "case L ->" : labels that eliminate the need for break statements to prevent fall through. 
+	public class SwitchExpressionExample {
+	    public static void main(String[] args) {
+	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
+	        switch (day) {
+	            case 1 -> System.out.println("Monday");
+	            case 2 -> System.out.println("Tuesday");  // No fall-through, directly prints for Tuesday
+	            case 3 -> System.out.println("Wednesday");
+	        }
+	    }
+	}
+	Explanation: Here, case L -> eliminates fall-through by design. Each case executes directly, and no further cases are executed unless specifically defined.
+	3. Switch Expressions: switch expressions are a more modern and safer way to write switch statements in Java, reducing mistakes and making the code more readable. In a switch expression, each case can directly return a value using the -> syntax. This is a key difference from traditional switch statements.
+	public class SwitchExpression {
+	    public static void main(String[] args) {
+	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
+	        int result = switch (day) {
+	            case 1 -> 6;
+	            case 2 -> 7;
+	            case 3 -> 8;
+	            default -> throw new IllegalStateException("Invalid day: " + day);
+	        };
+	        System.out.println(result);  // Prints the result, like 7 for Tuesday
+	    }
+	}
+	4. What is the yield keyword?
+	When you want to do more than just returning a value (for example, running some code and then returning a value), you can use yield in the body of a "case:". The yield keyword was introduced in Java 12 to address a specific need when using switch expressions with blocks of code (i.e., when you have multiple statements inside a case label like When you need to run more than just a simple expression (like calling methods, printing to the console, or doing multiple steps), you may need a block of code instead of just a single expression.).
+	
+	int day = 2; // Example: 1 = Monday, 2 = Tuesday, etc.	public class SwitchWithYield {
+	int result = switch (day) {	    public static void main(String[] args) {
+	    case 1 -> 6;	        int day = 2;  // Assume 1 = Monday, 2 = Tuesday, etc.
+	    case 2 -> 7;	        int result = switch (day) {
+	    case 3 -> 8;	            case 1 -> {
+	    default -> -1;	                System.out.println("Monday");
+	};	                yield 6;  // Use yield to return the value after the code
+	System.out.println(result); // Prints 7 for Tuesday	            }
+		            case 2 -> {
+		                System.out.println("Tuesday");
+		                yield 7;
+		            }
+		            default -> {
+		                System.out.println("Invalid day");
+		                yield -1;
+		            }
+		        };
+		        System.out.println(result);  // Prints 7 after executing "Tuesday"
+		    }
+		}
+		
+		        
+	5. Difference Between Switch statements (regular switch) and switch expressions?
+		• Switch statements use case L: and can have fall-through, meaning you need to use break to prevent running into the next case.
+		• Switch expressions use case L -> and automatically return a value for that case, making your code cleaner and easier to read.
+		Regular switch statement:	Switch expression:
+		public class SwitchStatement {	public class SwitchExpression {
+		    public static void main(String[] args) {	    public static void main(String[] args) {
+		        int day = 2;	        int day = 2;
+		        int result = 0;	        int result = switch (day) {
+		        switch (day) {	            case 1 -> 6;
+		            case 1: 	            case 2 -> 7;
+		                result = 6;	            case 3 -> 8;
+		                break;  // Prevent fall-through	            default -> -1;
+		            case 2: 	        };
+		                result = 7;	        System.out.println(result);  // Prints 7 for Tuesday
+		                break;	    }
+		            case 3: 	}
+		                result = 8;
+		                break;
+		            default:
+		                result = -1;
+		        }
+		        System.out.println(result);  // Prints 7 for Tuesday
+		    }
+		}
+	6. How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
+		a. In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
+		b. In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
+		public class SwitchStatementExample {	public class SwitchExpressionExample {
+		    public static void main(String[] args) {	    public static void main(String[] args) {
+		        int day = 2; // 1 = Monday, 2 = Tuesday, etc.	        int day = 2; // 1 = Monday, 2 = Tuesday, etc.
+		        	
+		        // Calling the method that uses the switch statement	        // Calling the method that uses the switch expression
+		        System.out.println(getDayLength(day)); // Output will be 7 for Tuesday	        System.out.println(getDayLength(day)); // Output will be 7 for Tuesday
+		    }	    }
+			
+		    // Method that uses a traditional switch statement	    // Method that uses a switch expression (Java 12+)
+		    public static int getDayLength(int day) {	    public static int getDayLength(int day) {
+		        int result = 0; // Variable to store the result	        // Switch expression (Java 12+)
+			        return switch (day) {
+		        // Traditional switch statement	            case 1 -> 6;  // Directly returns the value for this case
+		        switch (day) {	            case 2 -> 7;  // Directly returns the value for this case
+		            case 1: 	            case 3 -> 8;  // Directly returns the value for this case
+		                result = 6; // Assign value to variable	            default -> -1;  // Default value
+		                break;	        };
+		            case 2: 	    }
+		                result = 7; // Assign value to variable	}
+		                break;
+		            case 3: 
+		                result = 8; // Assign value to variable
+		                break;
+		            default: 
+		                result = -1; // Assign default value
+		        }
+		
+		        return result;  // Return the result from the method
+		    }
+		}
+	7. Summary: 
+		• Before Java 12: No yield keyword. Traditional switch statements had case L: labels with optional break statements and no direct value returns from cases.
+		• From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
+		
+
 ==========================================================================! Java 13 : Text Block Introduction (Multiline String Literals) !======================================================================
 ==========================================================================! Java 14: Record Class and Pattern Matching for instance of !======================================================================
 ==========================================================================! Java 15: Sealed Classes !======================================================================
 ==========================================================================! Java 21: String Templates, Unnamed Patterns and Variables, Simple Source Files and Instance Main Methods !======================================================================
+https://docs.oracle.com/en/java/javase/23/language/java-language-changes-summary.html
+
+https://openjdk.org/jeps/394
+
+What Is Pattern Matching for instanceof?
+-> Pattern Matching for instanceof is a language feature introduced in Java 16 that simplifies type checking and casting. Traditionally, when you want to check if an object is of a certain type and then use it as that type, you write code that explicitly checks with instanceof and then casts the object.
+
+Pattern Matching allows you to combine these two steps into one concise operation. When you use instanceof with a pattern, it not only tests the object's type but also automatically casts it to a variable of that type if the test succeeds. This makes the code shorter, safer, and easier to read.
+
+Before Java 16	After Java 16
+Object obj = "Hello, Java!";	Object obj = "Hello, Java!";
+	
+if (obj instanceof String) {	if (obj instanceof String str) {
+    // You need to cast explicitly	    // No need to cast explicitly
+    String str = (String) obj;	    System.out.println(str.toUpperCase());
+    System.out.println(str.toUpperCase());	}
+}
+	Object obj = 123;
+	
+	if (obj instanceof Integer i) {
+	    System.out.println(i + " is an Integer");
+	} else if (obj instanceof String s) {
+	    System.out.println(s + " is a String");
+	} else {
+	    System.out.println("Unknown type");
+	}
+
+
+
+Record Class: 
+https://openjdk.org/jeps/395
+
+Records are a special kind of class introduced in Java 16 that are designed to hold immutable data in a concise and clear manner.Instead of writing lots of boilerplate code, records let you define a class by just declaring its data fields, and Java automatically provides much of the usual code for you.
+
+In Java, when you create a class to store data, you often end up writing a lot of boilerplate code—constructors, getters, equals(), hashCode(), and toString() methods. Records aim to eliminate this repetitive code, allowing you to focus on the data itself.
+
+Basic Record Definition:
+
+// Define a record called Point with two components: x and y	• The record declaration creates a class with private final fields x and y.
+record Point(int x, int y) {}	• It automatically creates a constructor Point(int x, int y) to initialize these fields.
+	• It automatically creates getter methods x() and y().
+public class Main {	• The toString() method prints the fields in a readable way.
+    public static void main(String[] args) {
+        // Create a Point object
+        Point p = new Point(5, 10);
+
+        // Use the automatically created getter methods
+        System.out.println("x = " + p.x());  // prints: x = 5
+        System.out.println("y = " + p.y());  // prints: y = 10
+
+        // Use the automatically created toString() method
+        System.out.println(p);  // prints: Point[x=5, y=10]
+    }
+}
+record Person(String name, int age) {}	• equals() compares two records by their component values.
+	• hashCode() returns consistent hash values for equal records.
+public class Main {
+    public static void main(String[] args) {
+        Person p1 = new Person("Alice", 25);
+        Person p2 = new Person("Alice", 25);
+        Person p3 = new Person("Bob", 30);
+
+        // equals() method compares the content of records
+        System.out.println(p1.equals(p2));  // prints: true
+        System.out.println(p1.equals(p3));  // prints: false
+
+        // hashCode() is consistent with equals()
+        System.out.println(p1.hashCode() == p2.hashCode());  // prints: true
+    }
+}
+record Rectangle(int width, int height) {	You can still add your own methods inside a record:
+    // Custom method to calculate area
+    public int area() {
+        return width * height;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Rectangle rect = new Rectangle(4, 5);
+        System.out.println("Area: " + rect.area());  // prints: Area: 20
+    }
+}
+
+	• Records save you from writing boilerplate code.
+	• They are immutable data carriers with built-in support for common operations.
+	• You can still add custom behavior if needed.
+
+Constructors in Record Classes:
+When you write a record like this: record Point(int x, int y) {}
+Java automatically gives you:
+You didn’t write all that, but Java automatically generates it for you.	// What the compiler "sees"
+	record Point(int x, int y) {
+	    private final int x;
+	    private final int y;
+	
+	    public int x() { return x; }
+	    public int y() { return y; }
+	
+	    public Point(int x, int y) {
+	        this.x = x;
+	        this.y = y;
+	    }
+	
+	    public boolean equals(Object o) { ... }
+	    public int hashCode() { ... }
+	    public String toString() { ... }
+	}
+	
+If you want to validate or normalize data, you can write your own constructor.	record Range(int lo, int hi) {
+You don't declare parameters — they're implied from the record header.	    // This is a compact constructor
+Java still assigns this.lo = lo and this.hi = hi automatically.	    Range {
+	        if (lo > hi) {
+	            throw new IllegalArgumentException("lo cannot be greater than hi");
+	        }
+	    }
+	}
+Custom Normalization (Make data simpler)	record Rational(int num, int denom) {
+	    Rational {
+	        int gcd = gcd(num, denom);
+	        num /= gcd;
+	        denom /= gcd;
+	
+	        // Must assign normalized values explicitly
+	        this.num = num;
+	        this.denom = denom;
+	    }
+	
+	    // Helper method to find GCD
+	    static int gcd(int a, int b) {
+	        return b == 0 ? a : gcd(b, a % b);
+	    }
+	}
+
+Rules & Restrictions for Record Classes:
+
+Restriction	Explanation
+❌ Cannot extend any class	All records implicitly extend java.lang.Record.
+❌ Cannot be abstract or open	Records are implicitly final.
+❌ Cannot declare extra fields	You can only have the fields listed in the record header.
+❌ No instance initializers	You cannot write {} blocks inside to initialize data.
+❌ No native methods	Records should only depend on their own data.
+✅ Can implement interfaces	You can still add behavior by implementing interfaces.
+✅ Can define static fields/methods	Same as in normal classes.
+✅ Can define instance methods	You can add custom logic.
+✅ Can be nested or generic	You can do: record Box<T>(T value) {}
+✅ Supports annotations	You can annotate fields, methods, parameters, etc.
+✅ Serializable	Records are serializable, but custom serialization methods are not allowed.
+
+Local record classes: 
+A local record class is a record declared inside a method, just like a local class. It’s useful when you need a simple data container only within that method, to group some values together temporarily.
+import java.util.List;
+import java.util.stream.Collectors;
+
+class Merchant {
+    private final String name;
+
+    Merchant(String name) {
+        this.name = name;
+    }
+
+    String getName() {
+        return name;
+    }
+
+    // Just for printing
+    @Override
+    public String toString() {
+        return name;
+    }
+}
+
+public class Main {
+    static double computeSales(Merchant merchant, int month) {
+        // Dummy computation for example
+        return Math.random() * 1000;
+    }
+
+    public static List<Merchant> findTopMerchants(List<Merchant> merchants, int month) {
+        // Local record class inside method
+        record MerchantSales(Merchant merchant, double sales) {}
+
+        return merchants.stream()
+            .map(merchant -> new MerchantSales(merchant, computeSales(merchant, month)))
+            .sorted((m1, m2) -> Double.compare(m2.sales(), m1.sales()))
+            .map(MerchantSales::merchant)
+            .collect(Collectors.toList());
+    }
+
+    public static void main(String[] args) {
+        List<Merchant> merchants = List.of(new Merchant("Alice"), new Merchant("Bob"), new Merchant("Carol"));
+
+        List<Merchant> topMerchants = findTopMerchants(merchants, 9);
+        System.out.println(topMerchants);
+    }
+}
+• The MerchantSales record is declared inside the findTopMerchants method.
+• It groups a Merchant and their sales amount (double sales).
+• The stream creates MerchantSales instances for each merchant with their sales.
+• Then it sorts merchants by sales in descending order.
+• Finally, it extracts the merchants in sorted order and returns the list.
+Important points about Local Records:
+	• They behave like nested record classes but are declared inside methods.
+	• They are implicitly static:
+		○ So, they cannot access variables or parameters from the enclosing method directly.
+		○ This is different from normal local classes, which can access method variables (if those variables are final or effectively final).
+	• Because they're static, local records don't carry any hidden references to the enclosing instance.
+
+
+Local Enum Classes and Local Interfaces
+	• Just like local record classes, local enum classes and local interfaces can be declared inside methods.
+	• These local enums and interfaces are implicitly static, just like nested enums and interfaces at the class level.
+	• This means they don’t hold a reference to the enclosing instance or method variables.
+	• This addition is mainly for consistency with local record classes and nested enums/interfaces.
+
+Static Members of Inner Classes — Relaxed Restriction
+	• Previously, Java didn’t allow an inner class (a non-static nested class) to declare static members — except for constant variables.
+	• This rule meant inner classes couldn’t have members like nested record classes, since records are implicitly static.
+	• Now, this restriction is relaxed:
+		○ Inner classes can declare static members, including nested record classes.
+		○ This gives more flexibility in organizing code inside inner classes.
+		
+
+Annotations on record components
+
+For each component, Java automatically creates:
+	1. A private final field to hold the value.
+	2. A public accessor method to get the value.
+	3. A parameter in the canonical constructor to set the value when creating an instance.
+
+Before records, to annotate fields, constructor parameters, and getters, you had to write:	public final class Employee {
+	    private final String name;
+	    private final int id;
+	    private final double salary;
+	
+	    public Employee(String name, int id, double salary) {
+	        this.name = name;
+	        this.id = id;
+	        this.salary = salary;
+	    }
+	
+	    public String name() { return name; }
+	    public int id() { return id; }
+	    public double salary() { return salary; }
+	}
+After Record	public record Employee(String name, int id, double salary) { }
+Now, what about Annotations on these components?	import javax.validation.constraints.Min;
+Let's say you want to add some annotations — for example, you want to mark the id field as a database column and also mark the salary to indicate a certain validation rule.	
+	public record Employee(
+With records, you just write the annotation once on the component, and Java takes care of applying it everywhere it matters.	    String name,
+	
+	    @Column(name = "employee_id") 
+	    int id, 
+	
+	    @Min(0) 
+	    double salary
+	) { }
+This will result (behind the scenes) in something like:	public final class Employee {
+	    @Column(name = "employee_id")
+	    private final int id;
+	
+	    @Min(0)
+	    private final double salary;
+	
+	    public Employee(String name, 
+	                    @Column(name = "employee_id") int id, 
+	                    @Min(0) double salary) {
+	        this.id = id;
+	        this.salary = salary;
+	        this.name = name;
+	    }
+	
+	    @Column(name = "employee_id")
+	    public int id() { return id; }
+	
+	    @Min(0)
+	    public double salary() { return salary; }
+	
+	    public String name() { return name; }
+	}
+
+Key idea:
+	• All record classes in Java automatically extend java.lang.Record.
+	• java.lang.Record is automatically imported by default (like all classes in java.lang), so you don’t need to import it explicitly.
+	• This means when you declare a record like record Employee(...) {}, it actually extends java.lang.Record behind the scenes.
+https://openjdk.org/jeps/409
+
 ==========================================================================! Java 22: Flexible Constructor Bodies !======================================================================
 ==========================================================================! Java 23: (Primitive Types in Patterns, instanceof, and switch) and ( Module Import Declarations) !======================================================================
 
