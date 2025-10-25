@@ -52,7 +52,7 @@ Key Highlights:
 	-> Before Java 7: Developers had to use a finally block to manually close resources. This was verbose and error-prone, as forgetting to close a resource could lead to memory leaks.
 	-> Java 7: Introduced try-with-resources, allowing resources to be declared directly in the try statement. The resource is automatically closed when execution exits the try block, eliminating the need for a finally block.
 	-> Java 9: Enhanced try-with-resources by allowing effectively final resources declared outside the try block. This is useful when a resource needs to be initialized earlier but still benefits from automatic closing.
-	-> Example Code link: 
+	-> Example Code link: https://github.com/Vinay8386/core_Java/blob/main/Java9/TryWithResourcesExample.java
 
 => @SafeVarargs Annotation Allowed on Private Instance Methods (Java 7)
 	-> Purpose: The @SafeVarargs annotation is used to suppress warnings about potentially unsafe operations when using varargs with generics.
@@ -62,8 +62,7 @@ Key Highlights:
 		-> Without @SafeVarargs, Java will give a “possible heap pollution” warning when passing generic varargs.
 		-> Cannot Be Applied to Non-Private, Non-Final Instance Methods: Only static, final, or private instance methods are allowed.
 		-> Safe Usage Requirement: The method must not modify or store the varargs array in an unsafe way.
-		-> Code Example DiamondAnonymousJava7: 
-		-> Code Example DiamondAnonymousJava9: 
+		-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/SafeVarargsDemo.java 
 
 => Diamond Syntax with Anonymous Inner Classes (Java 7):
 	-> Before Java 7, when you wrote generics, you had to repeat the type on both sides: List<String> list = new ArrayList<String>(); // old way
@@ -71,19 +70,21 @@ Key Highlights:
 		-> The compiler automatically infers the type String from the left-hand side.
 	-> But In Java 7, diamond <> cannot be used with anonymous inner classes. Java 9 allows diamond <> even for anonymous inner classes, if the type can be inferred:
 		-> The compiler figures out that it’s ArrayList<String> from the left-hand side (List<String>).
-		-> Code Example: 
+		-> Code Example DiamondAnonymousJava7: https://github.com/Vinay8386/core_Java/blob/main/Java9/DiamondAnonymousJava7.java
+		-> Code Example DiamondAnonymousJava9: https://github.com/Vinay8386/core_Java/blob/main/Java9/DiamondAnonymousJava9.java
 
 => Underscore Character Not Legal Name (Java 9)
 	-> In Java, an underscore '_' was historically allowed as an identifier (variable name, method name, etc.).
 	-> Java 9 **disallows using a single underscore '_' as an identifier**.
-	-> Code Example: 
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/UnderscoreExample.java
 
 => Support for Private Interface Methods (Java 9)
 	-> Before Java 8, interfaces could only have abstract methods (no body).
 	-> Java 8 introduced: Default methods (methods with body), Static methods
 	-> Problem in Java 8: Default methods often had **duplicate code** across multiple default methods. No way to **reuse code internally** within the interface.
 	-> Java 9 allows **private methods in interfaces**. Private methods can be used **only inside the interface** to reduce code duplication. They **cannot be accessed** from implementing classes.
-	-> Code Example: 
+	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java9/Car.java
+
 ======================================================================================! Java 10-11 !====================================================================================
 
 => Local Variable Type: var
@@ -113,7 +114,7 @@ Key Highlights:
     -> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java10_11/StringRepeatExample.java
 
 
-==========================================================================! Java 12: Switch Expression !======================================================================
+==========================================================================! Java 14: Switch Expressions and Statements !======================================================================
 Switch Expression: 
 	1. fall-through: In regular switch statements, if you forget to add a break statement, your code might run into the next case unexpectedly called "fall-through".
 	public class FallThroughExample {
