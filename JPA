@@ -1,11 +1,288 @@
 ==================================================================================================! Basics (Concept Clarity First) !=============================================================================================================================================
+=> JDBC Problems → Why JPA?
+  -> Traditional JDBC Example: 
+                              CREATE TABLE employee (
+                                id INT PRIMARY KEY,
+                                name VARCHAR(50),
+                                salary DOUBLE
+                              );
+  -> To insert data using JDBC:
+                            public class EmployeeJDBC {
+                                public static void main(String[] args) throws Exception {
+                                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/jpadb", "root", "root");
+                                    String query = "INSERT INTO employee VALUES (?, ?, ?)";
+                                    PreparedStatement ps = con.prepareStatement(query);
+                                    ps.setInt(1, 1);
+                                    ps.setString(2, "Vinay");
+                                    ps.setDouble(3, 50000);
+                                    ps.executeUpdate();
+                                    con.close();
+                                }
+                            }
 
-=> What is JPA?
-=> What is Hibernate?
-=> Why JPA when we have JDBC?
-=> JPA Architecture
+  -> In real project, this approach creates several problems like Boilerplate Code, Tight Coupling, Object-Relational Mismatch, SQL Dependency, No Caching, No Entity Relationship, Difficult transaction.
+  -> Example of Object–Relational Mismatch: 
+    -> In Code: Employee emp = new Employee(1, "Vinay", 50000);
+    -> In Database: 
+                  | id | name  | salary |
+                  | -- | ----- | ------ |
+                  | 1  | Vinay | 50000  |
+    -> We need to manually map: emp.getId() → id, emp.getName() → name, emp.getSalary() → salary
+    -> That’s where ORM (Object Relational Mapping) helps.
+  -> ORM frameworks automatically map Java objects to database tables.
+      | Java Object  | Database Table     |
+      | ------------ | ------------------ |
+      | Class        | Table              |
+      | Field        | Column             |
+      | Object       | Row                |
+      | Relationship | Foreign Key / Join |
+
+=> So, Why JPA?
+  -> JPA (Java Persistence API) is a standard interface for ORM in Java.
+      ✅ It removes boilerplate JDBC code
+      ✅ Handles mapping between objects and tables automatically
+      ✅ Manages transactions internally
+      ✅ Provides query language (JPQL) instead of raw SQL
+      ✅ Supports caching and lazy loading
+      ✅ Works with multiple ORM providers (like Hibernate, EclipseLink)
+=> JPA vs ORM vs Hibernate:
+  -> ORM (Object Relational Mapping): ORM is a programming technique, not a tool or framework. It maps Java Objects to Database Tables automatically.
+  -> JPA (Java Persistence API) — Specification / Standard: JPA is not an implementation. JPA defines how ORM should work in Java (rules, interfaces, annotations). It provides a standard set of APIs + annotations for ORM.
+  -> Example:
+              @Entity  //@Entity comes from JPA 9When you run the code, the actual execution is done by Hibernate)
+              @Table(name = "employee")
+              public class Employee {
+                  @Id
+                  private int id;
+                  private String name;
+              }
+  -> Hibernate — Implementation (ORM Framework): Hibernate is the most popular implementation of JPA. 
+    -> Hibernate provides the real code behind JPA interfaces. 
+    -> When we use JPA, Hibernate runs underneath (in most projects).
+    -> Think: Hibernate = the worker that follows JPA rulebook.
+=> Benefits of JPA + Hibernate
+    | Feature                       | JDBC       | JPA with Hibernate  |
+    | ----------------------------- | --------   | ------------------- |
+    | Auto Mapping Objects ↔ Tables | ❌ No     | ✅ Yes               |
+    | Reduces boilerplate code      | ❌ No     | ✅ Yes               |
+    | Caching                       | ❌ No     | ✅ Yes               |
+    | Relationships Handling        | ❌ Manual | ✅ Automatic         |
+    | Transactions                  | ❌ Manual | ✅ Automatic         |
+    | Query Language                | SQL        | JPQL (Object-based) |
+
+=> JPA Architecture & Components:
+                                +------------------------------------------------------------------------------------+
+                                |                           Your Application Code (Service / Controller)           |
+                                |------------------------------------------------------------------------------------|
+                                |   userRepository.save(user)    <-- You call Spring Data JPA repository methods   |
+                                +--------------------------------+---------------------------------------------------+
+                                                                     |
+                                                                     v
+                                +------------------------------------------------------------------------------------+
+                                |                           Spring Data JPA (Abstraction Layer)                    |
+                                |------------------------------------------------------------------------------------|
+                                |  +----------------------+      +---------------------------------------------+   |
+                                |  | JpaRepository (API)  |  --> | SimpleJpaRepository (Default Implementation) |   |
+                                |  |  + save()            |      |  + save(entity) {                             |   |
+                                |  |  + findAll()         |      |      if (isNew(entity))                        |   |
+                                |  |  + findById()        |      |          entityManager.persist(entity);       |   |
+                                |  |                      |      |      else                                     |   |
+                                |  |                      |      |          entityManager.merge(entity);         |   |
+                                |  +----------------------+      |  }                                            |   |
+                                |                                |  + findById(id) { ... }                         |   |
+                                |                                +---------------------------------------------+   |
+                                +------------------------------------------------------------------------------------+
+                                                                     |
+                                                                     v
+                                +------------------------------------------------------------------------------------+
+                                |                         JPA (Java Persistence API - Specification)               |
+                                |------------------------------------------------------------------------------------|
+                                |  EntityManager (Standard JPA interface)                                           |
+                                |   + persist(entity)                                                                |
+                                |   + merge(entity)                                                                  |
+                                |   + find(Type, id)                                                                 |
+                                |                                                                                   |
+                                |  (Spring Data JPA uses these JPA calls internally — e.g., em.persist/em.merge)     |
+                                +------------------------------------------------------------------------------------+
+                                                                     |
+                                                                     v
+                                +------------------------------------------------------------------------------------+
+                                |                  Persistence Provider (Hibernate / EclipseLink / OpenJPA)        |
+                                |------------------------------------------------------------------------------------|
+                                |  Hibernate implements the JPA contracts. It:                                       |
+                                |   - Translates JPA calls to SQL (insert/update/select)                             |
+                                |   - Manages Session / Persistence Context (1st level cache)                        |
+                                |   - Handles dirty-checking, flush, transaction synchronization                      |
+                                |                                                                                   |
+                                +------------------------------------------------------------------------------------+
+                                                                     |
+                                                                     v
+                                +------------------------------------------------------------------------------------+
+                                |                                 JDBC / Database (MySQL)                           |
+                                |------------------------------------------------------------------------------------|
+                                |  PreparedStatements execute SQL -> Data persisted in tables                       |
+                                +------------------------------------------------------------------------------------+
+
+
+  -> JPA architecture include: Persistence Provider (Hibernate), EntityManagerFactory, Persistence Context, EntityManager, Entity, JPQL / Criteria API, Transactions
+    -> Persistence Provider (Hibernate): JPA is only a specification. Hibernate is the actual provider that implements JPA. All operations internally are done by Hibernate. Apart from Hibernate there are many other provider also like EclipseLink, OpenJPA. But In most real project, Hibernate is used.
+    -> EntityManagerFactory: It will Connects to DB (via Hibernate) and produces EntityManagers. It is heavy weight and created only once per application. It is thread safe.
+    -> EntityManager: It has a Persistence Context inside it. It is used to perform CRUD on entities. It is light-weight object and not thread safe. Spring injects this automatically, but in core JPA we create it manually.
+      -> The EntityManager interface is the primary interface used for interacting with the persistence context(The Persistence Context is the first-level cache of JPA. It is a runtime memory area where JPA manages entity objects). 
+      -> It provides methods like: persist() – Save entity, find() – Retrieve entity by ID, merge() – Update, remove() – Delete, createQuery() – To run JPQL
+      -> It is central interface for all persistent operations and manages Entity life-cycle states, Persistence context(cache of managed entities), Transaction demarcation.
+      -> For Example: When JPA query the database, It add the entity to the persistence context (first-level cache). When the query will again come with same primary key, JPA return the same object from cache. And if you modify the entity and commit the changes using commit() method than JPA track the changes in cached object and automatically update the database.
+
+    -> Persistence Context (Heart of JPA): It is a first-level cache. Persistence Context (PC) is an in-memory environment managed by EntityManager that stores entity instances, ensures identity equality (one Java object per DB row in the context), tracks changes (dirty checking), and coordinates SQL generation and flushing.
+      -> Key responsibilities: 
+        -> Identity Map: ensures one managed instance per (EntityClass, PrimaryKey) in the context.
+        -> State Tracking: tracks entity state (Transient, Managed/Persistent, Detached, Removed).
+        -> Dirty Checking: detects changes to managed entities and schedules SQL UPDATEs at flush/commit.
+        -> Cascade & Relationships: when cascading persist/remove, PC manages the whole object graph.
+        -> Transactional scope: PC is tied to an EntityManager instance and typically to a transaction (in JEE/Spring, one PC per transaction).
+        -> First-Level Cache: lookups (find) first check PC — avoids DB hit for already-loaded entities.
+      -> Types: 
+        -> Transaction-Scoped Persistence Context (✅ Default in Spring Boot)
+          -> A new persistence context is created when a transaction begins.
+          -> It is closed automatically when the transaction ends (either commit or rollback).
+          -> So, every transaction gets a fresh context.
+          -> Behaviour:
+            -> Entity is fetched from DB and managed within the transaction.
+            -> Once the transaction ends, the entity is detached (no longer managed).
+            -> Next transaction will need to re-fetch it.
+        -> Extended-Scoped Persistence Context (Used in Stateful Beans / JSF, not common in Spring Boot)
+            -> The persistence context is long-lived.
+            -> It survives across multiple transactions.
+            -> Useful in multi-step wizards / conversations in web apps.
+            -> 
+    -> Entity: A Java object that is mapped to a database table. Must have @Entity, @Id
+      -> Each instance of an entity corresponds to a row in the table. Entities are typically annotated with @Entity, and fields are mapped to table columns using annotations like @Column, @Id, and @GeneratedValue.
+      -> It contains relationship @OneToMany, @ManyToOne, @OneToOne, @ManyToMany etc.
+      -> It contains lifecycle callbacks (@PrePersist(called before saving(insert)), @PostLoad(called after loading from DB))
+    -> JPQL / Criteria API: Query languages for JPA. JPQL works on Objects, not tables. (example: select e from Employee e where e.salary > 50000)
+      -> In SQL, you query directly on table names and column names.
+      -> In JPQL, you query on Java class names (Entities) and field names — not the actual table or column names in the database.
+    -> Transaction Management: Required for write operations (INSERT, UPDATE, DELETE). JPA works with JTA or JDBC transactions
+
+    -> In Spring Data JPA, most of the boilerplate work with EntityManager is hidden while still using the same JPA rules internally. Even though Spring hides the code, the internal lifecycle still works exactly the same, because:
+      -> Spring Data JPA is just a layer on top of JPA + Hibernate
+      -> Hibernate still maintains the Persistence Context
+      -> Dirty checking, flushing, caching, merge, etc. still happen
+
 => Important Annotations (@Entity, @Id, @Table, etc.)
-=> Entity Lifecycle
+=> Entity Lifecycle:
+    -> Full Entity Lifecycle Code: 
+                                  // (Run with logging enabled: hibernate.show_sql = true and format_sql = true)
+                                  // Assume Employee entity with @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+                                  // and fields: Long id; String name; String department;
+                                  
+                                  EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+                                  EntityManager em = emf.createEntityManager();
+                                  
+                                  try {
+                                      // ---------------- BEGIN TRANSACTION 1 ----------------
+                                      em.getTransaction().begin();
+                                  
+                                      // TRANSIENT state: new object, not known to PC
+                                      Employee e = new Employee("Asha", "Finance");  // transient
+                                      System.out.println("Transient? (no id yet): " + (e.getId() == null));
+                                  
+                                      // PERSIST: Transient -> MANAGED
+                                      em.persist(e);
+                                      // Internal:
+                                      // - Persistence Context registers e (identityMap put)
+                                      // - ActionQueue.addInsert(e) scheduled
+                                      // - If using SEQUENCE, id may already be allocated; if IDENTITY, DB insert may happen at flush
+                                      System.out.println("After persist: managed? (id assigned maybe): " + (e.getId() != null));
+                                  
+                                      // No SQL necessarily yet (depends on id strategy). Usually: no insert until flush/commit (except IDENTITY)
+                                      // Expected SQL at flush/commit (example for SEQUENCE -> batched insert):
+                                      // INSERT INTO employee (name, department, ...) VALUES ('Asha', 'Finance', ...);
+                                  
+                                      em.getTransaction().commit();
+                                      // On commit -> flush -> execute INSERT -> commit
+                                      // SQL emitted here: INSERT ...
+                                  
+                                      // Now e is still managed as long as EM is open and we didn't clear.
+                                      System.out.println("After commit: managed and in PC? (true expected)");
+                                  
+                                      // ---------------- BEGIN TRANSACTION 2 ----------------
+                                      em.getTransaction().begin();
+                                  
+                                      // FIND: Returns managed instance from PC (identity guarantee)
+                                      Employee e1 = em.find(Employee.class, e.getId());
+                                      System.out.println("Find returns same instance? " + (e1 == e)); // true - identity map
+                                  
+                                      // UPDATE: modify field on managed entity -> dirty checking will detect at flush
+                                      e1.setDepartment("HR");
+                                      // No update SQL yet.
+                                      System.out.println("Modified department to HR (still managed).");
+                                  
+                                      // em.flush() forces SQL now (optional)
+                                      em.flush();
+                                      // On flush -> persistence context diff vs snapshot -> schedule/execute UPDATE
+                                      // Expected SQL: UPDATE employee SET department = 'HR' WHERE id = <id>;
+                                  
+                                      // Now demonstrate CLEAR (detach all entities)
+                                      em.clear();
+                                      // em.clear() evicts all managed entities --> they become DETACHED
+                                      System.out.println("After clear: is e managed? " + em.contains(e)); // false
+                                  
+                                      // Now modify the detached object in Java heap (no tracking)
+                                      e.setDepartment("Legal"); // no dirty checking since detached
+                                      System.out.println("Changed detached object's department to 'Legal' (no DB change tracked).");
+                                  
+                                      // REATTACH using merge
+                                      em.getTransaction().commit(); // end Tx2
+                                      // Close previous tx properly if needed, start new tx for merge:
+                                      em.getTransaction().begin();
+                                      Employee merged = em.merge(e); // returns managed instance
+                                      // Internal: copy state from detached 'e' into managed instance in PC (or new one loaded), schedule UPDATE
+                                      // merged is the managed instance (use returned ref)
+                                      merged.setDepartment("Legal & Compliance"); // now tracked again
+                                  
+                                      em.getTransaction().commit();
+                                      // On commit -> flush -> UPDATE employee set department = 'Legal & Compliance' WHERE id = <id>;
+                                  
+                                      // DEMONSTRATE REMOVE
+                                      em.getTransaction().begin();
+                                      Employee toRemove = em.find(Employee.class, e.getId()); // managed
+                                      em.remove(toRemove);
+                                      // Internal: mark entity as REMOVED; ActionQueue.addDelete(toRemove)
+                                      em.getTransaction().commit();
+                                      // On commit -> DELETE FROM employee WHERE id = <id>;
+                                  
+                                  } finally {
+                                      em.close();
+                                      emf.close();
+                                  }
+    -> Dirty Checking + flush() + clear() (Focused Example)
+                                EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+                                EntityManager em = emf.createEntityManager();
+                                
+                                // Transaction A
+                                em.getTransaction().begin();
+                                Employee e = em.find(Employee.class, 101L); // loads from DB if not in PC
+                                System.out.println("Loaded dept: " + e.getDepartment());
+                                
+                                e.setDepartment("X");           // change managed entity
+                                System.out.println("After setDepartment('X') - no SQL yet if no flush");
+                                
+                                em.flush(); // explicit flush -> SQL UPDATE executed now
+                                // Expected SQL: UPDATE employee SET department = 'X' WHERE id = 101;
+                                
+                                e.setDepartment("Y");           // change again after flush
+                                // No SQL yet; change is tracked in PC snapshot diff at next flush/commit
+                                
+                                em.clear(); // clears PC -> e becomes DETACHED
+                                // Because we cleared, the managed instance was evicted. The pending change 'Y' may be lost if not merged.
+                                
+                                Employee again = em.find(Employee.class, 101L); // causes DB hit to read current DB state
+                                System.out.println("Dept after clear and refetch: " + again.getDepartment());
+                                // If you didn't merge 'e' after clear, DB will have 'X' (value from earlier flush), not 'Y'
+                                
+                                em.close();
+                                emf.close();
 
 ==================================================================================================! Mappings (Most Important Part) !=============================================================================================================================================
 => @Column, @Transient, @Embedded
