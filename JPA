@@ -1,0 +1,37 @@
+==================================================================================================! Basics (Concept Clarity First) !=============================================================================================================================================
+
+=> What is JPA?
+=> What is Hibernate?
+=> Why JPA when we have JDBC?
+=> JPA Architecture
+=> Important Annotations (@Entity, @Id, @Table, etc.)
+=> Entity Lifecycle
+
+==================================================================================================! Mappings (Most Important Part) !=============================================================================================================================================
+=> @Column, @Transient, @Embedded
+=> One-to-One Mapping
+=> One-to-Many & Many-to-One
+=> Many-to-Many
+=> Cascade Types, Fetch Types
+=> Orphan Removal
+=======================================================================================================! Queries & Fetching !====================================================================================================================================================
+=> JPQL
+=> Native Queries
+=> Criteria API
+=> Pagination & Sorting
+=> N+1 Problem and Fetch Joins
+==========================================================================================================! Advanced JPA !======================================================================================================================================================
+=> Caching (1st & 2nd Level Cache)
+=> Dirty Checking
+=> Hibernate States (Transient, Persistent, Detached, Removed)
+=> Auditing (CreatedDate, UpdatedDate)
+=> Entity Graphs
+=> Batch Processing
+=======================================================================================================! Real-Time Project !====================================================================================================================================================
+=> Spring Boot + JPA + Hibernate + MySQL with proper layers: Controller → Service → Repository → Entity + DTO
+=> We will cover : 
+  -> Transaction Management
+  -> Batch Inserts
+  -> Soft Delete
+  -> Performance Tuning
+  -> Real DB Design
