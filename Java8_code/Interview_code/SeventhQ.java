@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 
@@ -26,3 +26,4 @@ Accumulator function: It is the binary operator that combines the partial result
 The accumulator function is (word1, word2) -> word1.length() > word2.length() ? word1 : word2.
 This lambda function compares the lengths of two strings (word1 and word2) and returns the one with the greater length.
  */
+

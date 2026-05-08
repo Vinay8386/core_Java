@@ -1,4 +1,4 @@
-package Java8;
+package Java8_code.random_que;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,3 +12,5 @@ public class LimitAndSkipMethodExample {
         skippedFruits.forEach(System.out::println);
     }
 }
+
+

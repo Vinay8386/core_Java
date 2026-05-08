@@ -1,4 +1,4 @@
-package Java8;
+package Java8_code.random_que;
 
 import java.util.Arrays;
 import java.util.List;
@@ -9,3 +9,5 @@ public class IteratingOverList {
         fruits.stream().forEach(System.out::println);
     }
 }
+
+

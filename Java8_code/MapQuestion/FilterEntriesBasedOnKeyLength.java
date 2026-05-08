@@ -1,4 +1,4 @@
-package Java8.MapQuestion;
+package Java8_code.MapQuestion;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -42,3 +42,4 @@ Since you want to preserve the insertion order, you need a LinkedHashMap.
         This lambda function means "if there's a conflict, keep the old value and ignore the new one."
 If a key collision occurs, this function tells Java how to handle it.
  */
+

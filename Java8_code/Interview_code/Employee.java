@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 public class Employee {
 
@@ -47,3 +47,5 @@ public class Employee {
 
 
 }
+
+

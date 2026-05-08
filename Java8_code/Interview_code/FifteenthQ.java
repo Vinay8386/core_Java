@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -30,3 +30,5 @@ public class FifteenthQ {
 
     }
 }
+
+

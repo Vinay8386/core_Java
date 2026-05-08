@@ -1,4 +1,4 @@
-package Java8.MapQuestion;
+package Java8_code.MapQuestion;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,3 +31,5 @@ public class MapToList {
                 .collect(Collectors.toList());
     }
 }
+
+

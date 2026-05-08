@@ -1,6 +1,5 @@
 package Java10_11;
 
-import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +72,6 @@ public class ForEachWithVarExample {
      *
      * @return a nested list of integers (List of List of Integers)
      */
-    @NotNull
     private static List<List<Integer>> getLists() {
 
         // For complex generics, explicit typing is clearer

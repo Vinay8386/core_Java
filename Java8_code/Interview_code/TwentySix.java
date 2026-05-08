@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.*;
 
@@ -13,3 +13,5 @@ public class TwentySix {
                 .forEach(System.out::println);
     }
 }
+
+

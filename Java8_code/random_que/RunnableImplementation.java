@@ -1,4 +1,4 @@
-package Java8;
+package Java8_code.random_que;
 
 public class RunnableImplementation {
     public static void main(String[] args) {
@@ -15,3 +15,5 @@ public class RunnableImplementation {
         new Thread(() -> System.out.println("Runnable implement without Lambda expression")).start();*/
     }
 }
+
+

@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 
 public class Notes {
@@ -39,3 +39,5 @@ public class Notes {
         this.pages = pages;
     }
 }
+
+

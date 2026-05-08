@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -26,3 +26,4 @@ public class ThirtyTwo {
 
 
 //For two maps to be considered equal, they must contain exactly the same key-value pairs.
+

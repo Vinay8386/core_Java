@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -47,3 +47,4 @@ t -> new int[]{t[1], t[0] + t[1]}: This is the lambda expression that defines ho
  .map(num -> num[0]): This maps each array in the stream to its first element,
  which represents the Fibonacci numbers in the sequence.
  */
+

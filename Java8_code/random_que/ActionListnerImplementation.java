@@ -1,4 +1,4 @@
-package Java8;
+package Java8_code.random_que;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,3 +20,5 @@ public class ActionListnerImplementation {
         show.addActionListener(e -> System.out.println("Event handling without lambda expressions"));*/
     }
 }
+
+

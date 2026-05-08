@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,3 +17,4 @@ public class TwentyThreeNoQ {
 
     }
 }
+

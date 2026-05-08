@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 
 import java.time.LocalDate;
@@ -13,3 +13,5 @@ public class EighteenthQ {
         System.out.println("Current date & time is : "+ LocalDateTime.now());
     }
 }
+
+

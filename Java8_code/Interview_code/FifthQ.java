@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -46,3 +46,5 @@ In groupingBy method, we have used constructor reference of LinkedHashMap to cre
 use LinkedHashMap, then groupingBy method will consider this as HashMap object and insertion order not preserve in
 HashMap. So, In place of the first repeated string maybe you will get second or different repeated String.
  */
+
+

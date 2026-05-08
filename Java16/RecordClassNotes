@@ -1,0 +1,830 @@
+=> Record Class (Java)
+
+    -> Record is a special type of class introduced in Java to reduce boilerplate code.
+
+    -> It is mainly used when your class is only storing data.
+    
+    -> Such classes are called:
+            -> Data Carrier Classes
+            -> Plain Data Aggregates
+
+    -> Before Record:
+            -> We had to manually write:
+                    -> fields
+                    -> constructor
+                    -> getter methods
+                    -> equals()
+                    -> hashCode()
+                    -> toString()
+
+    -> Java developers noticed:
+            -> Many classes only store data
+            -> But still require lots of repetitive code
+
+    -> So Java introduced:
+            -> Record Class
+            -> To write clean immutable data classes with very less code
+
+----------------------------------------------------------------------------------------------------
+
+-> COMPARISON: Normal Class vs Record Class
+
+----------------------------------------------------------------------------------------------------
+
+-> NORMAL CLASS EXAMPLE: Rectangle.java (Path: Java16/Rectangle.java)
+
+    -> This is a traditional/normal Java class
+
+    -> Problem:
+            -> Too much repetitive code
+            -> Boilerplate code increases
+            -> Harder to maintain
+
+    -> Contains:
+            -> Field declarations
+            -> Constructor
+            -> Getter methods
+            -> equals() method
+            -> hashCode() method
+            -> toString() method
+
+----------------------------------------------------------------------------------------------------
+
+-> RECORD CLASS EXAMPLE: RectangleUsingRecord.java (Path: Java16/RectangleUsingRecord.java)
+
+    -> This is a modern Record class (Java 16+)
+
+    -> Syntax:
+
+            record RectangleUsingRecord(double length, double width) { }
+
+    -> That's it!
+    -> Java automatically creates everything:
+            -> Constructor
+            -> Accessor methods (length(), width())
+            -> equals()
+            -> hashCode()
+            -> toString()
+
+    -> No boilerplate needed!
+
+----------------------------------------------------------------------------------------------------
+
+-> Story Understanding:
+
+    -> Suppose you are creating a Student class.
+
+    -> Requirement:
+            -> Store:
+                    -> name
+                    -> rollNumber
+
+    -> Earlier:
+            -> You manually write:
+                    -> fields
+                    -> constructor
+                    -> getters
+                    -> equals()
+                    -> hashCode()
+                    -> toString()
+
+    -> But think:
+            -> Your real goal is only:
+                    -> "Store student data"
+
+    -> Record says:
+            -> "Just tell me what data you want."
+            -> "I will generate remaining code automatically."
+
+----------------------------------------------------------------------------------------------------
+
+-> Record Syntax:
+
+        record RectangleUsingRecord(double length, double width) { }
+
+    -> Breakdown:
+
+        -> record
+                -> Special keyword
+
+        -> RectangleUsingRecord
+                -> Record class name
+
+        -> (double length, double width)
+                -> Components/Header
+
+----------------------------------------------------------------------------------------------------
+
+-> Record Header / Components:
+
+        (double length, double width)
+
+    -> This header defines:
+            -> fields
+            -> constructor parameters
+            -> accessor methods
+
+    -> These are called:
+            -> Record Components
+
+----------------------------------------------------------------------------------------------------
+
+-> Java Automatically Generates (for Record Classes):
+
+    -> 1. Private Final Fields
+
+            private final double length;
+            private final double width;
+
+    -> final means:
+            -> Value cannot change after object creation
+
+----------------------------------------------------------------------------------------------------
+
+    -> 2. Constructor (Auto-generated)
+
+            public RectangleUsingRecord(double length, double width) {
+                this.length = length;
+                this.width = width;
+            }
+
+----------------------------------------------------------------------------------------------------
+
+    -> 3. Accessor Methods
+
+            length()
+            width()
+
+    -> Important:
+            -> Records do NOT create traditional getters like:
+                    -> getLength()
+                    -> getWidth()
+
+    -> Instead:
+            -> Method name is same as field name
+
+----------------------------------------------------------------------------------------------------
+
+    -> 4. equals() (Auto-generated)
+
+    -> Java automatically compares objects based on values
+
+    -> Example:
+
+            RectangleUsingRecord r1 = new RectangleUsingRecord(4,5);
+            RectangleUsingRecord r2 = new RectangleUsingRecord(4,5);
+
+            System.out.println(r1.equals(r2));
+
+    -> Output:
+            true
+
+    -> Because:
+            -> Both contain same values
+
+----------------------------------------------------------------------------------------------------
+
+    -> 5. hashCode()
+
+    -> Automatically generated
+
+    -> Useful in:
+            -> HashMap
+            -> HashSet
+
+----------------------------------------------------------------------------------------------------
+
+    -> 6. toString() (Auto-generated)
+
+    -> Automatically generated
+
+    -> Example:
+
+            RectangleUsingRecord r = new RectangleUsingRecord(4,5);
+
+            System.out.println(r);
+
+    -> Output:
+
+            RectangleUsingRecord[length=4.0, width=5.0]
+
+----------------------------------------------------------------------------------------------------
+
+-> Creating Record Object:
+
+        RectangleUsingRecord r = new RectangleUsingRecord(4,5);
+
+    -> Same as normal object creation
+    -> Uses new keyword
+
+----------------------------------------------------------------------------------------------------
+
+-> Accessing Values:
+
+        r.length()
+        r.width()
+
+    -> Example:
+
+            System.out.println(
+                "Length: " + r.length()
+                + ", Width: " + r.width()
+            );
+
+    -> Output:
+
+            Length: 4.0, Width: 5.0
+
+----------------------------------------------------------------------------------------------------
+
+-> Why Record Fields Are Final?
+
+    -> Record objects are designed to be immutable.
+
+    -> Immutable means:
+            -> Object state cannot change after creation
+
+    -> Example (Using Record Class):
+
+            RectangleUsingRecord r = new RectangleUsingRecord(4, 5);
+
+            // Cannot modify later
+            // r.length = 10;  <-- This would cause a compilation error
+
+    -> Why Final?
+            -> Records use "final" keyword for all fields
+            -> Once created, values cannot be changed
+            -> This ensures immutability
+
+    -> Benefits:
+            -> safety
+            -> thread safety
+            -> predictability
+            -> easier to reason about code
+
+----------------------------------------------------------------------------------------------------
+
+-> Internal Visualization:
+
+        record RectangleUsingRecord(double length, double width)
+
+                    |
+                    v
+
+        Java internally creates:
+
+            private final double length;
+            private final double width;
+
+            Constructor
+
+            length()
+            width()
+
+            equals()
+
+            hashCode()
+
+            toString()
+
+----------------------------------------------------------------------------------------------------
+
+-> Important Characteristics of Record Class:
+
+    -> Special type of class (introduced in Java 16)
+    -> Mainly used for storing data
+    -> Less boilerplate code compared to normal classes
+    -> Immutable by default
+    -> Automatically generates:
+            -> constructor
+            -> accessor methods
+            -> equals()
+            -> hashCode()
+            -> toString()
+    -> Fields are private final
+    -> Accessor names same as field names
+    -> Perfect replacement for traditional data carrier classes
+
+----------------------------------------------------------------------------------------------------
+
+-> Real-Life Analogy:
+
+    -> Think about Aadhaar Card Information:
+
+            -> Name
+            -> DOB
+            -> Address
+
+    -> Purpose:
+            -> Only store data
+
+    -> You are not writing heavy business logic there
+
+    -> Record is perfect for such scenarios
+
+----------------------------------------------------------------------------------------------------
+
+-> When To Use Record?
+
+    -> DTO Objects
+    -> API Response Objects
+    -> Request Objects
+    -> Immutable Data Containers
+    -> Configuration Objects
+
+----------------------------------------------------------------------------------------------------
+
+-> When NOT To Use Record?
+
+    -> When object state changes frequently
+    -> Heavy business logic classes
+    -> Mutable entities
+    -> Classes requiring inheritance
+
+----------------------------------------------------------------------------------------------------
+
+-> Simple Full Example:
+
+        record Student(String name, int rollNo) { }
+
+        public class Main {
+
+            public static void main(String[] args) {
+
+                Student s = new Student("Vinay", 101);
+
+                System.out.println(s.name());
+                System.out.println(s.rollNo());
+
+                System.out.println(s);
+
+            }
+        }
+
+----------------------------------------------------------------------------------------------------
+
+-> Output:
+
+        Vinay
+        101
+        Student[name=Vinay, rollNo=101]
+
+----------------------------------------------------------------------------------------------------
+
+-> Final Conclusion:
+
+    -> Record is Java's modern way to create immutable data classes.
+
+    -> Instead of writing repetitive boilerplate code manually,
+       Java automatically generates everything for you.
+
+    -> You only focus on:
+            -> "What data should this object store?"
+
+    -> Records make code:
+            -> shorter
+            -> cleaner
+            -> safer
+            -> easier to maintain
+
+=> The Canonical Constructor of a Record Class
+
+    -> In a Record class, Java automatically generates a constructor that takes all the components as parameters.
+
+    -> This constructor is called the "canonical constructor".
+
+    -> For example, in the Record class:
+
+            record RectangleUsingRecord(double length, double width) { }
+
+    -> The canonical constructor would be:
+
+            public RectangleUsingRecord(double length, double width) {
+                this.length = length;
+                this.width = width;
+            }
+
+    -> This constructor initializes all the fields of the record.
+
+    -> You can also define your own canonical constructor if you want to add validation or additional logic during object creation.
+
+=> Custom Canonical Constructor in Record Class
+
+    -> If you want to add custom logic during object creation, you can define your own canonical constructor in a Record class.
+
+    -> For example:
+
+            record RectangleUsingRecord(double length, double width) {
+
+                public RectangleUsingRecord {
+                    if (length <= 0 || width <= 0) {
+                        throw new IllegalArgumentException("Length and width must be positive");
+                    }
+                }
+            }
+
+    -> In this example, we have defined a custom canonical constructor that checks if the length and width are positive values.
+
+    -> If the validation fails, it throws an IllegalArgumentException.
+
+    -> This allows you to enforce constraints on the data being stored in the record while still benefiting from the automatic generation of other methods.
+
+=> Alternative Record Constructors
+
+    -> In addition to the canonical constructor, you can also define alternative constructors in a Record class.
+
+    -> Alternative constructors are defined using the "this" keyword to call the canonical constructor.
+
+    -> For example:
+
+            record RectangleUsingRecord(double length, double width) {
+
+                public RectangleUsingRecord(double side) {
+                    this(side, side); // Calls the canonical constructor
+                }
+            }
+
+    -> In this example, we have defined an alternative constructor that takes a single parameter "side" and creates a square by calling the canonical constructor with the same value for length and width.
+
+    -> This allows you to provide multiple ways to create instances of the record while still maintaining immutability and simplicity.
+
+=> Explicit Declaration of Record Class Members
+
+    -> In a Record class, you can explicitly declare:
+            -> constructors
+            -> methods
+            -> static fields and methods
+            -> nested types
+
+    -> But the record header defines the only instance fields allowed.
+    -> The components declared in the record header are implicitly:
+            -> private
+            -> final
+            -> part of the canonical constructor
+            -> included in equals(), hashCode(), and toString()
+    
+    -> You cannot declare additional instance fields in a Record class outside of the record header.
+
+    -> Invalid example (compile error):
+
+            record RectangleUsingRecord(double length, double width) {
+                private int area; // not allowed: extra instance field
+            }
+    -> You can explicitly declare any of the members derived from the header, such as the public accessor methods that correspond to the record class's components.
+    -> Correct approach: use a method to compute derived values.
+
+    -> Example:
+
+            record RectangleUsingRecord(double length, double width) {
+
+                public double area() {
+                    return length * width;
+                }
+            }
+    -> You can declare static fields, static initializers, and static methods in a record class, and they behave as they would in a normal class, for example:
+
+            record RectangleUsingRecord(double length, double width) {
+
+                //static field
+                public static String shapeType = "Rectangle";
+
+                //static Initializer
+                static {        
+                    System.out.println("Static initializer called");
+                }
+                
+                //static method
+                public static void printShapeType() {
+                    System.out.println(shapeType);
+                }
+            }
+
+    -> You cannot declare instance variables (non-static fields) or instance initializers in a record class.
+            record Rectangle(double length, double width) {
+
+                // Field declarations must be static:
+                BiFunction<Double, Double, Double> diagonal;
+
+                // Instance initializers are not allowed in records:
+                {
+                        diagonal = (x, y) -> Math.sqrt(x*x + y*y);
+                }
+            }
+
+    -> You can declare instance methods in a record class, independent of whether you implement your own accessor methods. 
+            record Rectangle(double length, double width) {
+
+                // Nested record class
+                record RotationAngle(double angle) {
+                        public RotationAngle {  // Compact constructor
+                                angle = Math.toRadians(angle);
+                        }
+                }
+                
+                // Public instance method
+                public Rectangle getRotatedRectangleBoundingBox(double angle) {
+                        RotationAngle ra = new RotationAngle(angle);
+                        double x = Math.abs(length * Math.cos(ra.angle())) +
+                                Math.abs(width * Math.sin(ra.angle()));
+                        double y = Math.abs(length * Math.sin(ra.angle())) +
+                                Math.abs(width * Math.cos(ra.angle()));
+                        return new Rectangle(x, y);
+                }
+            }
+
+            -> Compact constructor:
+                -> Theory:
+                   -> Records automatically generate a canonical constructor that takes all components as parameters and assigns them to the fields.
+                   -> To customize the constructor logic (e.g., for validation or transformation), you can define a compact constructor.
+                   -> A compact constructor has the same name as the record and no parameter list; the parameters are implicitly provided.
+                   -> Inside the compact constructor, you can access the component parameters directly and perform validations or transformations.
+                   -> You cannot return a value from a compact constructor; it's for setup only.
+
+                -> Example 1: Validation in compact constructor
+                        record Rectangle(double length, double width) {
+                                public Rectangle {
+                                        // length and width are automatically available as parameters
+                                        if (length <= 0 || width <= 0) {
+                                                throw new IllegalArgumentException("Length and width must be positive");
+                                        }
+                                        // No return statement; just validation
+                                }
+                        }
+
+                -> Example 2: Transformation in compact constructor
+                        record RotationAngle(double angle) {
+                                public RotationAngle {
+                                        // angle is automatically available as a parameter
+                                        if (angle < 0 || angle >= 360) {
+                                                throw new IllegalArgumentException("Angle must be between 0 and 360 degrees");
+                                        }
+                                        // Suppose user gives angle in degrees, but we want to store it in radians internally
+                                        this.angle = Math.toRadians(angle);
+                                }
+                        }
+
+
+    -> Usage example:
+
+            public class Main {
+                public static void main(String[] args) {
+                    RectangleUsingRecord rect = new RectangleUsingRecord(4, 5);
+                    System.out.println(rect.length()); // 4.0
+                    System.out.println(rect.width());  // 5.0
+                    System.out.println(rect.area());   // 20.0
+                }
+            }
+
+    -> Explanation:
+            -> `length` and `width` are record components, not regular instance fields.
+            -> They are automatically created and cannot be re-declared inside the record body.
+            -> `area()` is a computed method, so it adds behavior without adding mutable instance state.
+            -> This keeps the record immutable and simple.
+
+=> Features of Record Classes
+
+    -> Record classes are a special kind of class in Java that provide a compact syntax for declaring classes that are transparent holders for shallowly immutable data.
+
+    -> Key features of record classes include:
+
+        1. Compact Syntax:
+            -> Record classes have a concise syntax that allows you to declare a class with its components (fields) in a single line.
+
+        2. Immutable Data:
+            -> The fields of a record class are implicitly final, making the instances of the record immutable.
+
+        3. Auto-generated Methods:
+            -> Java automatically generates several methods for record classes, including:
+                -> A canonical constructor that initializes all fields.
+                -> Accessor methods for each field (with the same name as the field).
+                -> equals() and hashCode() methods based on the fields.
+                -> A toString() method that includes the class name and field values.
+
+        4. No Additional Instance Fields:
+            -> You cannot declare additional instance fields in a record class outside of the record header.
+
+        5. Support for Static Members:
+            -> You can declare static fields, static initializers, and static methods in a record class.
+
+        6. Nested Types:
+            -> You can declare nested types (classes, interfaces, enums) within a record class.
+
+        7. Custom Constructors and Methods:
+            -> You can define custom constructors (including compact constructors) and instance methods to add behavior to your record class while maintaining immutability.
+        
+        8. Create Generic record classes:
+            -> Record classes can be generic, allowing you to define records that can hold different types of data.
+            -> Example:
+
+                    record Pair<T, U>(T first, U second) { }
+                    where
+                        T and U are type parameters that can be specified when creating an instance of the Pair record.
+                        Example usage:
+
+                            Pair<String, Integer> pair = new Pair<>("Hello", 42);
+                            System.out.println(pair.first()); // Output: Hello
+                            System.out.println(pair.second()); // Output: 42
+
+        9. Implementing one or more interfaces:
+            -> Record classes can implement interfaces, allowing them to be used in contexts where a specific interface type is required.
+            -> Example:
+
+                    record Point(int x, int y) implements Comparable<Point> {
+                        @Override
+                        public int compareTo(Point other) {
+                            return Integer.compare(this.x * this.x + this.y * this.y,
+                                                   other.x * other.x + other.y * other.y);
+                        }
+                    }
+                    In this example, the Point record implements the Comparable interface, allowing instances of Point to be compared based on their distance from the origin.
+
+        10. Cannot Extend Other Classes:
+            -> Record classes cannot extend other classes (they implicitly extend java.lang.Record), but they can implement interfaces.
+                    Example:
+                                record Circle(double radius) extends Shape { } // This will cause a compile error
+                                record Circle(double radius) implements Drawable { } // This is valid
+
+        11. Cannot be Abstract or Final:
+            -> Record classes cannot be declared as abstract or final, as they are implicitly final and cannot be subclassed.
+                    Example:
+                                abstract record AbstractRecord(int value) { } // This will cause a compile error
+                                final record FinalRecord(int value) { } // This will also cause a compile error
+
+        12. Cannot Declare Instance Initializers:
+            -> Record classes cannot have instance initializers, as they are designed to be immutable and all initialization should be done through the canonical constructor or compact constructor.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    {
+                                        // This will cause a compile error
+                                        System.out.println("Instance initializer");
+                                    }
+                                }
+        13. Cannot Declare Instance Fields:
+            -> Record classes cannot declare additional instance fields outside of the record header, as all fields must be defined in the header to be part of the canonical constructor and auto-generated methods.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    private int area; // This will cause a compile error
+                                }
+        14. Cannot Declare Instance Methods with the Same Name as Components:
+            -> Record classes cannot declare instance methods that have the same name as the record components, as this would conflict with the auto-generated accessor methods.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    public double length() { // This will cause a compile error
+                                        return length * 2; // This is not allowed
+                                    }
+                                }
+        15. Cannot Declare Static Methods with the Same Name as Components:
+            -> Record classes cannot declare static methods that have the same name as the record components, as this would also conflict with the auto-generated accessor methods.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    public static double length() { // This will cause a compile error
+                                        return 0; // This is not allowed
+                                    }
+                                }
+        16. Cannot Declare Nested Records with the Same Name as the Enclosing Record:
+            -> Record classes cannot declare nested records that have the same name as the enclosing record, as this would cause a naming conflict.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    record Rectangle(double side) { // This will cause a compile error
+                                        public Rectangle {
+                                            this(side, side);
+                                        }
+                                    }
+                                }
+        17. Cannot Declare Local Records:
+            -> Record classes cannot be declared as local classes within a method, as they are intended to be top-level or static nested types.
+                    Example:
+                                public void someMethod() {
+                                    record LocalRecord(int value) { } // This will cause a compile error
+                                }
+        18. Cannot Declare Anonymous Records:
+            -> Record classes cannot be declared as anonymous classes, as they require a name and a specific structure defined by the record header.
+                    Example:
+                                Object obj = new record(int value) { }; // This will cause a compile error
+        19. Cannot Declare Records in Interfaces or Enums:
+            -> Record classes cannot be declared within interfaces or enums, as they are meant to be standalone types.
+                    Example:
+                                interface Shape {
+                                    record Circle(double radius) { } // This will cause a compile error
+                                }
+                                enum Color {
+                                    RED, GREEN, BLUE;
+                                    record Shade(int intensity) { } // This will also cause a compile error
+                                }
+        20. Cannot Declare Records in Local or Anonymous Classes:
+            -> Record classes cannot be declared within local or anonymous classes, as they are intended to be top-level or static nested types.
+                    Example:
+                                public void someMethod() {
+                                    class LocalClass {
+                                        record LocalRecord(int value) { } // This will cause a compile error
+                                    }
+                                }
+        21. Cannot Declare Records in Static Initializers:
+            -> Record classes cannot be declared within static initializers, as they are meant to be top-level or static nested types.
+                    Example:
+                                static {
+                                    record StaticRecord(int value) { } // This will cause a compile error
+                                }
+        22. Cannot Declare Records in Instance Initializers:
+            -> Record classes cannot be declared within instance initializers, as they are designed to be immutable and all initialization should be done through the canonical constructor or compact constructor.
+                    Example:
+                                record Rectangle(double length, double width) {
+                                    {
+                                        record InnerRecord(int value) { } // This will cause a compile error
+                                    }
+                                }
+        23. Can annotate a record class and its components with annotations:
+            -> Record classes and their components can be annotated with annotations to provide additional metadata or behavior.
+                    Example:
+                                @Deprecated
+                                record OldRecord(@Deprecated String oldField) { }
+
+    -> Overall, record classes provide a convenient way to create simple data carrier classes without the need for boilerplate code, while still allowing for customization and additional functionality when needed.           
+
+=> Record Classes and Sealed Classes and Interfaces
+
+    -> Record classes can be declared as sealed, which means they can only be extended by a specific set of classes.
+
+    -> Sealed classes and interfaces are a feature in Java that allows you to control which classes can extend or implement them.
+
+    -> When a record class is declared as sealed, it must specify the permitted subclasses using the "permits" clause.
+
+    -> Example of a sealed record class:
+
+            public sealed record Shape(String name) permits Circle, Rectangle { }
+
+            public final class Circle extends Shape {
+                public Circle() {
+                    super("Circle");
+                }
+            }
+
+            public final class Rectangle extends Shape {
+                public Rectangle() {
+                    super("Rectangle");
+                }
+            }
+
+    -> In this example, the Shape record is declared as sealed and permits only the Circle and Rectangle classes to extend it.
+
+    -> This allows you to have a controlled hierarchy of shapes while still benefiting from the immutability and concise syntax of records.
+
+=> Static Members of Inner Classes
+
+    -> Prior to Java 16, inner classes (non-static nested classes) could not have static members unless that member is a constant (static final field initialized with a compile-time constant expression) variable.
+
+    -> From Java 16 onwards, inner classes in Java can have static members, but they must be declared as static nested classes.
+
+    -> A static nested class is a nested class that is declared static, which means it does not have access to the instance variables and methods of the outer class.
+
+    -> Example of a static nested class with static members:
+
+            public class OuterClass {
+                private int outerField;
+
+                public static class StaticNestedClass {
+                    private static int staticField;
+
+                    public static void staticMethod() {
+                        System.out.println("Static method in static nested class");
+                    }
+                }
+            }
+
+    -> In this example, StaticNestedClass is a static
+
+=> Differences Between the Serialization of Records and Ordinary Objects
+
+    -> Records in Java are designed to be simple data carriers, and they have a specific serialization mechanism that differs from ordinary objects.
+
+    -> When a record is serialized, only the components (fields) defined in the record header are serialized. The auto-generated methods (like equals(), hashCode(), toString()) and any additional methods or static members are not serialized.
+
+    -> In contrast, when an ordinary object is serialized, all non-transient instance fields are serialized, regardless of whether they are defined in a specific header or not.
+
+    -> Additionally, records have a built-in serialization mechanism that ensures that the canonical constructor is used during deserialization, which helps maintain the immutability and integrity of the record instances.
+
+    -> Overall, the serialization of records focuses on the components defined in the record header, while ordinary objects serialize all non-transient instance fields.
+
+=> APIs related to Record Classes
+
+    -> Java provides several APIs that are related to record classes, including:
+
+        1. java.lang.Record:
+            -> This is the base class for all record classes in Java. It provides methods for accessing the components of a record and for comparing records.
+
+        2. java.lang.reflect.RecordComponent:
+            -> This class represents a component of a record class. It provides methods for accessing the name, type, and annotations of a record component.
+
+        3. java.lang.reflect.RecordComponent.getRecordComponents():
+            -> This method returns an array of RecordComponent objects representing the components of a record class.
+
+        4. java.lang.reflect.RecordComponent.getAccessor():
+            -> This method returns the accessor method for a given record component.
+
+        5. java.lang.reflect.RecordComponent.getType():
+            -> This method returns the type of a given record component.
+
+        6. java.lang.reflect.RecordComponent.getName():
+            -> This method returns the name of a given record component.
+
+    -> These APIs allow you to introspect and manipulate record classes and their components at runtime, providing flexibility and control over how you work with records in your applications.

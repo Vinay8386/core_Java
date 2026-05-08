@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.*;
 import java.util.function.Function;
@@ -57,3 +57,4 @@ public class ThirdQ {
         System.out.println("non_duplicate element is: "+non_duplicate);
     }
 }
+

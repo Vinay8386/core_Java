@@ -1,4 +1,4 @@
-package Java8.CollectorWithJava8;
+package Java8_code.CollectorWithJava8;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,3 +27,5 @@ class SortListInBothAscDesc {
         return result;
     }
 }
+
+

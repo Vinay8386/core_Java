@@ -1,4 +1,4 @@
-package Java8.CollectorWithJava8;
+package Java8_code.CollectorWithJava8;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,3 +41,5 @@ public class FilterEmpByDeptAndCity {
                 ).forEach(System.out::println);
     }
 }
+
+

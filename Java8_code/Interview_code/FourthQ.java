@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.*;
 import java.util.function.Function;
@@ -52,3 +52,4 @@ public class FourthQ {
         so for this you can create LinkedHashMap object in groupingBy method so that Java will consider
         it as LinkedHashMap not HashMap and you will get correct answer. In LinkedHashMap insertion order
         is preserved.*/
+

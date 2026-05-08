@@ -1,4 +1,4 @@
-package Java8.CollectorWithJava8;
+package Java8_code.CollectorWithJava8;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,3 +20,5 @@ public class EmpNameStartWith {
                 );
     }
 }
+
+

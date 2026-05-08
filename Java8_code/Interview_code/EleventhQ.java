@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,13 +27,15 @@ public class EleventhQ {
         System.out.println(val);
 
         //Approach-3
-        Set<Integer> set = new HashSet();
+        Set<Integer> set = new HashSet<>();
         numList.stream().filter(value-> !set.add(value)).forEach(System.out::println);
 
         //Approach-4
-        Set<Integer> set2 = new HashSet();
+        Set<Integer> set2 = new HashSet<>();
         List<Integer> resultList=numList.stream().filter(value-> !set2.add(value))
                 .collect(Collectors.toList());
         System.out.println(resultList);
     }
 }
+
+

@@ -1,4 +1,4 @@
-package Java8;
+package Java8_code.random_que;
 
 import java.util.stream.IntStream;
 
@@ -20,3 +20,5 @@ public class ParallelStreamExample {
         System.out.println("Parallel execution took time :"+(end-start));
     }
 }
+
+

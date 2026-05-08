@@ -1,4 +1,4 @@
-package Java8.MapQuestion;
+package Java8_code.MapQuestion;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -71,3 +71,5 @@ public class SortByValueAndKey {
 
     }
 }
+
+

@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -29,3 +29,4 @@ public class FirstQ {
         Return type is Map because if you use groupingBy method internally Stream will consider
         it as a HashMap.
         */
+

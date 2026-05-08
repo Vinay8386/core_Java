@@ -1,4 +1,4 @@
-package Java8.CollectorWithJava8;
+package Java8_code.CollectorWithJava8;
 
 public class Employee {
     private int id;
@@ -60,3 +60,5 @@ public class Employee {
                 '}';
     }
 }
+
+

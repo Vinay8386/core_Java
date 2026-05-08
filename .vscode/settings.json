@@ -1,0 +1,7 @@
+{
+    "java.project.sourcePaths": [
+        ".",
+        "java8"
+    ],
+    "java.project.referencedLibraries": []
+}

@@ -1,4 +1,4 @@
-package Java8.InterviewQuestion;
+package Java8_code.Interview_code;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,3 +22,5 @@ primitive stream----->stream of wrapper/object : boxed()
 Wrapper -------> String : object_name.toString()
 String --------> Wrapper : Wrapper class name::valueOf (method reference)
  */
+
+
