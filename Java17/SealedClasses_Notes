@@ -1,0 +1,659 @@
+-> Why Sealed Classes Came into Java?
+
+    -> Normally, inheritance is mainly used for:
+        -> Code Reuse
+        -> Extending existing functionality
+
+    -> Example:
+        -> Suppose class Shape already contains:
+            -> common fields
+            -> common methods
+        -> Then Circle and Square can reuse that code by extending Shape
+
+    ---------------------------------------------------
+
+    -> Problem Before Sealed Classes:
+
+        -> Any class from anywhere could extend Shape
+
+        -> Example:
+
+                class Triangle extends Shape { }
+                class Hexagon extends Shape { }
+                class RandomShape extends Shape { }
+
+        -> Library owner loses control over hierarchy
+
+        -> This becomes dangerous when:
+            -> You want to model FIXED domain possibilities
+            -> You want strict control over inheritance
+            -> You want only specific subclasses
+
+    ---------------------------------------------------
+
+    -> Real World Thinking:
+
+        -> Imagine graphics library creator says:
+
+            -> "In my library, only these shapes are valid:"
+                -> Circle
+                -> Square
+                -> Rectangle
+
+            -> I do NOT want users creating:
+                -> WeirdShape
+                -> UnknownShape
+                -> CustomShape
+
+    ---------------------------------------------------
+
+    -> Solution = Sealed Class
+
+        -> Sealed class allows parent class to control:
+            -> Who can extend it
+
+        -> Parent class explicitly declares permitted subclasses
+
+    ---------------------------------------------------
+
+    -> Example:
+
+            public sealed class Shape
+                permits Circle, Square, Rectangle {
+
+            }
+
+            final class Circle extends Shape { }
+
+            final class Square extends Shape { }
+
+            final class Rectangle extends Shape { }
+
+    ---------------------------------------------------
+
+    -> Meaning:
+
+        -> Only:
+            -> Circle
+            -> Square
+            -> Rectangle
+
+           can extend Shape
+
+        -> Any other class trying to extend Shape gives compile-time error
+
+    ---------------------------------------------------
+
+    -> Main Goal of Sealed Classes:
+
+        -> Restrict inheritance
+        -> Model fixed set of possibilities
+        -> Improve domain modeling
+        -> Improve security/control
+        -> Help compiler understand hierarchy better
+
+    ---------------------------------------------------
+
+    -> Very Important Point:
+
+        -> Sealed class is opposite of open inheritance
+
+        -> Normal inheritance:
+            -> "Anyone can extend me"
+
+        -> Sealed inheritance:
+            -> "Only selected classes can extend me"
+
+    ---------------------------------------------------
+
+    -> Best Use Cases:
+
+        -> Domain models
+        -> State machines
+        -> AST trees
+        -> Geometry libraries
+        -> Payment types
+        -> Vehicle hierarchy
+        -> Expression trees
+
+    ---------------------------------------------------
+
+    -> Example:
+
+            sealed interface Payment
+                permits CreditCard, UPI, Cash { }
+
+            final class CreditCard implements Payment { }
+
+            final class UPI implements Payment { }
+
+            final class Cash implements Payment { }
+
+        -> Now payment types are fixed and controlled
+
+    ---------------------------------------------------
+
+    -> Simple Memory Trick:
+
+        -> "sealed" means:
+            -> Closed for unknown subclasses
+            -> Open only for permitted subclasses
+
+    ---------------------------------------------------
+
+    -> Before Sealed Class:
+    
+            Shape
+               ↑
+        Anyone can extend
+
+    ---------------------------------------------------
+
+    -> After Sealed Class:
+
+                    Shape
+                  /   |   \
+             Circle Square Rectangle
+
+        -> Only permitted classes allowed
+
+=> Declaring Sealed Class:
+    
+    -> In different file: If you want to declare permitted subclasses in different files, you must use "permits" clause in the sealed class declaration.
+
+        -> Syntax:
+
+                public sealed class ClassName
+                    permits Subclass1, Subclass2, ... {
+                }
+
+        -> Example:
+
+                public sealed class Shape
+                    permits Circle, Square, Rectangle {
+
+                }
+
+                public final class Circle extends Shape { }
+                public final class Square extends Shape { }
+                public final class Rectangle extends Shape { }
+        
+    -> In same file:
+        -> you can define permitted subclass in the same file without using "permits" clause:
+
+                public sealed class Shape {
+
+                }
+
+                final class Circle extends Shape { }
+
+                final class Square extends Shape { }
+
+                final class Rectangle extends Shape { }
+
+    ---------------------------------------------------
+
+    -> Constraints on Permitted Subclasses:
+        
+        -> They must be accessible by the sealed class at compile time.
+            -> For Example:
+                -> To compile Shape, compiler must be able to find Circle, Square, and Rectangle
+
+        -> Permitted subclasses must be in the same module or package as the sealed class
+
+        -> Permitted subclasses must be declared as below modifier to describe their relationship with the sealed class:
+            -> final: Cannot be extended further
+            -> sealed: Can be extended by other sealed or non-sealed classes
+            -> non-sealed: Can be extended by any class
+
+            -> Example:
+
+                    public sealed class Shape
+                        permits Circle, Square, Rectangle {
+
+                    }
+
+                    // Circle is final, cannot be extended further
+                    final class Circle extends Shape { }
+
+                    // Square is sealed, can be extended by other sealed or non-sealed classes
+                    sealed class Square extends Shape
+                        permits ColoredSquare {
+
+                    }
+
+                    // Rectangle is non-sealed, can be extended by any class
+                    non-sealed class Rectangle extends Shape { }
+
+                    final class ColoredSquare extends Square { }
+
+    ---------------------------------------------------
+
+    -> Declaring Sealed Interface:
+
+        -> Similar to sealed class, you can declare a sealed interface with "sealed" keyword and "permits" clause.
+
+            -> Example:
+
+                    public sealed interface Payment
+                        permits CreditCard, UPI, Cash { }
+
+                    final class CreditCard implements Payment { }
+
+                    final class UPI implements Payment { }
+
+                    final class Cash implements Payment { }
+
+    ---------------------------------------------------
+    -> Record Classes as permitted subclasses:
+
+        -> Record classes can also be permitted subclasses of a sealed class or interface.
+
+            -> Example:
+
+                    public sealed interface Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) implements Shape { }
+
+                    public record Square(double side) implements Shape { }
+
+                    public record Rectangle(double width, double height) implements Shape { }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Pattern Matching:
+
+        -> Sealed classes work well with pattern matching (introduced in Java 16) because the compiler knows all possible subclasses.
+
+        -> This allows for exhaustive pattern matching, where the compiler can check if all cases are handled.
+
+            -> Example:
+
+                    public sealed interface Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) implements Shape { }
+
+                    public record Square(double side) implements Shape { }
+
+                    public record Rectangle(double width, double height) implements Shape { }
+
+                    public class ShapeAreaCalculator {
+                        public double calculateArea(Shape shape) {
+                            return switch (shape) {
+                                case Circle c -> Math.PI * c.radius() * c.radius();
+                                case Square s -> s.side() * s.side();
+                                case Rectangle r -> r.width() * r.height();
+                            };
+                        }
+                    }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Serialization:
+
+        -> Sealed classes can be serialized, but all permitted subclasses must also be serializable.
+
+        -> This ensures that the entire hierarchy can be serialized and deserialized correctly.
+
+            -> Example:
+
+                    public sealed class Shape implements Serializable
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) extends Shape { }
+
+                    public record Square(double side) extends Shape { }
+
+                    public record Rectangle(double width, double height) extends Shape { }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Reflection:
+
+        -> Reflection in java allows you to inspect classes and their members at runtime. With sealed classes, you can still use reflection to inspect the class and its permitted subclasses.
+
+        -> Sealed classes can be inspected using reflection, but the permitted subclasses are also known at compile time.
+
+        -> This allows for better performance and security when using reflection with sealed classes.
+
+            -> Example:
+
+                    public sealed class Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) extends Shape { }
+
+                    public record Square(double side) extends Shape { }
+
+                    public record Rectangle(double width, double height) extends Shape { }
+
+                    public class ReflectionExample {
+                        public static void main(String[] args) {
+                            Class<?> shapeClass = Shape.class;
+                            System.out.println("Permitted subclasses of Shape:");
+                            for (Class<?> subclass : shapeClass.getPermittedSubclasses()) {
+                                System.out.println(" - " + subclass.getSimpleName());
+                            }
+                        }
+                    }
+    ---------------------------------------------------
+    -> Sealed Classes and Access Modifiers:
+
+        -> Sealed classes can have any access modifier (public, protected, package-private, private).
+
+        -> However, the permitted subclasses must be accessible to the sealed class at compile time.
+
+        -> So, permited subclass modifier must be compatible with the sealed class's access level like public.
+                    -> For example, 
+                        sealed class Modifier          Permitted Subclass Modifier
+                        ----------------------------------------------------------------------
+                        public sealed class Shape           public final class Circle extends Shape
+                        public sealed class Shape           final class Circle extends Shape
+                        public sealed class Shape           sealed class Circle extends Shape
+                        public sealed class Shape           non-sealed class Circle extends Shape
+                        ----------------------------------------------------------------------
+                        private sealed class Shape          private final class Circle extends Shape
+                        private sealed class Shape          final class Circle extends Shape
+                        private sealed class Shape          sealed class Circle extends Shape
+                        private sealed class Shape          non-sealed class Circle extends Shape
+                        ----------------------------------------------------------------------
+                        package-private sealed class Shape  package-private final class Circle extends Shape
+                        package-private sealed class Shape  final class Circle extends Shape
+                        package-private sealed class Shape  sealed class Circle extends Shape
+                        package-private sealed class Shape  non-sealed class Circle extends Shape
+                        -----------------------------------------------------------------------
+                        protected sealed class Shape        protected final class Circle extends Shape
+                        protected sealed class Shape        final class Circle extends Shape       
+                        protected sealed class Shape        sealed class Circle extends Shape
+                        protected sealed class Shape        non-sealed class Circle extends Shape  
+                        ------------------------------------------------------------------------
+            -> Example:
+
+                    public sealed class Shape
+                        permits Circle, Square, Rectangle { }
+
+                    final class Circle extends Shape { }
+
+                    final class Square extends Shape { }
+
+                    final class Rectangle extends Shape { }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Record Classes:
+
+        -> Record classes can also be used as permitted subclasses of a sealed class or interface.
+
+        -> This allows for concise and immutable data carriers within a sealed hierarchy.
+
+            -> Example:
+
+                    public sealed interface Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) implements Shape { }
+
+                    public record Square(double side) implements Shape { }
+
+                    public record Rectangle(double width, double height) implements Shape { }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Enums:
+
+        -> Enums cannot be sealed classes, but they can implement a sealed interface.
+
+        -> This allows for a fixed set of enum constants while still benefiting from the control provided by sealed interfaces.
+
+            -> Example:
+
+                    public sealed interface Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public enum BasicShape implements Shape {
+                        CIRCLE, SQUARE, RECTANGLE
+                    }
+    ---------------------------------------------------
+    -> Sealed Classes and Generics:
+
+        -> Sealed classes can also be generic, allowing for more flexible and reusable code while still controlling the inheritance hierarchy.
+
+            -> Example:
+
+                    public sealed class Box<T>
+                        permits SmallBox, MediumBox, LargeBox { }
+
+                    public final class SmallBox<T> extends Box<T> { }
+
+                    public final class MediumBox<T> extends Box<T> { }
+
+                    public final class LargeBox<T> extends Box<T> { }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Modules:
+
+        -> Sealed classes can be used in conjunction with Java's module system to further control access and visibility.
+            
+            -> Sealed class already restricts:
+                -> Who can extend it (only permitted subclasses)
+                -> Where it can be extended (same module or package)
+            
+            -> Java's module system allows you to control:
+                -> Which packages are accessible to other modules
+                -> Which classes are accessible within a module
+                -> Before Java 9, all packages were mostly open to everyone.
+                -> After Java 9, Java introduced MODULES, which allow you to define boundaries and control access between different parts of your application.
+                    -> Example: 
+                        -> Before Java 9:
+                            -> All classes in all packages were accessible to everyone, which could lead to unintended usage and security issues.
+                        -> After Java 9:
+                            -> You can define a module and specify which packages are exported and which are not, providing better encapsulation and control over your codebase.
+
+                        -> Code Example:
+
+                                // In module-info.java
+                                module com.example.shapes {
+                                    exports com.example.shapes;
+                                }
+
+                                // In Shape.java
+                                package com.example.shapes;
+
+                                public sealed class Shape
+                                    permits Circle, Square, Rectangle { }
+
+                                public final class Circle extends Shape { }
+
+                                public final class Square extends Shape { }
+
+                                public final class Rectangle extends Shape { }
+                            
+                            -> Above we created a module "com.example.shapes" and exported the package "com.example.shapes". 
+                            -> The sealed class "Shape" and its permitted subclasses are all in the same package, which allows for better encapsulation and control over the hierarchy.
+
+                        -> wrong code example:
+
+                                // In module-info.java
+                                module com.example.shapes {
+                                    exports com.example.shapes;
+                                }
+
+                                // In Shape.java
+                                package com.example.shapes;
+
+                                public sealed class Shape
+                                    permits Circle, Square, Rectangle { }
+
+                                public final class Circle extends Shape { }
+
+                                public final class Square extends Shape { }
+
+                                public final class Rectangle extends Shape { }
+
+                                // In another package
+                                package com.example.other;
+
+                                public final class Triangle extends Shape { } // Compile-time error: Triangle is not a permitted subclass of Shape
+
+                            -> Above we have a class "Triangle" in a different package trying to extend "Shape", which will result in a compile-time error because "Triangle" is not a permitted subclass of "Shape" and is also in a different package.
+                        
+                        -> Now to allow there are two ways to fix this issue:
+                            -> Different packages with same module: Using "permits" clause to declare Triangle as a permitted subclass of Shape even though it's in a different package
+                               -> code example:
+
+                                        // In module-info.java
+                                        module com.example.shapes {
+                                            exports com.example.shapes;
+                                        }
+
+                                        // In Shape.java
+                                        package com.example.shapes;
+
+                                        public sealed class Shape
+                                            permits Circle, Square, Rectangle, Triangle { }
+
+                                        public final class Circle extends Shape { }
+
+                                        public final class Square extends Shape { }
+
+                                        public final class Rectangle extends Shape { }
+
+                                        public final class Triangle extends Shape { }
+                            
+                            -> Moving Triangle class to the same package as Shape and declaring it as a permitted subclass
+                               -> code example:
+                                        // In module-info.java
+                                        module com.example.shapes {
+                                            exports com.example.shapes;
+                                        }
+
+                                        // In Shape.java
+                                        package com.example.shapes;
+
+                                        public sealed class Shape
+                                            permits Circle, Square, Rectangle, Triangle { }
+
+                                        public final class Circle extends Shape { }
+
+                                        public final class Square extends Shape { }
+
+                                        public final class Rectangle extends Shape { }
+
+                                        public final class Triangle extends Shape { }
+
+
+        -> Permitted subclasses must be in the same module or package as the sealed class, which allows for better encapsulation and modular design.
+    ---------------------------------------------------
+    -> Narrowing Reference Conversion and Disjoint Types
+        -> Casting meaning:
+            -> Converting a reference of one type to another type
+            -> Example: 
+                Object obj = "Hello";
+                String str = (String) obj; // Casting Object to String
+            -> Two important things in casting:
+                -> Compile time check: Compiler checks if the cast is valid based on the class hierarchy
+                    -> Example:
+                        Object obj = "Hello";
+                        Integer num = (Integer) obj; // Compile-time error: Cannot cast Object to Integer
+                -> Runtime check: JVM checks if the actual object can be cast to the target type at runtime
+                    -> Example:
+                        Object obj = "Hello";
+                        String str = (String) obj; // Valid cast, works at runtime
+                        Integer num = (Integer) obj; // Runtime error: ClassCastException
+                -> Interesting case when compile time check passes but runtime check fails:
+                    -> Example:
+                        Object obj = "Hello";
+                        String str = (String) obj; // Valid cast, works at runtime
+                        Object anotherObj = new Object();
+                        String anotherStr = (String) anotherObj; // Runtime error: ClassCastException
+                        Reason: At compile time, the cast is valid because Object can be cast to String, 
+                                but at runtime, the actual object is not a String, leading to a ClassCastException.
+                        
+                        Mesh of two object references:
+                            -> At compile time, the compiler sees that both references are of type Object, so it allows the cast to String.
+                            -> At runtime, the JVM checks the actual object that "anotherObj" refers to, which is not a String, resulting in a ClassCastException.
+        -> Disjoint types:
+            -> Two types are disjoint if they do not share any common subtype
+            -> Example:
+                class A { }
+                class B { }
+                A and B are disjoint types because there is no common subtype that can be cast to both A and B.
+            -> In the context of sealed classes, if you have two sealed classes that do not share any common permitted subclasses, they are considered disjoint types.
+                -> Example:
+                    public sealed class Shape
+                        permits Circle, Square { }
+
+                    public sealed class Color
+                        permits Red, Green { }
+
+                    Shape and Color are disjoint types because they do not share any common permitted subclasses. 
+                    You cannot cast a Shape to a Color or vice versa, as they are unrelated in the type hierarchy.
+
+        -> Narrowing reference conversion:
+            -> A narrowing reference conversion is a type of cast that converts a reference of a supertype to a reference of a subtype.
+            -> Example:
+                Object obj = "Hello";
+                String str = (String) obj; // Narrowing reference conversion from Object to String
+            -> In the context of sealed classes, if you have a reference of a sealed class type, you can perform a narrowing reference conversion to one of its permitted subclasses.
+                -> Example:
+                    Shape shape = new Circle(5.0);
+                    Circle circle = (Circle) shape; // Narrowing reference conversion from Shape to Circle
+                    This is valid because Circle is a permitted subclass of Shape, and the actual object referred to by "shape" is indeed an instance of Circle.
+
+        -> Now narrowing reference conversion with disjoint types:
+            -> If you have two disjoint types, you cannot perform a narrowing reference conversion between them because there is no common subtype that can be cast to both types.
+            -> Example:
+                Shape shape = new Circle(5.0);
+                Color color = (Color) shape; // Compile-time error: Cannot cast Shape to Color
+                This is invalid because Shape and Color are disjoint types, and there is no common subtype that can be cast to both Shape and Color.
+    
+    ---------------------------------------------------
+    
+    -> APIs Related to Sealed Classes and Interfaces
+        -> The class java.lang.Class has two important methods related to sealed classes:
+            -> isSealed(): Returns true if the class is a sealed class or interface, false otherwise.
+            -> getPermittedSubclasses(): Returns an array of Class objects representing the permitted subclasses of the sealed class or interface. 
+                If the class is not a sealed class or interface, it returns an empty array.
+            -> Example:
+
+                    public sealed class Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public final class Circle extends Shape { }
+
+                    public final class Square extends Shape { }
+
+                    public final class Rectangle extends Shape { }
+
+                    public class SealedClassAPIExample {
+                        public static void main(String[] args) {
+                            Class<?> shapeClass = Shape.class;
+                            System.out.println("Is Shape a sealed class? " + shapeClass.isSealed());
+                            System.out.println("Permitted subclasses of Shape:");
+                            for (Class<?> subclass : shapeClass.getPermittedSubclasses()) {
+                                System.out.println(" - " + subclass.getSimpleName());
+                            }
+                    output:
+                            Is Shape a sealed class? true
+                            Permitted subclasses of Shape:
+                             - Circle
+                             - Square
+                             - Rectangle
+                        }
+                    }
+    ---------------------------------------------------
+
+    -> Important Notes:
+
+        -> Sealed class must be declared with "sealed" keyword
+
+        -> Permitted subclasses must be listed in "permits" clause
+
+        -> Permitted subclasses must be in the same module or package
+
+        -> Permitted subclasses must be final, sealed, or non-sealed
+
+        -> Sealed classes cannot be abstract
+
+        -> Sealed classes can be interfaces or records
+
+        -> Sealed classes work well with pattern matching and switch expressions
+
+    
