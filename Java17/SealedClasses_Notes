@@ -656,4 +656,19 @@
 
         -> Sealed classes work well with pattern matching and switch expressions
 
-    
+---------------------------------------------------------------------------------
+=> Practice code examples:
+
+    -> Shape Area Calculator using Sealed Classes
+    -> Payment System using Sealed Interfaces
+    -> Vehicle Hierarchy using Sealed Classes
+    -> Expression Tree using Sealed Classes 
+    -> State Machine using Sealed Classes
+    -> AST (Abstract Syntax Tree) using Sealed Classes
+    -> Authentication System using Sealed Classes
+    -> File System using Sealed Classes
+    -> Bank account types using Sealed Classes
+    -> User roles and permissions using Sealed Classes
+    -> Reflection API using Sealed Classes
+    -> Serialization with Sealed Classes
+    -> Casting and type checking with Sealed Classes
