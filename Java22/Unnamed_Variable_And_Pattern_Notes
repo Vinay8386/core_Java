@@ -1,0 +1,70 @@
+=> Unnamed Variables and Patterns (_)
+    -> This feature was introduced to handle situations where:
+        - variable exists but we do not need to use it.
+        - Instead of creating unnecessary variable names like:
+          - temp
+          - unused
+          - dummy   
+          - x   
+          - ignore
+        - Java allows
+          - (_) as an unnamed variable to indicate that the value is intentionally ignored.
+          - This is called unnamed variable/pattern or wildcard variable.
+    -> Old style example:
+        
+        int[] orderIDs = {34, 45, 23, 27, 15};
+            
+            int total = 0;
+
+            for (int id : orderIDs) {
+
+                total++;
+        }
+
+        -> Here we are using the variable 'id' just to iterate through the array, but we do not actually need to use it in our logic.
+        -> With unnamed variable, we can write it as:
+        int[] orderIDs = {34, 45, 23, 27, 15};
+            
+            int total = 0;
+
+            for (int _ : orderIDs) {
+
+                total++;
+        }
+        -> Here we are using (_) to indicate that we do not care about the value of each element in the array, we just want to count how many elements there are.
+    -> This feature can be used in various contexts such as:
+        - loops
+        - lambda expressions
+        - pattern matching
+        - record patterns
+
+    -> Place where you can use unnamed variables:
+        - A local variable declaration statement in a block:
+          - for (int _ : orderIDs) { ... }
+        
+        - A resource specification of a try-with-resources statement
+          - try (Scanner _ = new Scanner(System.in)) { ... }
+        
+        - The header of a basic for statement
+          - for (int _ = 0; _ < 10; _++) { ... }
+          
+        -  The header of an enhanced for loop
+           -  for (int _ : orderIDs) { ... }
+        
+        -  An exception parameter of a catch block
+           -  catch (IOException _) { ... }
+        
+        -  A formal parameter of a lambda expression
+           -  (int _) -> { ... }
+   
+=> Unnamed Patterns
+    -> Unnamed patterns are used in pattern matching to indicate that we do not care about the value of a certain part of the pattern.
+    -> For example, in a record pattern, we can use (_) to ignore certain components of the record:
+        - record Point(int x, int y) {}
+        
+        - Point p = new Point(3, 4);
+        
+        - if (p instanceof Point(int _, int y)) {
+            System.out.println("Y coordinate: " + y);
+        }
+        -> Here we are using (_) to ignore the x coordinate of the point, and only care about the y coordinate.
