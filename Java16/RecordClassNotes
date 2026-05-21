@@ -828,3 +828,9 @@
             -> This method returns the name of a given record component.
 
     -> These APIs allow you to introspect and manipulate record classes and their components at runtime, providing flexibility and control over how you work with records in your applications.
+
+
+=> Key idea:
+	• All record classes in Java automatically extend java.lang.Record.
+	• java.lang.Record is automatically imported by default (like all classes in java.lang), so you don’t need to import it explicitly.
+	• This means when you declare a record like record Employee(...) {}, it actually extends java.lang.Record behind the scenes.

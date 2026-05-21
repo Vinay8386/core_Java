@@ -1,0 +1,116 @@
+=> What is the Problem with Traditional switch?
+    -> Before Java Pattern Matching, switch was mainly used with:
+        - Primitive types (int, char, etc.)
+        - String
+        - Enum types
+        - constants
+
+        -> Example: refer SwitchExample.java
+
+    -> So traditional switch work using exact value match. And this is the main problem with traditional switch. 
+    -> It cannot work with complex data types or patterns. It can only work with exact values. 
+
+    -> This is where Pattern Matching with switch comes into play. 
+    -> It allows us to use patterns in switch statements, making it more powerful and flexible.
+        -> In switchExample.java, we can see that we are using pattern matching with switch to check the type of the object and then perform some action based on the type.
+            -> case String s -> System.out.println("It's a String: " + s);
+            -> case Integer i -> System.out.println("It's an Integer: " + i);
+
+            -> In this case String s -> contains two things:
+                -> String: The type we want to match (String)
+                -> s: A variable (s) that will hold the value if the match is successful.
+                -> So if the object is of type String, it will be assigned to the variable s and we can use it in the case block.
+                -> if obj is of type Integer, it will be assigned to the variable i and we can use it in the case block.
+                -> if obj is none of the above types, it will go to the default case and print "Unknown type".
+
+            -> so if we define pattern matching with switch:
+                -> first we check the type of the object (String, Integer, etc.)
+                -> if the type matches, we can use the variable (s, i, etc.) to perform some action based on the type.
+
+    -> This is a powerful feature because it allows us to write more concise and readable code when dealing with complex data types and patterns.
+    -> Some other example code:
+        
+        public class SwitchExample {
+            public static void main(String[] args) {
+                Shape shape = new Circle(5);
+                String result = switch (shape) {
+                    case Circle c -> "It's a circle with radius: " + c.radius();
+                    case Rectangle r -> "It's a rectangle with width: " + r.width() + " and height: " + r.height();
+                    default -> "Unknown shape";
+                };
+            }
+        }
+
+    -> Advance part of pattern matching with switch:
+        -> When Clause
+            -> This allows us to add additional conditions to the case labels.
+            -> Example:
+                case String s when s.length() > 5 -> System.out.println("It's a long string: " + s);
+                case String s when s.length() <= 5 && s.length() > 0 -> System.out.println("It's a short string: " + s);
+            -> You can add multiple conditions inside the when clause using: &&, ||, etc.
+            -> Java first check pattern match and then evaluate the when clause. 
+            -> So if the pattern match fails, it will not evaluate the when clause.
+
+        -> Pattern label Dominance
+            -> When multiple case labels can match the same input, the most specific pattern is chosen.
+            -> For example, if you have a case for a specific type and a case for a more general type, the case for the specific type will be chosen if it matches.
+            -> Example:
+                case Number n -> System.out.println("It's a number: " + n);
+                case Integer i -> System.out.println("It's an integer: " + i);
+                -> In this case, if the input is an Integer, it will match both cases (Number and Integer), but the case for Integer will be chosen because it is more specific.
+
+        -> Scope of Pattern Variables and switch
+            ->  The scope of pattern variables is limited to the case block in which they are defined.
+            -> This means that you cannot use a pattern variable outside of the case block where it is defined.
+            -> Example:
+                case String s -> {
+                    System.out.println("It's a string: " + s);
+                }
+                // System.out.println(s); // This will cause a compile-time error because s is not in scope here.
+        -> Null case labels
+            -> You can use null as a case label to match null values.
+            -> Example:
+                case null -> System.out.println("It's null");
+            -> This allows you to handle null values in a more concise and readable way.
+
+        -> Example code for all the above features can be found in "AdvancedPatternMatchingSwitch.java" file.
+
+=> Pattern Match with instanceof:
+    -> Before Java 21, we had to use instanceof to check the type of an object and then cast it to the appropriate type before using it. 
+    -> With pattern matching for instanceof, we can combine the type check and the cast into a single operation. 
+    -> In example "PatternMatchingInstanceOfExample.java", we are using pattern matching with instanceof to check the type of the object and then perform some action based on the type. 
+    -> This is more concise and readable than the traditional way of using instanceof and casting.
+
+=> Type Patterns:
+    -> Type patterns are a new feature in Java 21 that allows us to match the type of an object in a switch statement. 
+    -> This is similar to pattern matching with instanceof, but it is used in switch statements instead of if statements. 
+    -> In example "SwitchExample.java", we are using type patterns in the switch statement to check the type of the object and then perform some action based on the type. 
+    -> This is more concise and readable than the traditional way of using switch statements with exact value matches.
+
+    -> There are basically three types of patterns in Java 21:
+        -> Type pattern with reference type (e.g., String s)
+            -> Example code:
+                case String s -> System.out.println("It's a string: " + s);
+                case Integer i -> System.out.println("It's an integer: " + i);
+
+        -> Type pattern with primitive type (e.g., int i)
+            -> Example code:
+                case int i -> System.out.println("It's an integer: " + i);
+                case char c -> System.out.println("It's a character: " + c);
+
+        -> Type pattern with parameterized type (e.g., List<String> list)
+            -> Example code:
+                case List<String> list -> System.out.println("It's a list of strings: " + list);
+                case Map<String, Integer> map -> System.out.println("It's a map of string to integer: " + map);
+
+        -> Example code for all the above features can be found in "TypePatternExamples.java" file.
+
+=> Record Patterns:
+    -> Record patterns are a new feature in Java 21 that allows java to:
+        -> check whether object is a record type
+        -> automatically extract record component values
+        -> avoid manual accessor method calls
+
+    -> This is similar to pattern matching with instanceof, but it is used for records instead of regular classes.                 
+    -> In example "RecordPatternExample.java", we are using record patterns in the if statement to check the components of a record and then perform some action based on the values of those components. 
+    -> This is more concise and readable than the traditional way of using if statements with exact value matches for records.
