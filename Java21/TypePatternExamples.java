@@ -54,6 +54,7 @@ class TypePatternExamples {
     // Example:
     //      case String s
     //
+    //
     // Meaning:
     //      If obj is String,
     //      create variable s
