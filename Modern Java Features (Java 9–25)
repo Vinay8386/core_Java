@@ -183,21 +183,21 @@ Key Highlights:
 
 ==========================================================================! Java 21: Pattern Matching !======================================================================
 
-=> Pattern Matching with switch 
+=> Pattern Matching with switch: Done
 
-=> Pattern Matching with instanceof 
+=> Pattern Matching with instanceof: Done 
 
-=> Type Patterns 
+=> Type Patterns: Done
 
-=> Record Pattern 
+=> Record Pattern: Done
 
 ==========================================================================! Java 22: Unnamed Variables and Patterns !======================================================================
 
-=> Unnamed Variables and Patterns
+=> Unnamed Variables and Patterns 
 
 ==========================================================================! Java 25: Compact Source Files and Instance main Methods & Flexible Constructor Bodies & Module Import Declarations !======================================================================
 
-=> Compact Source Files and Instance main Methods 
+=> Compact Source Files and Instance main Methods
 
 => Flexible Constructor Bodies
 
