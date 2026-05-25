@@ -1,0 +1,485 @@
+=> Module Import Declarations (JEP 511)
+
+    -> Earlier in Java, if we wanted to use classes from different packages,
+       we had to import each package or class separately.
+
+--------------------------------------------------------------------------------
+
+=> Example Before Module Import Declarations
+
+    -> Example:
+
+        import java.util.Map;
+        import java.util.function.Function;
+        import java.util.stream.Collectors;
+        import java.util.stream.Stream;
+
+--------------------------------------------------------------------------------
+
+    -> Problem:
+        -> Too many import statements.
+        -> Boilerplate code increased.
+        -> Large programs often contained many imports.
+
+--------------------------------------------------------------------------------
+
+=> Alternative Earlier Approach
+
+    -> We could reduce imports using:
+    
+        import java.util.*;
+        import java.util.function.*;
+        import java.util.stream.*;
+
+--------------------------------------------------------------------------------
+
+    -> But still:
+        -> Multiple package imports were required.
+        -> Developers still needed to know exact package names.
+
+--------------------------------------------------------------------------------
+
+=> Java Enhancement
+
+    -> Java introduced Module Import Declarations through:
+    
+        -> JEP 511
+
+--------------------------------------------------------------------------------
+
+=> Main Idea
+
+    -> Instead of importing individual packages,
+       Java now allows importing an entire module.
+
+--------------------------------------------------------------------------------
+
+=> Syntax
+
+        import module moduleName;
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import module java.base;
+
+--------------------------------------------------------------------------------
+
+=> What Happens Internally?
+
+    -> Java imports:
+    
+        -> All public top-level classes/interfaces
+        -> From packages exported by that module.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+    -> java.base module exports packages like:
+    
+        -> java.util
+        -> java.util.function
+        -> java.util.stream
+        -> java.lang
+        -> java.io
+        -> etc.
+
+--------------------------------------------------------------------------------
+
+    -> Therefore:
+
+        import module java.base;
+
+       automatically makes classes available from all these exported packages.
+
+--------------------------------------------------------------------------------
+
+=> Example Conversion
+
+--------------------------------------------------------------------------------
+
+    -> Earlier Code:
+
+        import java.util.Map;
+        import java.util.function.Function;
+        import java.util.stream.Collectors;
+        import java.util.stream.Stream;
+
+--------------------------------------------------------------------------------
+
+    -> Now Simplified As:
+
+        import module java.base;
+
+--------------------------------------------------------------------------------
+
+=> Important Benefit
+
+    -> Reduces:
+    
+        -> Boilerplate imports
+        -> Package-level import management
+        -> Repeated import statements
+
+--------------------------------------------------------------------------------
+
+=> Important Concept
+
+    -> Module import declaration performs:
+    
+        -> On-demand imports
+
+--------------------------------------------------------------------------------
+
+    -> Meaning:
+        -> Classes are imported when required.
+
+--------------------------------------------------------------------------------
+
+=> Syntax Structure
+
+        import module M;
+
+--------------------------------------------------------------------------------
+
+    -> Here:
+    
+        -> M = Module name
+
+--------------------------------------------------------------------------------
+
+=> What Gets Imported?
+
+    -> Module import declaration imports:
+
+        -> All public top-level classes/interfaces
+        -> From packages exported by module M
+
+--------------------------------------------------------------------------------
+
+=> Additional Important Feature
+
+    -> It also imports:
+    
+        -> Packages exported by modules
+        -> that are READ by module M
+
+--------------------------------------------------------------------------------
+
+=> Why This Is Useful?
+
+    -> Many modules internally depend on other modules.
+    -> Module import declarations automatically make related APIs available.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import module java.sql;
+
+--------------------------------------------------------------------------------
+
+    -> java.sql internally depends on:
+    
+        -> java.logging
+        -> java.xml
+
+--------------------------------------------------------------------------------
+
+    -> Therefore:
+        -> Their exported packages also become available automatically.
+
+--------------------------------------------------------------------------------
+
+=> Ambiguous Imports Problem
+
+    -> Sometimes multiple modules/packages may contain:
+    
+        -> Classes with same simple name.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+    -> java.awt.List
+    -> java.util.List
+
+--------------------------------------------------------------------------------
+
+    -> If both imported:
+    
+        -> Compiler becomes confused.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import module java.desktop;
+        import module java.base;
+
+--------------------------------------------------------------------------------
+
+    -> Compiler Error:
+
+        reference to List is ambiguous
+
+--------------------------------------------------------------------------------
+
+=> Why?
+
+    -> Because:
+    
+        -> java.awt.List
+        -> java.util.List
+
+       both are visible.
+
+--------------------------------------------------------------------------------
+
+=> Another Example
+
+    -> java.awt.Label
+    -> java.lang.classfile.Label
+
+--------------------------------------------------------------------------------
+
+    -> Compiler cannot decide:
+    
+        -> Which Label class to use.
+
+--------------------------------------------------------------------------------
+
+=> Solution for Ambiguous Imports
+
+    -> Use single-type-import declarations.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import module java.desktop;
+        import module java.base;
+
+        import java.awt.Label;
+        import java.awt.List;
+
+--------------------------------------------------------------------------------
+
+=> Why This Works?
+
+    -> Single-type-import declarations take higher priority.
+    -> They shadow conflicting imported types.
+
+--------------------------------------------------------------------------------
+
+=> Shadowing Concept
+
+    -> Shadowing means:
+    
+        -> One declaration hides another declaration
+           with same name.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import java.awt.List;
+
+--------------------------------------------------------------------------------
+
+    -> This shadows:
+    
+        java.util.List
+
+--------------------------------------------------------------------------------
+
+=> Important Rule
+
+    -> Single-type-import declarations have higher priority than:
+    
+        -> module imports
+        -> on-demand imports
+
+--------------------------------------------------------------------------------
+
+=> Another Simplification
+
+    -> Instead of:
+
+        import java.awt.Label;
+        import java.awt.List;
+
+--------------------------------------------------------------------------------
+
+    -> We can use:
+
+        import java.awt.*;
+
+--------------------------------------------------------------------------------
+
+=> Why This Works?
+
+    -> Type-import-on-demand declarations can also shadow module imports.
+
+--------------------------------------------------------------------------------
+
+=> Compact Source Files and Module Imports
+
+    -> Every compact source file automatically behaves like:
+
+        import module java.base;
+
+--------------------------------------------------------------------------------
+
+=> Meaning
+
+    -> Compact source files automatically gain access to:
+    
+        -> All exported packages from java.base module.
+
+--------------------------------------------------------------------------------
+
+=> Therefore in compact source files:
+
+    -> Many imports become unnecessary.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        void main() {
+
+            Map<String, String> map = new HashMap<>();
+
+            Stream.of("A", "B")
+                  .forEach(System.out::println);
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Here:
+    
+        -> Map
+        -> HashMap
+        -> Stream
+
+       work without explicit imports in compact source files.
+
+--------------------------------------------------------------------------------
+
+=> Why?
+
+    -> Because:
+    
+        import module java.base;
+
+       is automatically applied internally.
+
+--------------------------------------------------------------------------------
+
+=> Importing Entire Standard Java API
+
+    -> Java also allows importing:
+    
+        import module java.se;
+
+--------------------------------------------------------------------------------
+
+=> What is java.se?
+
+    -> java.se is a larger module containing:
+    
+        -> Entire standard Java API.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        import module java.se;
+
+        import java.awt.*;
+
+--------------------------------------------------------------------------------
+
+=> Benefit
+
+    -> Almost all standard Java APIs become available.
+
+--------------------------------------------------------------------------------
+
+=> Important Note
+
+    -> java.se is NOT automatically included for unnamed module.
+
+--------------------------------------------------------------------------------
+
+=> Therefore compilation may require:
+
+        --add-modules java.se
+
+--------------------------------------------------------------------------------
+
+=> Example Compilation
+
+        javac --add-modules java.se FruitApp.java
+
+--------------------------------------------------------------------------------
+
+=> Important Change in JDK 24+
+
+    -> Earlier:
+    
+        -> java.se did NOT transitively depend on java.base
+
+--------------------------------------------------------------------------------
+
+    -> From newer Java versions:
+    
+        -> java.se can now transitively expose java.base
+           for module import declarations.
+
+--------------------------------------------------------------------------------
+
+=> Important Terms
+
+    | Term | Meaning |
+    |------|----------|
+    | Module Import Declaration | Imports all exported packages from module |
+    | On-Demand Import | Imports types when needed |
+    | Shadowing | One declaration hides another |
+    | Ambiguous Import | Multiple matching class names cause conflict |
+    | Transitive Dependence | One module indirectly exposes another module |
+
+--------------------------------------------------------------------------------
+
+=> Benefits of Module Import Declarations
+
+    -> Reduces import boilerplate
+    -> Easier beginner experience
+    -> Cleaner code
+    -> Better readability
+    -> Easier access to standard APIs
+    -> Works well with compact source files
+
+--------------------------------------------------------------------------------
+
+=> Limitations / Cautions
+
+    -> May introduce ambiguous imports.
+    -> Large modules may expose many classes.
+    -> Developers must still understand package conflicts.
+    -> Enterprise projects may still prefer explicit imports for readability.
+
+--------------------------------------------------------------------------------
+
+=> Simple Mental Model
+
+    -> Earlier Java:
+    
+        "Import packages individually."
+
+    -> Modern Java:
+    
+        "Import an entire module at once."

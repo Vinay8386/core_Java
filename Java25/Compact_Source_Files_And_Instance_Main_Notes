@@ -1,0 +1,399 @@
+## Compact Source Files and Instance main Methods
+
+- Earlier, even the smallest Java program required many advanced concepts:
+  - Classes
+  - Objects
+  - Static vs Instance Methods
+  - Variables
+  - Access modifiers
+  - Arrays
+- This made it difficult for beginners to write simple programs.
+- Example: To print "Hello, World!" in Java, you had to write:
+
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+- This was intimidating for new programmers who just wanted to see a simple output.
+- Student often memorized the structure without understanding the underlying concepts, leading to confusion.
+- To address this issue, Java introduced compact source files and instance main methods (Introduced through: JEP 512).
+
+## Main Idea
+
+- Java now allows developers to write simple programs without the need for a class or static main method. Example: refer "ClassUsingInstanceMain.java" file.
+- This makes it easier for beginners to get started with Java programming.
+
+### How to Compile and Run
+
+- To compile and run a Java program with an instance main method, you can use the following ways:
+
+#### Using Command Line (Two Steps)
+
+- Compile: `javac ClassUsingInstanceMain.java`
+- Run: `java ClassUsingInstanceMain`
+
+#### Using Command Line (Direct Run)
+
+- `java ClassUsingInstanceMain.java`: This will compile and run the program in one step. Because the Java launcher can detect that the source file contains an instance main method, it will compile and execute it without needing a separate class file.
+- Internally the Java launcher will create a temporary class file for the instance main method and execute it, allowing for a seamless experience when running simple programs.
+
+### Benefits of Compact Source Files and Instance Main Methods
+
+- Simplicity: Beginners can write simple programs without needing to understand complex concepts.
+- Faster Development: Developers can quickly write and test small programs without boilerplate code.
+- Improved Readability: Code is more concise and easier to read, especially for simple tasks.
+- No package declaration 
+- No class declaration
+- No static main method declaration
+- No access modifiers
+- No array declaration for main method parameters
+- No project structure requirements
+- This feature is particularly beneficial for educational purposes, allowing students to focus on learning programming concepts
+
+### Limitations
+
+- This feature is intended for simple programs and is not suitable for larger, more complex applications.
+- It may not be compatible with all Java tools and libraries that expect a traditional class structure.
+- It is primarily designed for educational use and may not be widely adopted in professional development environments. 
+- Enterprise project needs:
+  - Modularity
+  - Package organization
+  - Team collaboration
+  - Code maintainability
+  - Dependency management
+  - Large codebases structure
+  - Testing frameworks
+  - Build tools
+  - Microservices architecture
+  - Cloud-native development
+- All these things require a more structured approach that compact source files and instance main methods do not provide.
+
+## Additional Important Concepts About Compact Source Files and Instance Main Methods
+
+### How Java Internally Handles Compact Source Files
+
+- Internally Java still creates a class even if we do not explicitly write one.
+- When compiler encounters:
+
+```java
+void main() {
+    System.out.println("Hello");
+}
+```
+
+- It automatically creates an implicitly declared top-level class internally.
+
+### Key Points About OOP
+
+- Java is NOT removing object-oriented programming concepts completely.
+- Instead:
+  - Java hides advanced concepts from beginners initially.
+  - This helps beginners focus on:
+    - Variables
+    - Loops
+    - Conditions
+    - Methods
+    - Basic programming logic
+
+---
+
+### Characteristics of Implicitly Declared Class
+
+- It is a final top-level class.
+- It belongs to unnamed package.
+- It belongs to unnamed module.
+- It extends java.lang.Object.
+- It cannot implement interfaces.
+- It has a default zero-parameter constructor only.
+- It cannot define custom constructors.
+- It contains all fields and methods written inside compact source file.
+
+---
+
+### Important Rule: Package Declaration
+
+- Compact source files cannot contain package declaration.
+
+#### Invalid Example
+
+```java
+package demo;
+
+void main() {
+}
+```
+
+#### Compiler Error
+
+```
+compact source file should not have package declaration
+```
+
+---
+
+### Why Package Declaration is Not Allowed
+
+- Because compiler-generated implicit class already belongs to unnamed package.
+
+---
+
+### Important Rule About Class Name
+
+- Compiler usually uses source file name as generated class name internally.
+- Example:
+  - `HelloWorld.java` may internally become: `class HelloWorld`
+
+- But:
+  - We cannot directly reference implicit class by name in source code.
+  - We cannot create object explicitly using: `new HelloWorld()`
+
+---
+
+### Use Cases for Compact Source Files
+
+- Compact source files are mainly useful for:
+  - Learning Java
+  - Beginner-friendly programs
+  - Small standalone programs
+  - Script-like programs
+  - Quick testing
+  - Simple utilities
+
+---
+
+### What Compact Source Files Can Contain
+
+- Compact source files can still contain:
+  - Fields
+  - Methods
+  - Nested classes
+
+---
+
+### Example Using Method
+
+```java
+String greeting() {
+    return "Hello";
+}
+
+void main() {
+    System.out.println(greeting());
+}
+```
+
+---
+
+### Example Using Field
+
+```java
+String greeting = "Hello";
+
+void main() {
+    System.out.println(greeting);
+}
+```
+
+---
+
+### Main Method Selection Rules
+
+- The Java launcher uses the following preference order:
+
+1. **First Preference:**
+   ```java
+   void main(String[] args)
+   ```
+
+2. **Second Preference:**
+   ```java
+   void main()
+   ```
+
+3. **If none found:**
+   - JVM throws error.
+
+---
+
+### What Happens Internally During Execution
+
+- For instance main methods:
+  - JVM internally creates object of implicit class.
+  - Then invokes main() method automatically.
+
+- Approximate internal behavior:
+
+```java
+ImplicitClass obj = new ImplicitClass();
+obj.main();
+```
+
+---
+
+### Supported Features in Compact Source Files
+
+- Compact source files still support:
+  - Instance methods
+  - Static methods
+  - Access modifiers
+  - Fields
+  - Nested classes
+
+#### Example
+
+```java
+private String message = "Hello";
+
+static void helper() {
+    System.out.println("Helper");
+}
+
+void main() {
+    System.out.println(message);
+    helper();
+}
+```
+
+---
+
+### Important Clarification About println()
+
+- Earlier preview examples sometimes showed: `println("Hello");`
+
+- But in finalized Java 25 version:
+  - `println()` is NOT automatically available globally.
+
+- Therefore this gives compiler error: `println("Hello");`
+
+- Correct ways:
+
+```java
+System.out.println("Hello");
+```
+
+OR
+
+```java
+IO.println("Hello");
+```
+
+---
+
+### Java.lang.IO Class
+
+- `java.lang.IO` class introduced simplified console I/O methods:
+  - `IO.println(Object)`
+  - `IO.print(Object)`
+  - `IO.readln(String)`
+
+---
+
+### Example Using IO Class
+
+```java
+void main() {
+    IO.println("Hello");
+}
+```
+
+---
+
+### Automatic Import Feature
+
+- Every compact source file automatically imports:
+  - All public top-level classes/interfaces
+  - Exported by java.base module.
+
+- Because of this many import statements become unnecessary.
+
+---
+
+### Example with Automatic Import
+
+```java
+void main() {
+    Map<String, Integer> map = new HashMap<>();
+    map.put("Java", 25);
+    IO.println(map);
+}
+```
+
+- Here:
+  - `Map`
+  - `HashMap`
+- Can be used without explicit import statements in compact source files.
+
+---
+
+### Compact Source Files vs Enterprise Development
+
+- Compact source files are NOT intended to replace enterprise Java development.
+
+- Enterprise applications still require:
+  - Package structure
+  - Explicit classes
+  - Constructors
+  - Dependency injection
+  - Build tools
+  - Modular architecture
+  - Testing frameworks
+  - Microservices structure
+  - Team collaboration standards
+
+---
+
+### Simple Mental Model
+
+- **Compact source files are:**
+  - "Java's beginner-friendly scripting style."
+
+- **Traditional Java classes are:**
+  - "Java's enterprise application development style."
+
+
+## Enabling Preview: Is it Required?
+
+### Java 21 to Java 24 (Preview Versions)
+
+- Instance main methods and compact source files were first introduced as a preview feature in JDK 21 (JEP 445).
+- If you are using JDK 21 to JDK 24, you must enable preview features to use instance main methods.
+- You can enable preview features using:
+
+#### Compilation
+
+- `javac --enable-preview --release <version> ClassUsingInstanceMain.java`
+
+#### Execution
+
+- `java --enable-preview FileName`
+
+#### Notes
+
+- Replace `<version>` with the appropriate Java version (e.g., 21, 22, 23, or 24).
+- Example for JDK 21:
+  - Compile: `javac --enable-preview --release 21 ClassUsingInstanceMain.java`
+  - Run: `java --enable-preview ClassUsingInstanceMain`
+
+### Java 20 and Earlier
+
+- JDK 20 or earlier does NOT support instance main methods at all.
+- Even with `--enable-preview`, the feature will not work because it was not introduced before JDK 21.
+
+### Java 25 and Later
+
+- Starting from JDK 25 (JEP 512), compact source files and instance main methods became a standard Java feature.
+- No preview flag is required in JDK 25 and later.
+
+### Evolution of Instance Main Methods
+
+| Java Version | Status         | JEP     |
+| ------------ | -------------- | ------- |
+| Java 21      | First Preview  | JEP 445 |
+| Java 22      | Second Preview | JEP 463 |
+| Java 23      | Third Preview  | JEP 477 |
+| Java 24      | Fourth Preview | JEP 495 |
+| Java 25      | Finalized      | JEP 512 |

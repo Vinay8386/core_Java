@@ -1,0 +1,394 @@
+=> Switching Between Multiple Java Versions Using Batch File (.bat)
+
+--------------------------------------------------------------------------------
+
+=> Problem Statement
+
+    -> A developer may have multiple Java versions installed on the same machine.
+
+    -> Example:
+    
+        C:\Program Files\Microsoft\jdk-11.0.30.7-hotspot
+        C:\Program Files\Microsoft\jdk-17.0.18.8-hotspot
+        C:\Program Files\Microsoft\jdk-21.0.10.7-hotspot
+        C:\Program Files\Microsoft\jdk-25.0.2.10-hotspot
+
+    -> Normally:
+        -> System Environment Variables point to only ONE Java version at a time.
+        -> Example:
+            -> JAVA_HOME
+            -> PATH
+
+    -> But developers often need different Java versions for:
+        -> Different projects
+        -> Legacy applications
+        -> Testing
+        -> Learning latest Java features
+        -> Spring Boot compatibility
+        -> Maven/Gradle builds
+
+--------------------------------------------------------------------------------
+
+=> Goal
+
+    -> Switch Java versions TEMPORARILY during development.
+    -> WITHOUT changing permanent Windows Environment Variables.
+
+--------------------------------------------------------------------------------
+
+=> Important Concept
+
+    -> Environment variables can exist at multiple levels:
+
+        -> System Level
+            -> Permanent for all users/processes.
+
+        -> User Level
+            -> Permanent for current user.
+
+        -> Process/Terminal Level
+            -> Temporary.
+            -> Exists only for current terminal session.
+
+--------------------------------------------------------------------------------
+
+=> Our Batch File Approach
+
+    -> We are changing Java version ONLY for:
+        -> Current terminal session.
+
+    -> We are NOT changing:
+        -> System Environment Variables
+        -> User Environment Variables
+
+--------------------------------------------------------------------------------
+
+=> What Happens Internally?
+
+    -> Batch file temporarily changes:
+    
+        -> JAVA_HOME
+        -> PATH
+
+    -> Only inside current CMD terminal.
+
+    -> Once terminal closes:
+        -> Changes disappear automatically.
+
+--------------------------------------------------------------------------------
+
+=> Final Working Batch File
+
+    -> File Name:
+    
+        switch-java.bat
+
+--------------------------------------------------------------------------------
+
+=> Batch File Code
+
+@echo off
+
+echo =========================
+echo Select Java Version
+echo =========================
+echo 1. Java 11
+echo 2. Java 17
+echo 3. Java 21
+echo 4. Java 25
+echo.
+
+set /p choice=Enter choice:
+
+if "%choice%"=="1" set "JAVA_HOME=C:\Program Files\Microsoft\jdk-11.0.30.7-hotspot"
+if "%choice%"=="2" set "JAVA_HOME=C:\Program Files\Microsoft\jdk-17.0.18.8-hotspot"
+if "%choice%"=="3" set "JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.10.7-hotspot"
+if "%choice%"=="4" set "JAVA_HOME=C:\Program Files\Microsoft\jdk-25.0.2.10-hotspot"
+
+set "PATH=%JAVA_HOME%\bin;%SystemRoot%\System32;%SystemRoot%;%SystemRoot%\System32\Wbem"
+
+echo.
+echo JAVA_HOME=%JAVA_HOME%
+echo.
+
+java -version
+
+cmd
+
+--------------------------------------------------------------------------------
+
+=> Understanding the Batch File Step-by-Step
+
+--------------------------------------------------------------------------------
+
+=> @echo off
+
+    -> Prevents commands from being printed while executing.
+    -> Makes output cleaner.
+
+--------------------------------------------------------------------------------
+
+=> echo Commands
+
+    -> Displays menu/options to user.
+
+--------------------------------------------------------------------------------
+
+=> set /p choice=Enter choice:
+
+    -> Takes input from user.
+    -> Stores value inside variable:
+    
+        %choice%
+
+--------------------------------------------------------------------------------
+
+=> if Conditions
+
+    -> Depending on selected option:
+        -> JAVA_HOME is assigned corresponding JDK path.
+
+    -> Example:
+
+        if "%choice%"=="4"
+
+       means:
+
+        -> If user selects option 4,
+        -> Use Java 25.
+
+--------------------------------------------------------------------------------
+
+=> JAVA_HOME
+
+    -> JAVA_HOME points to root folder of JDK installation.
+
+    -> Example:
+
+        C:\Program Files\Microsoft\jdk-25.0.2.10-hotspot
+
+--------------------------------------------------------------------------------
+
+=> PATH Variable
+
+    -> PATH tells Windows where executable programs exist.
+
+    -> We prepend:
+
+        %JAVA_HOME%\bin
+
+    -> So commands like:
+    
+        java
+        javac
+
+       use selected JDK version.
+
+--------------------------------------------------------------------------------
+
+=> Why We Added SystemRoot Paths?
+
+    -> Earlier when PATH was completely replaced:
+
+        java worked
+        but Windows commands failed.
+
+    -> Example failures:
+    
+        where not recognized
+        cmd not recognized
+
+    -> Because essential Windows directories disappeared from PATH.
+
+--------------------------------------------------------------------------------
+
+=> Required Windows Paths
+
+    -> These paths are needed for normal Windows commands:
+
+        %SystemRoot%\System32
+        %SystemRoot%
+        %SystemRoot%\System32\Wbem
+
+--------------------------------------------------------------------------------
+
+=> java -version
+
+    -> Verifies currently active Java version.
+
+--------------------------------------------------------------------------------
+
+=> cmd
+
+    -> Opens a new CMD session using modified environment variables.
+
+--------------------------------------------------------------------------------
+
+=> Why Changes Are Temporary?
+
+    -> Because:
+    
+        set JAVA_HOME=...
+        set PATH=...
+
+       modify variables ONLY inside current process/session.
+
+    -> They do NOT call:
+    
+        setx
+
+       which changes permanent environment variables.
+
+--------------------------------------------------------------------------------
+
+=> Difference Between set and setx
+
+    | Command | Scope |
+    |----------|------|
+    | set      | Temporary (current terminal only) |
+    | setx     | Permanent system/user variable |
+
+--------------------------------------------------------------------------------
+
+=> PowerShell Important Note
+
+    -> In PowerShell:
+    
+        switch-java.bat
+
+       may fail.
+
+    -> Correct execution:
+
+        .\switch-java.bat
+
+--------------------------------------------------------------------------------
+
+=> Why .\ Is Required in PowerShell?
+
+    -> PowerShell does NOT execute scripts from current folder automatically.
+    -> This is for security reasons.
+
+    -> .\ means:
+
+        "Run script from current directory"
+
+--------------------------------------------------------------------------------
+
+=> Running VS Code With Selected Java Version
+
+    -> VS Code inherits environment variables from terminal that launched it.
+
+    -> Correct workflow:
+
+        -> Run batch file.
+        -> Select Java version.
+        -> Then launch VS Code using:
+
+            code .
+
+--------------------------------------------------------------------------------
+
+=> Example Workflow
+
+    -> Step 1:
+
+        .\switch-java.bat
+
+    -> Step 2:
+    
+        Select:
+        
+            4
+
+    -> Step 3:
+    
+        code .
+
+    -> Result:
+    
+        VS Code terminal also uses Java 25.
+
+--------------------------------------------------------------------------------
+
+=> Verifying Current Active Java
+
+    -> Commands:
+
+        java -version
+        javac -version
+
+--------------------------------------------------------------------------------
+
+=> Common Mistakes
+
+--------------------------------------------------------------------------------
+
+=> Mistake 1
+
+    -> Using:
+
+        java Java25\ClassName
+
+    -> Wrong because:
+        -> java command expects:
+            -> package.className
+        -> NOT file path.
+
+--------------------------------------------------------------------------------
+
+=> Mistake 2
+
+    -> Replacing entire PATH with only Java path.
+
+    -> Causes Windows commands to stop working.
+
+--------------------------------------------------------------------------------
+
+=> Mistake 3
+
+    -> Using wrong JDK folder name.
+
+    -> Example:
+
+        jdk-25.0.0.36-hotspot
+
+       while actual folder was:
+
+        jdk-25.0.2.10-hotspot
+
+--------------------------------------------------------------------------------
+
+=> Real Enterprise Usage
+
+    -> Developers commonly maintain:
+    
+        Java 8
+        Java 11
+        Java 17
+        Java 21
+        Java 25
+
+       simultaneously.
+
+    -> Different projects may require different JDK versions.
+
+--------------------------------------------------------------------------------
+
+=> Professional Alternatives
+
+    -> SDKMAN (Linux/macOS)
+    -> jEnv
+    -> Jabba
+    -> IntelliJ SDK Manager
+    -> VS Code Java Configuration
+
+--------------------------------------------------------------------------------
+
+=> Simple Rule to Remember
+
+    -> Batch File + set command:
+        -> Temporary Java switching.
+
+    -> setx:
+        -> Permanent Java switching.

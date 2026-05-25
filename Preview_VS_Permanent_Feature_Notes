@@ -1,0 +1,208 @@
+=> Enabling Preview Features in Java
+
+    -> Java introduces many new language features gradually before making them permanent.
+    -> A feature generally goes through the following lifecycle:
+
+        -> Incubator Feature
+            -> Experimental API or module.
+            -> Mainly used for testing new ideas.
+            -> May change or even get removed later.
+
+        -> Preview Feature
+            -> Language/API feature available for developers to test.
+            -> Not finalized yet.
+            -> Requires explicit enabling using --enable-preview.
+            -> Syntax or behavior may change in future Java versions.
+
+        -> Final / Permanent Feature
+            -> Officially added to Java language/platform.
+            -> No preview flag required.
+            -> Safe for production and enterprise use.
+
+--------------------------------------------------------------------------------
+
+=> Important Rule About Preview Features
+
+    -> The --enable-preview flag only enables preview features available in the CURRENT JDK version.
+    -> It does NOT enable future Java features.
+
+    -> Example:
+        -> JDK 20 cannot use Instance Main Methods because the feature did not exist in JDK 20.
+        -> Even using:
+            
+            javac --enable-preview File.java
+
+           will NOT work in JDK 20.
+
+    -> Instance Main Methods were introduced FIRST in JDK 21.
+
+--------------------------------------------------------------------------------
+
+=> How to Use Preview Features
+
+    -> When a feature is in preview state, you must enable preview during:
+        -> Compilation
+        -> Execution
+
+--------------------------------------------------------------------------------
+
+=> Compilation Syntax
+
+    -> General Syntax:
+
+        javac --enable-preview --release <version> FileName.java
+
+    -> Explanation:
+        -> --enable-preview
+            -> Enables preview language features.
+
+        -> --release <version>
+            -> Specifies which Java version preview features should be used.
+            -> Must match the JDK version.
+
+--------------------------------------------------------------------------------
+
+=> Execution Syntax
+
+    -> General Syntax:
+
+        java --enable-preview FileName
+
+--------------------------------------------------------------------------------
+
+=> Example Using JDK 21
+
+    -> Suppose file:
+
+        ClassUsingInstanceMain.java
+
+    -> Code:
+
+        void main() {
+            System.out.println("Hello Java");
+        }
+
+--------------------------------------------------------------------------------
+
+=> Compilation in JDK 21
+
+    -> Command:
+
+        javac --enable-preview --release 21 ClassUsingInstanceMain.java
+
+--------------------------------------------------------------------------------
+
+=> Execution in JDK 21
+
+    -> Command:
+
+        java --enable-preview ClassUsingInstanceMain
+
+--------------------------------------------------------------------------------
+
+=> Why Preview Flag is Required During BOTH Compile and Run?
+
+    -> Compilation Time:
+        -> Compiler needs permission to accept experimental syntax/features.
+
+    -> Runtime:
+        -> JVM also needs permission to execute preview bytecode/features.
+
+    -> If you forget preview flag during execution:
+        -> JVM throws error because preview bytecode execution is disabled.
+
+--------------------------------------------------------------------------------
+
+=> Important Restrictions of Preview Features
+
+    -> Preview features:
+        -> May change in future versions.
+        -> May get removed completely.
+        -> Should generally NOT be used in production enterprise applications.
+        -> Are mainly intended for:
+            -> Learning
+            -> Experimentation
+            -> Community feedback
+            -> Early adoption testing
+
+--------------------------------------------------------------------------------
+
+=> What Happens After Feature Becomes Permanent?
+
+    -> Once Java finalizes the feature:
+        -> No --enable-preview flag required.
+        -> Feature becomes standard Java syntax/API.
+
+--------------------------------------------------------------------------------
+
+=> Example: Instance Main Methods
+
+    -> Instance Main Methods and Compact Source Files were finalized in JDK 25.
+
+    -> Starting from JDK 25:
+
+        -> Compilation:
+
+            javac ClassUsingInstanceMain.java
+
+        -> Execution:
+
+            java ClassUsingInstanceMain
+
+--------------------------------------------------------------------------------
+
+=> Evolution of Instance Main Methods
+
+    | Java Version  | Status           | JEP     |
+    |---------------|------------------|---------|
+    | Java 21       | First Preview    | JEP 445 |
+    | Java 22       | Second Preview   | JEP 463 |
+    | Java 23       | Third Preview    | JEP 477 |
+    | Java 24       | Fourth Preview   | JEP 495 |
+    | Java 25       | Finalized        | JEP 512 |
+
+--------------------------------------------------------------------------------
+
+=> JDK Support Summary
+
+    | JDK Version       | Support Status                |
+    |-------------------|-------------------------------|
+    | JDK 20 or earlier | NOT supported                 |
+    | JDK 21 - 24       | Supported as Preview Feature  |
+    | JDK 25+           | Permanent Standard Feature    |
+
+--------------------------------------------------------------------------------
+
+=> Important Mental Model
+
+    -> Preview Feature means:
+
+        "Experimental feature already included in this JDK version."
+
+    -> It does NOT mean:
+
+        "Download or unlock future Java features."
+
+--------------------------------------------------------------------------------
+
+=> Real Enterprise Usage
+
+    -> Enterprise applications usually avoid preview features because:
+        -> APIs/syntax may change later.
+        -> Long-term stability is important.
+        -> Production systems require stable language features.
+
+    -> Most companies wait until:
+        -> Feature becomes finalized/permanent.
+
+--------------------------------------------------------------------------------
+
+=> Simple Rule to Remember
+
+    -> If feature is in Preview State:
+        -> Use:
+
+            --enable-preview
+
+    -> If feature is Finalized:
+        -> Use normally without preview flag.

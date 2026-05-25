@@ -1,0 +1,592 @@
+=> Flexible Constructor Bodies (JEP 513)
+
+    -> Earlier in Java, constructor rules were very strict.
+    -> If we wanted to call:
+    
+        super(...)
+        
+       or:
+       
+        this(...)
+
+       then it had to be the FIRST statement inside constructor.
+
+--------------------------------------------------------------------------------
+
+    -> Example of old restriction:
+
+        class Child extends Parent {
+
+            Child(int x) {
+
+                // Invalid in earlier Java versions
+                validate(x);
+
+                super(x);
+            }
+        }
+
+    -> Compiler Error:
+
+        Constructor call must be the first statement in a constructor
+
+--------------------------------------------------------------------------------
+
+    -> This restriction created problems when developers needed:
+        -> Validation before super(...)
+        -> Complex calculations before super(...)
+        -> Data transformation before super(...)
+        -> Logging/checking before constructor chaining
+
+--------------------------------------------------------------------------------
+
+=> Java Enhancement
+
+    -> Java introduced Flexible Constructor Bodies through:
+    
+        -> JEP 513
+
+    -> Now Java allows:
+        -> Statements before:
+        
+            super(...)
+            
+           OR
+           
+            this(...)
+
+--------------------------------------------------------------------------------
+
+=> Main Idea
+
+    -> We can now:
+        -> Validate constructor arguments
+        -> Perform calculations
+        -> Prepare values
+        -> Execute safe logic
+
+       BEFORE invoking:
+       
+        super(...)
+        
+       or
+       
+        this(...)
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+    -> Earlier this was NOT allowed:
+
+        public class PositiveBigInteger extends BigInteger {
+
+            public PositiveBigInteger(long value) {
+
+                if (value <= 0)
+                    throw new IllegalArgumentException();
+
+                super(Long.toString(value));
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Now this is VALID because Java supports flexible constructor bodies.
+
+--------------------------------------------------------------------------------
+
+=> Constructor Body Parts
+
+    -> Constructor body is now divided into two parts:
+
+--------------------------------------------------------------------------------
+
+    -> Prologue:
+        -> Statements BEFORE:
+        
+            super(...)
+            
+           OR
+           
+            this(...)
+
+--------------------------------------------------------------------------------
+
+    -> Epilogue:
+        -> Statements AFTER:
+        
+            super(...)
+            
+           OR
+           
+            this(...)
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        Constructor() {
+
+            // Prologue
+            validate();
+
+            super();
+
+            // Epilogue
+            initialize();
+        }
+
+--------------------------------------------------------------------------------
+
+=> Early Construction Context
+
+    -> Early Construction Context means:
+    
+        -> Everything before:
+        
+            super(...)
+            
+           OR
+           
+            this(...)
+
+        -> Including:
+            -> Constructor arguments
+            -> Statements before constructor invocation
+
+--------------------------------------------------------------------------------
+
+=> Important Restriction
+
+    -> During early construction context:
+    
+        -> Current object is NOT fully constructed yet.
+
+    -> Therefore:
+    
+        -> We CANNOT access instance members.
+
+--------------------------------------------------------------------------------
+
+=> Why?
+
+    -> Because superclass constructor has NOT executed yet.
+    -> Object initialization is incomplete.
+
+--------------------------------------------------------------------------------
+
+=> Invalid Examples
+
+    -> Example:
+
+        class A {
+
+            int i;
+
+            A() {
+
+                i++;
+
+                super();
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Error:
+
+        cannot reference i before supertype constructor has been called
+
+--------------------------------------------------------------------------------
+
+=> Why This Error?
+
+    -> i belongs to current object.
+    -> But object construction is incomplete before super().
+
+--------------------------------------------------------------------------------
+
+=> Another Invalid Example
+
+        class A {
+
+            A() {
+
+                this.hashCode();
+
+                super();
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Error:
+
+        cannot reference this before supertype constructor has been called
+
+--------------------------------------------------------------------------------
+
+=> Important Rule
+
+    -> Before super(...):
+    
+        -> We CANNOT use:
+            -> this
+            -> instance fields
+            -> instance methods
+            -> hashCode()
+            -> toString()
+            -> overridden methods
+
+--------------------------------------------------------------------------------
+
+=> super Keyword Restrictions
+
+    -> We also cannot access superclass instance members before super().
+
+--------------------------------------------------------------------------------
+
+=> Invalid Example
+
+        class D {
+
+            int j;
+        }
+
+        class E extends D {
+
+            E() {
+
+                j++;
+
+                super();
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Error:
+
+        cannot reference j before supertype constructor has been called
+
+--------------------------------------------------------------------------------
+
+=> Important Mental Model
+
+    -> Before super(...):
+    
+        -> Object memory may exist.
+        -> But object is NOT fully initialized yet.
+
+--------------------------------------------------------------------------------
+
+=> What IS Allowed Before super(...)?
+
+    -> Allowed:
+        -> Validation logic
+        -> Local variables
+        -> Static methods
+        -> Static fields
+        -> Pure computations
+        -> Assignments to current object's fields
+
+--------------------------------------------------------------------------------
+
+=> Field Initialization Before super(...)
+
+    -> Earlier:
+        -> Super constructor executed before subclass field initialization.
+
+    -> This sometimes caused overridden methods to access uninitialized fields.
+
+--------------------------------------------------------------------------------
+
+=> Problem Example
+
+        class Super {
+
+            Super() {
+                overriddenMethod();
+            }
+
+            void overriddenMethod() {
+                System.out.println("hello");
+            }
+        }
+
+        class Sub extends Super {
+
+            final int x;
+
+            Sub(int x) {
+
+                this.x = x;
+            }
+
+            @Override
+            void overriddenMethod() {
+                System.out.println(x);
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+=> What Happens Internally?
+
+    -> During object creation:
+    
+        -> Super constructor executes first.
+        -> overriddenMethod() executes.
+        -> x not initialized yet.
+
+--------------------------------------------------------------------------------
+
+=> Output
+
+        0
+
+--------------------------------------------------------------------------------
+
+=> Why 0?
+
+    -> int default value is:
+    
+        0
+
+    -> Because:
+        -> this.x = x
+        
+       happened AFTER superclass constructor execution.
+
+--------------------------------------------------------------------------------
+
+=> Better Solution Using Flexible Constructor Bodies
+
+        class BetterSub extends Super {
+
+            final int x;
+
+            BetterSub(int x) {
+
+                this.x = x;
+
+                super();
+            }
+
+            @Override
+            void overriddenMethod() {
+                System.out.println(x);
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+=> Output
+
+        42
+        42
+
+--------------------------------------------------------------------------------
+
+=> Why This Works?
+
+    -> x initialized BEFORE super().
+    -> Therefore overridden method accesses initialized value.
+
+--------------------------------------------------------------------------------
+
+=> Important Benefit
+
+    -> Flexible constructor bodies help avoid:
+    
+        -> Partially initialized object problems
+        -> Incorrect overridden method behavior
+        -> Default value bugs
+
+--------------------------------------------------------------------------------
+
+=> Nested Classes Rule
+
+    -> Nested classes are members of enclosing class.
+
+    -> Therefore:
+        -> Nested classes CANNOT be accessed from enclosing class's early construction context.
+
+--------------------------------------------------------------------------------
+
+=> Invalid Example
+
+        class B {
+
+            class C { }
+
+            B() {
+
+                new C();
+
+                super();
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+    -> Error:
+
+        cannot reference this before supertype constructor has been called
+
+--------------------------------------------------------------------------------
+
+=> Why?
+
+    -> Nested class internally requires enclosing object reference:
+    
+        B.this
+
+    -> But enclosing object not fully initialized yet.
+
+--------------------------------------------------------------------------------
+
+=> Special Case
+
+    -> Nested class CAN access enclosing object inside its own constructor.
+
+--------------------------------------------------------------------------------
+
+=> Valid Example
+
+        class F {
+
+            int f;
+
+            void hello() {
+                System.out.println("Hello!");
+            }
+
+            class G {
+
+                G() {
+
+                    F.this.f++;
+
+                    hello();
+
+                    super();
+                }
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+=> Why This Works?
+
+    -> Here:
+    
+        -> G constructor executes AFTER F object already exists.
+
+--------------------------------------------------------------------------------
+
+=> Flexible Constructor Bodies in Records
+
+    -> Record constructors cannot call:
+    
+        super(...)
+
+    -> Because records already extend:
+    
+        java.lang.Record
+
+--------------------------------------------------------------------------------
+
+=> Important Rule for Records
+
+    -> Noncanonical constructors MUST call:
+    
+        this(...)
+
+--------------------------------------------------------------------------------
+
+=> Canonical Constructor
+
+    -> Constructor whose parameter list exactly matches record components.
+
+--------------------------------------------------------------------------------
+
+=> Example
+
+        record Rectangle(float length, float width) { }
+
+--------------------------------------------------------------------------------
+
+=> Canonical Constructor
+
+        Rectangle(float length, float width)
+
+--------------------------------------------------------------------------------
+
+=> Noncanonical Constructor
+
+        Rectangle(Pair<Float> pair)
+
+--------------------------------------------------------------------------------
+
+=> Flexible Constructor Example in Records
+
+        record RectanglePair(float length, float width) {
+
+            public RectanglePair(Pair<Float> corner) {
+
+                float x = corner.x().floatValue();
+                float y = corner.y().floatValue();
+
+                if (x < 0 || y < 0) {
+                    throw new IllegalArgumentException();
+                }
+
+                this(x, y);
+            }
+        }
+
+--------------------------------------------------------------------------------
+
+=> Why This Is Useful?
+
+    -> Allows:
+    
+        -> Validation before this(...)
+        -> Data conversion before this(...)
+        -> Cleaner record constructors
+
+--------------------------------------------------------------------------------
+
+=> Important Restrictions Summary
+
+    -> Before super(...) or this(...):
+    
+        -> Allowed:
+            -> Local variables
+            -> Validation
+            -> Static access
+            -> Computations
+            -> Field assignments
+
+--------------------------------------------------------------------------------
+
+        -> NOT Allowed:
+            -> this reference
+            -> Instance method calls
+            -> Instance field access
+            -> super field access
+            -> super method access
+            -> Using partially initialized object
+
+--------------------------------------------------------------------------------
+
+=> Real Benefit of Flexible Constructor Bodies
+
+    -> Cleaner constructor logic
+    -> Better validation support
+    -> Safer initialization
+    -> More readable constructors
+    -> Better inheritance handling
+    -> Reduces initialization bugs
