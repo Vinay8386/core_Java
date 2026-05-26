@@ -487,18 +487,56 @@ Advanced multithreading topics with comprehensive documentation:
 
 ### Singleton Pattern
 
-**Location:** `Singleton_6_Ways`
+**Location:** [Singleton/](Singleton/)
 
-Six different implementations of the Singleton design pattern:
+Six different implementations of the Singleton design pattern with detailed documentation and trade-offs:
 
-1. **Eager Initialization** - Singleton created at class loading
-2. **Lazy Initialization** - Singleton created on first use
-3. **Thread-Safe Singleton** - Synchronized for concurrent access
-4. **Double-Check Locking** - Optimized thread-safe singleton
-5. **Bill Pugh Singleton** - Using static inner helper class
-6. **Enum Singleton** - Serialization-safe approach
+**Implementations:**
 
-**Key Topics:** Singleton pattern, thread safety, serialization, enum singletons, best practices
+1. **`StaticEagerSingleton.java`** - Singleton created at class loading
+   - Simple and thread-safe by default
+   - No runtime initialization overhead
+   - Best for always-used singletons
+
+2. **`DynamicLazySingleton.java`** - Singleton created on first use (non-thread-safe)
+   - Lazy initialization
+   - **Not suitable for multi-threaded applications**
+   - Educational purposes only
+
+3. **`DynamicLazyImprovedSingleton.java`** - Thread-safe lazy initialization
+   - Uses synchronized keyword
+   - Thread-safe but with lock contention overhead
+   - Best for low to medium concurrency
+
+4. **`DoubleCheckedLockingSingleton.java`** - Optimized thread-safe singleton
+   - Lock acquired only during initialization
+   - Better performance in high concurrency
+   - Requires volatile keyword and careful implementation
+   - **Complex pattern - avoid unless necessary**
+
+5. **`BillPughSingleton.java`** - Using static inner helper class (Recommended)
+   - Thread-safe without synchronization overhead
+   - Lazy initialization by design
+   - **Best choice for most applications**
+   - Perfect balance of safety, performance, and simplicity
+
+6. **`EnumSingleton.java`** - Serialization and reflection-safe approach
+   - Maximum security against reflection and serialization attacks
+   - Most robust implementation
+   - **Best for production systems where security is critical**
+   - Enum construction controlled by JVM
+
+7. **`SingletonWithFunction.java`** - Modern Java functional approach
+   - Combines singleton pattern with Java 8+ lambdas
+   - Contemporary implementation style
+
+**Additional Files:**
+- **`Main.java`** - Demo program showing all implementations and usage patterns
+- **`Singleton_Notes`** - Additional documentation and discussion
+
+**Key Topics:** Singleton pattern, thread safety, serialization attacks, reflection attacks, lazy vs eager initialization, design pattern trade-offs
+
+**Recommended Reading:** Start with [Singleton/README.md](Singleton/README.md) for comprehensive comparison and selection guide for each implementation.
 
 ---
 

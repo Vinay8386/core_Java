@@ -1,0 +1,216 @@
+https://dzone.com/articles/singleton-six-ways-to-write-and-uses-in-Java
+
+=> Singleton in Java is a design pattern that restricts the instantiation of a class to a single instance and provides a global point of access to that instance. This is useful when exactly one object is needed to coordinate actions across the system.
+
+=> While creating singleton we have to ensure only one object is created and that object can be accessed globally. There are several ways to implement a singleton in Java, each with its own advantages and disadvantages. Here are six common ways to write a singleton in Java:      
+
+=> Common things to consider when implementing a singleton:
+    1. All constructor should be private to prevent direct instantiation.
+    2. A private static or private static final variable to hold the single instance of the class.
+       a. A private static variable is initialized when the class is loaded, and it can be lazily initialized when the instance is first requested.
+       b. A private static final variable is initialized when the class is loaded and cannot be changed afterward, ensuring thread safety without synchronization.
+    3. A static method to provide global access to the single instance.
+
+=> 6 Ways to Write a Singleton in Java:
+    -> Static Eager Singleton Class:
+    
+        -> Eager means the object is created early and kept ready to use.
+        -> When a .java file is compiled, it generates a .class file.
+        -> The JVM loads the .class file into memory when the class is needed.
+        -> When the class is loaded, static variables are initialized.
+        -> Since the singleton instance is declared as static, the object is created during class loading itself.
+        -> Without static, the object will NOT be created during class loading.
+        -> Static variables are initialized only once when the class is loaded.
+        
+        -> Example: Refer StaticEagerSingleton.java
+        
+        -> Flow:
+            -> StaticEagerSingleton.java is compiled into StaticEagerSingleton.class
+            -> JVM loads StaticEagerSingleton.class into memory
+            -> The static variable 'instance' is initialized
+            -> new StaticEagerSingleton() executes and creates the singleton object
+            -> The getInstance() method returns the already created instance
+
+        -> Advantages:
+            -> Simple to implement
+            -> Thread-safe without synchronization
+
+        -> Disadvantages:
+            -> Instance is created even if it is never used
+            -> Can lead to unnecessary memory/resource usage
+    
+    -> Dynamic Lazy Singleton Class:
+    
+        -> Lazy means the object is created only when it is needed.
+
+        -> The singleton instance is not created until the getInstance() method is called for the first time.
+
+        -> This approach can save resources if the singleton object is not always required.
+            
+        -> Example: Refer DynamicLazySingleton.java
+            
+        -> Flow:
+            -> DynamicLazySingleton.java is compiled into DynamicLazySingleton.class
+            -> JVM loads DynamicLazySingleton.class into memory
+            -> The static variable 'instance' is initialized to null
+            -> When getInstance() is called for the first time, it checks whether 'instance' is null
+            -> If null, it creates a new instance of DynamicLazySingleton and assigns it to 'instance'
+            -> Subsequent calls to getInstance() return the already created instance
+
+        -> Advantages:
+            -> Instance is created only when needed
+            -> Saves memory/resources
+
+        -> Disadvantages:
+            -> Not thread-safe without synchronization
+            -> Multiple threads may create multiple instances simultaneously in a multithreaded environment
+
+
+    -> Dynamic Lazy Improved Singleton Class:
+        
+        -> This approach is similar to Dynamic Lazy Singleton but adds synchronization to make it thread-safe.
+
+        -> The getInstance() method is synchronized, ensuring that only one thread can execute it at a time.
+
+        -> This prevents multiple threads from creating multiple singleton objects simultaneously.
+            
+        -> Example: Refer DynamicLazyImprovedSingleton.java
+            
+        -> Flow:
+            -> DynamicLazyImprovedSingleton.java is compiled into DynamicLazyImprovedSingleton.class
+            -> JVM loads DynamicLazyImprovedSingleton.class into memory
+            -> The static variable 'instance' is initialized to null
+            -> When getInstance() is called for the first time, it checks whether 'instance' is null
+            -> Since the method is synchronized, only one thread can enter the method at a time
+            -> If 'instance' is null, a new singleton object is created and assigned to 'instance'
+            -> Subsequent calls return the already created instance
+
+        -> Advantages:
+            -> Thread-safe
+            -> Prevents creation of multiple singleton objects
+
+        -> Disadvantages:
+            -> Entire getInstance() method is synchronized
+            -> Every call requires locking and unlocking
+            -> Can reduce performance after the object is already created
+
+
+        -> To improve performance, Double Checked Locking (DCL) can be used.
+
+        -> Double Checked Locking reduces synchronization overhead by synchronizing only the object creation code.
+
+        -> Example: Refer DoubleCheckedLockingSingleton.java
+
+            -> The singleton object is created only when getInstance() is called for the first time.
+
+            -> The first check (if instance == null) is performed without synchronization for better performance.
+
+            -> If instance is null, the thread enters the synchronized block.
+
+            -> Inside the synchronized block, a second null check is performed.
+
+            -> The object is created only once.
+
+            -> The instance variable should be declared as volatile to avoid partially initialized objects due to instruction reordering.
+
+    -> Bill Pugh Singleton Class:
+        
+        -> This approach uses a static inner helper class to hold the singleton instance.
+
+        -> The singleton instance is created when the inner class is loaded, which happens only when getInstance() is called for the first time.
+
+        -> This approach is thread-safe without requiring synchronization.
+
+        -> Example: Refer BillPughSingleton.java
+
+            -> The BillPughSingleton class contains a private static inner class called SingletonHelper.
+
+            -> The SingletonHelper class has a static variable 'instance' that holds the singleton object.
+
+            -> When getInstance() is called, it returns SingletonHelper.instance.
+
+            -> The SingletonHelper class is not loaded until getInstance() is called, ensuring lazy initialization.
+
+    -> Enum Singleton Class:
+        
+        -> This approach uses an enum to implement the singleton pattern.
+
+        -> Enums in Java are inherently serializable and provide a guarantee against multiple instantiation, even in the face of complex serialization or reflection attacks.
+
+        -> Example: Refer EnumSingleton.java
+
+            -> The EnumSingleton class is defined as an enum with a single instance called INSTANCE.
+
+            -> The getInstance() method returns the INSTANCE.
+
+            -> This approach is simple and provides built-in thread safety and serialization guarantees.
+
+        -> Advantages:
+            -> Simple to implement
+            -> Provides built-in thread safety
+            -> Provides built-in serialization guarantees
+            -> safe against reflection attacks
+        -> Disadvantages:
+            -> May not be suitable if the singleton class needs to extend another class (since enums cannot extend other classes)
+
+    ->  Singleton With Function and Libraries
+
+        -> This approach uses a functional interface and a library like Java's Supplier to create a singleton instance.
+
+        -> The singleton instance is created lazily when the supplier is called for the first time.
+
+        -> Example 1: Refer SingletonWithFunction.java
+
+            -> The SingletonWithFunction class contains a private static final variable 'instance' of type SingletonWithFunction.
+
+            -> The singleton object is created eagerly when the class is loaded by the JVM.
+
+            -> The constructor is private to prevent object creation from outside the class.
+
+            -> The getInstance() method returns the already created singleton object.
+
+            -> The class also contains additional methods (functions) that can be accessed using the singleton instance.
+
+            -> Example:
+                -> SingletonWithFunction obj = SingletonWithFunction.getInstance();
+                -> obj.showMessage();
+
+            -> This approach is simple, thread-safe, and suitable when the singleton object is always required.
+
+
+        -> Example 2: Singleton Usage in Libraries (Logger Example)
+
+            -> Many Java libraries internally use the Singleton design pattern.
+
+            -> Logger is a common real-world example of Singleton usage.
+
+            -> Example:
+                -> private static final Logger logger =
+                        Logger.getLogger(Main.class.getName());
+
+            -> The Logger object is shared and reused instead of creating a new logger object every time.
+
+            -> This improves performance and ensures centralized logging across the application.
+
+            -> Example Usage:
+                -> logger.info("Application Started");
+
+            -> Real-world libraries/frameworks using Singleton concepts:
+                -> Logger
+                -> Runtime class
+                -> Spring Singleton Beans
+                -> Database Connection Pool Managers
+
+=> Singleton With Framework: Spring, Guice
+
+    -> Spring Framework provides built-in support for Singleton beans.
+
+    -> By default, Spring beans are singleton scoped, meaning that only one instance of the bean is created and shared across the entire application context.
+
+    -> Example:
+        -> @Component
+           public class MySingletonService {
+               // Service methods
+           }
+
+    -> Guice from Google is also a framework to prepare singleton objects and an alternative to Spring.
