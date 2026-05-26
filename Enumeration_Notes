@@ -1,0 +1,592 @@
+# Enumeration in Java
+
+## What is Enumeration (enum)?
+
+-> Enumeration (enum) is a special data type in Java used to define a fixed set of constants.
+
+-> enum stands for Enumerated Type.
+
+-> It is used when a variable can have only a limited number of predefined values.
+
+-> Enumeration improves:
+-> Readability
+-> Type Safety
+-> Maintainability
+
+---
+
+# Why Do We Need Enumeration?
+
+Before enum, developers commonly used:
+
+```java
+public static final int MONDAY = 1;
+public static final int TUESDAY = 2;
+```
+
+Problems:
+
+-> No type safety
+-> Any integer value can be passed
+-> Difficult to maintain
+-> Less readable
+
+---
+
+# Example Without Enum
+
+```java
+public class Main {
+
+    public static final int RED = 1;
+    public static final int GREEN = 2;
+    public static final int BLUE = 3;
+
+    public static void main(String[] args) {
+
+        int color = 5;
+
+        System.out.println(color);
+    }
+}
+```
+
+-> Invalid values like 5 are still allowed.
+
+---
+
+# Example With Enum
+
+```java
+enum Color {
+    RED,
+    GREEN,
+    BLUE
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Color color = Color.RED;
+
+        System.out.println(color);
+    }
+}
+```
+
+Output:
+
+```text
+RED
+```
+
+---
+
+# Important Observation
+
+```java
+Color.RED
+```
+
+-> RED is not a normal variable.
+
+-> It is an enum constant.
+
+-> Java internally creates objects for enum constants.
+
+---
+
+# Internal Understanding
+
+Java internally behaves somewhat like this:
+
+```java
+final class Color {
+
+    public static final Color RED = new Color();
+    public static final Color GREEN = new Color();
+    public static final Color BLUE = new Color();
+}
+```
+
+-> Constructor is controlled internally by Java.
+
+---
+
+# Basic Syntax
+
+```java
+enum EnumName {
+    CONSTANT1,
+    CONSTANT2,
+    CONSTANT3
+}
+```
+
+---
+
+# Enum Naming Convention
+
+-> Enum name follows PascalCase.
+
+Example:
+
+```java
+Day
+Color
+Direction
+```
+
+-> Enum constants are usually written in UPPER_CASE.
+
+Example:
+
+```java
+MONDAY
+RED
+NORTH
+```
+
+---
+
+# Enum Example
+
+```java
+enum Day {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}
+```
+
+---
+
+# Using Enum
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+
+        Day today = Day.MONDAY;
+
+        System.out.println(today);
+    }
+}
+```
+
+Output:
+
+```text
+MONDAY
+```
+
+---
+
+# Enum with Switch Case
+
+```java
+enum Day {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Day today = Day.MONDAY;
+
+        switch (today) {
+
+            case MONDAY:
+                System.out.println("Start of week");
+                break;
+
+            case TUESDAY:
+                System.out.println("Working day");
+                break;
+
+            case WEDNESDAY:
+                System.out.println("Mid week");
+                break;
+        }
+    }
+}
+```
+
+---
+
+# Enum is Type-Safe
+
+```java
+Day today = Day.MONDAY;
+```
+
+-> Only Day constants are allowed.
+
+This is invalid:
+
+```java
+Day today = 5;
+```
+
+Compilation Error occurs.
+
+---
+
+# Enum Can Have Methods
+
+Example:
+
+```java
+enum Direction {
+
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST;
+
+    public void show() {
+        System.out.println("Direction Method");
+    }
+}
+```
+
+Using:
+
+```java
+Direction.NORTH.show();
+```
+
+---
+
+# Enum Can Have Constructors
+
+Example:
+
+```java
+enum Laptop {
+
+    MACBOOK(200000),
+    THINKPAD(120000),
+    DELL(90000);
+
+    private int price;
+
+    Laptop(int price) {
+        this.price = price;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+}
+```
+
+Usage:
+
+```java
+System.out.println(Laptop.MACBOOK.getPrice());
+```
+
+Output:
+
+```text
+200000
+```
+
+---
+
+# Important Rule About Enum Constructor
+
+-> Enum constructors are always private internally.
+
+-> We cannot create enum objects manually using new.
+
+Invalid:
+
+```java
+Laptop l = new Laptop();
+```
+
+Compilation Error.
+
+---
+
+# Enum with Fields and Methods
+
+```java
+enum Status {
+
+    SUCCESS(200),
+    ERROR(500),
+    NOT_FOUND(404);
+
+    private int code;
+
+    Status(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+}
+```
+
+Usage:
+
+```java
+System.out.println(Status.SUCCESS.getCode());
+```
+
+---
+
+# values() Method
+
+-> values() returns all enum constants as an array.
+
+Example:
+
+```java
+for (Day d : Day.values()) {
+    System.out.println(d);
+}
+```
+
+Output:
+
+```text
+MONDAY
+TUESDAY
+WEDNESDAY
+```
+
+---
+
+# ordinal() Method
+
+-> ordinal() returns the position of enum constant.
+
+Example:
+
+```java
+System.out.println(Day.MONDAY.ordinal());
+```
+
+Output:
+
+```text
+0
+```
+
+---
+
+# valueOf() Method
+
+-> Converts String into Enum constant.
+
+Example:
+
+```java
+Day d = Day.valueOf("MONDAY");
+
+System.out.println(d);
+```
+
+Output:
+
+```text
+MONDAY
+```
+
+---
+
+# Enum and Singleton
+
+Enum is one of the best ways to implement Singleton.
+
+Example:
+
+```java
+public enum EnumSingleton {
+
+    INSTANCE;
+
+    public void show() {
+        System.out.println("Singleton Method");
+    }
+}
+```
+
+Usage:
+
+```java
+EnumSingleton.INSTANCE.show();
+```
+
+---
+
+# Why Enum Singleton Is Special
+
+-> Thread-safe by default
+
+-> Prevents reflection attacks
+
+-> Prevents serialization issues
+
+-> Simplest Singleton implementation
+
+---
+
+# Memory Understanding
+
+```text
+JVM Loads Enum
+      ↓
+Enum Constants Created Once
+      ↓
+Shared Everywhere
+```
+
+---
+
+# Important Characteristics of Enum
+
+-> Enum constants are static and final internally.
+
+-> Enum can have:
+-> Variables
+-> Constructors
+-> Methods
+
+-> Enum cannot extend another class because it already extends java.lang.Enum.
+
+-> Enum can implement interfaces.
+
+---
+
+# Enum Implementing Interface
+
+Example:
+
+```java
+interface Printable {
+    void print();
+}
+
+
+enum Demo implements Printable {
+
+    TEST;
+
+    @Override
+    public void print() {
+        System.out.println("Printing");
+    }
+}
+```
+
+---
+
+# Enum vs Normal Constants
+
+| Normal Constants             | Enum                     |
+| ---------------------------- | ------------------------ |
+| Not type-safe                | Type-safe                |
+| Uses primitive/static values | Uses enum constants      |
+| Less readable                | More readable            |
+| Difficult to maintain        | Easier to maintain       |
+| Invalid values possible      | Invalid values prevented |
+
+---
+
+# Real-World Use Cases
+
+-> Days of week
+-> Months
+-> Directions
+-> Status codes
+-> Roles
+-> Order states
+-> Traffic signals
+-> Database status
+-> Singleton implementation
+
+---
+
+# Common Interview Questions
+
+## 1. What is enum in Java?
+
+-> enum is a special data type used to represent a fixed set of constants.
+
+## 2. Is enum a class?
+
+-> Yes.
+
+-> Java internally treats enum as a special class extending java.lang.Enum.
+
+## 3. Can enum have methods?
+
+-> Yes.
+
+## 4. Can enum have constructors?
+
+-> Yes.
+
+-> But constructors are private internally.
+
+## 5. Can we create enum object using new?
+
+-> No.
+
+## 6. Can enum implement interfaces?
+
+-> Yes.
+
+## 7. Why is enum Singleton considered best?
+
+-> Thread-safe
+-> Serialization-safe
+-> Reflection-safe
+-> Simple implementation
+
+---
+
+# Technique to Remember
+
+```text
+Enum = Fixed Set of Constants
+```
+
+Examples:
+
+```text
+Days
+Directions
+Colors
+Status
+Roles
+```
+
+---
+
+# Final Conclusion
+
+-> Enumeration (enum) is a special Java data type used to represent a fixed collection of constants.
+
+-> Enum provides type safety, readability, maintainability, and cleaner code.
+
+-> Enums can contain variables, constructors, and methods.
+
+-> Java internally treats enums as special classes.
+
+-> Enum is heavily used in real-world applications and is also one of the safest ways to implement the Singleton Design Pattern.

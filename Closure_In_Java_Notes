@@ -1,0 +1,475 @@
+# Closure in Java
+
+## What is Closure?
+
+-> A Closure is a function/lambda that remembers and uses variables from its outer scope.
+
+-> Even after the outer method finishes execution, the lambda/function can still access those variables.
+
+-> In Java, closures are mainly implemented using:
+-> Lambda Expressions
+-> Anonymous Inner Classes
+
+-> Closure is commonly used in:
+-> Functional Programming
+-> Streams API
+-> Multithreading
+-> Event Handling
+-> Callback Functions
+
+---
+
+# Simple Definition
+
+-> A Closure is a lambda or function that captures variables from its surrounding scope and remembers them later.
+
+---
+
+# Why the Name “Closure”?
+
+-> The lambda "closes over" the outer variable.
+
+-> It captures the variable and keeps it available even after the outer method ends.
+
+---
+
+# Basic Example
+
+```java
+interface Printer {
+    void print();
+}
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        int number = 10;
+
+        Printer p = () -> {
+            System.out.println(number);
+        };
+
+        p.print();
+    }
+}
+```
+
+Output:
+
+```text
+10
+```
+
+---
+
+# Understanding the Example
+
+```java
+int number = 10;
+```
+
+-> number is a local variable of the outer method.
+
+```java
+Printer p = () -> {
+    System.out.println(number);
+};
+```
+
+-> Lambda is using the outer variable 'number'.
+
+-> Lambda captures the variable.
+
+-> This captured behavior is called Closure.
+
+---
+
+# Internal Flow
+
+```text
+Outer Variable Created
+        ↓
+Lambda Captures Variable
+        ↓
+Lambda Remembers Variable
+        ↓
+Lambda Uses Variable Later
+```
+
+---
+
+# Real-Life Analogy
+
+-> Suppose a mother gives a lunch box to her child.
+
+-> Even after the child leaves home, the child still has access to the lunch box.
+
+-> Similarly:
+
+```text
+Outer Method Ends
+        ↓
+Lambda Still Remembers Variable
+```
+
+---
+
+# Another Important Example
+
+```java
+public class Main {
+
+    public static Runnable demo() {
+
+        int value = 100;
+
+        return () -> {
+            System.out.println(value);
+        };
+    }
+
+    public static void main(String[] args) {
+
+        Runnable r = demo();
+
+        r.run();
+    }
+}
+```
+
+Output:
+
+```text
+100
+```
+
+---
+
+# Important Observation
+
+-> The demo() method already finished execution.
+
+-> Normally local variables disappear after method completion.
+
+-> But lambda still remembers:
+
+```java
+value
+```
+
+-> This is Closure behavior.
+
+---
+
+# Why Java Allows This?
+
+-> Java internally captures and stores a copy of the variable.
+
+-> The lambda keeps access to that copied value.
+
+---
+
+# Important Rule in Java
+
+## Captured Variables Must Be Final or Effectively Final
+
+---
+
+# What is Final Variable?
+
+```java
+final int x = 10;
+```
+
+-> Value cannot be changed.
+
+---
+
+# What is Effectively Final?
+
+-> Variable is not declared final.
+
+-> But value is never modified after assignment.
+
+---
+
+# Example of Effectively Final
+
+```java
+int x = 10;
+
+Runnable r = () -> {
+    System.out.println(x);
+};
+```
+
+-> x is effectively final.
+
+-> Code works correctly.
+
+---
+
+# Invalid Example
+
+```java
+int x = 10;
+
+x++;
+
+Runnable r = () -> {
+    System.out.println(x);
+};
+```
+
+Compilation Error:
+
+```text
+Local variable x defined in an enclosing scope must be final or effectively final
+```
+
+---
+
+# Why This Restriction Exists?
+
+-> Local variables are stored in Stack Memory.
+
+-> Stack memory is destroyed after method execution.
+
+-> Lambda may execute later.
+
+-> To avoid inconsistency, Java copies the variable value.
+
+-> If variable changes later, copied value and actual value may become different.
+
+-> Therefore Java allows only final/effectively final variables.
+
+---
+
+# Memory Visualization
+
+```text
+main() starts
+      ↓
+int x = 10 created in stack
+      ↓
+Lambda captures x
+      ↓
+Java copies x value internally
+      ↓
+main() ends
+      ↓
+Original stack variable destroyed
+      ↓
+Lambda still uses copied value
+```
+
+---
+
+# Internal Concept (Simplified)
+
+Java internally behaves somewhat like this:
+
+```java
+int copiedValue = x;
+```
+
+-> Lambda uses copiedValue internally.
+
+---
+
+# Closure with Anonymous Inner Class
+
+Before Lambda Expressions, closures were commonly implemented using Anonymous Inner Classes.
+
+Example:
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+
+        int value = 50;
+
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println(value);
+            }
+        };
+
+        r.run();
+    }
+}
+```
+
+Output:
+
+```text
+50
+```
+
+---
+
+# Closure with Lambda
+
+```java
+Runnable r = () -> {
+    System.out.println(value);
+};
+```
+
+-> Lambda version is shorter and cleaner.
+
+---
+
+# Closure in Streams API
+
+Example:
+
+```java
+import java.util.Arrays;
+import java.util.List;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        int limit = 5;
+
+        List<Integer> list = Arrays.asList(1,2,3,4,5,6,7);
+
+        list.stream()
+            .filter(n -> n > limit)
+            .forEach(System.out::println);
+    }
+}
+```
+
+Output:
+
+```text
+6
+7
+```
+
+---
+
+# Understanding Stream Closure
+
+```java
+.filter(n -> n > limit)
+```
+
+-> Lambda uses outer variable:
+
+```java
+limit
+```
+
+-> Lambda captures limit.
+
+-> This is Closure.
+
+---
+
+# Closure in Multithreading
+
+```java
+public class Main {
+
+    public static void main(String[] args) {
+
+        String message = "Thread Started";
+
+        Thread t = new Thread(() -> {
+            System.out.println(message);
+        });
+
+        t.start();
+    }
+}
+```
+
+-> Thread lambda captures outer variable 'message'.
+
+-> This is another example of Closure.
+
+---
+
+# Difference Between Normal Function and Closure
+
+| Normal Function             | Closure                        |
+| --------------------------- | ------------------------------ |
+| Uses only its own variables | Uses outer variables           |
+| No memory of outer scope    | Remembers outer scope          |
+| Independent execution       | Captures surrounding variables |
+| No variable capture         | Variable capture exists        |
+
+---
+
+# Key Points to Remember
+
+-> Closure captures variables from outer scope.
+
+-> Lambda remembers outer variables.
+
+-> Captured variables must be final or effectively final.
+
+-> Java copies captured variables internally.
+
+-> Closures are heavily used in functional programming.
+
+-> Streams API uses closures extensively.
+
+-> Anonymous inner classes also support closures.
+
+---
+
+# Common Interview Questions
+
+## 1. What is Closure in Java?
+
+-> A closure is a lambda or anonymous inner class that captures variables from its outer scope.
+
+## 2. Why must variables be effectively final?
+
+-> Because Java copies local variables internally for lambda usage.
+
+-> Changing variables later may create inconsistency.
+
+## 3. Does Java support true closures?
+
+-> Java supports closure-like behavior using lambda expressions and anonymous inner classes.
+
+## 4. Where are closures commonly used?
+
+-> Streams API
+-> Functional Programming
+-> Multithreading
+-> Event Handling
+-> Callback Functions
+
+---
+
+# Technique to Remember
+
+```text
+Closure = Capture + Remember
+```
+
+-> Lambda captures outer variable.
+
+-> Lambda remembers variable later.
+
+---
+
+# Final Conclusion
+
+-> Closure in Java means a lambda or anonymous inner class can capture and remember variables from its surrounding scope.
+
+-> Even after the outer method finishes execution, the lambda can still use those variables.
+
+-> Java closures work only with final or effectively final variables to ensure safety and consistency.
+
+-> Closures are one of the most important concepts behind Lambda Expressions, Streams API, and Functional Programming in Java.
