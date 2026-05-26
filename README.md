@@ -4,27 +4,77 @@ A comprehensive educational Java repository covering foundational concepts throu
 
 ## Table of Contents
 
-- [Project Overview](#project-overview)
-- [Repository Structure](#repository-structure)
-- [Core Java Fundamentals](#core-java-fundamentals)
-- [Object-Oriented Programming Concepts](#object-oriented-programming-concepts)
-- [Collections & Iterators](#collections--iterators)
-- [Java 8: Functional Programming](#java-8-functional-programming)
-- [Java 9 Features](#java-9-features)
-- [Java 10-11 Features](#java-10-11-features)
-- [Java 14: Switch Expressions](#java-14-switch-expressions)
-- [Java 15: Text Blocks](#java-15-text-blocks)
-- [Java 16: Records](#java-16-records)
-- [Java 17: Sealed Classes](#java-17-sealed-classes)
-- [Java 21: Pattern Matching](#java-21-pattern-matching)
-- [Java 22: Unnamed Variables](#java-22-unnamed-variables)
-- [Java 25: Compact Source Files](#java-25-compact-source-files)
-- [Multithreading & Concurrency](#multithreading--concurrency)
-- [Design Patterns](#design-patterns)
-- [String & Wrapper Classes](#string--wrapper-classes)
-- [Supporting Documentation](#supporting-documentation)
-- [Learning Path](#learning-path)
-- [Getting Started](#getting-started)
+- [Core Java Learning Repository](#core-java-learning-repository)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Repository Structure](#repository-structure)
+  - [Core Java Fundamentals](#core-java-fundamentals)
+    - [Basic Syntax \& OOP Concepts](#basic-syntax--oop-concepts)
+    - [Constructor Patterns](#constructor-patterns)
+    - [Polymorphism \& Method Resolution](#polymorphism--method-resolution)
+    - [Inheritance Examples](#inheritance-examples)
+  - [Object-Oriented Programming Concepts](#object-oriented-programming-concepts)
+    - [Comparison Implementations](#comparison-implementations)
+  - [Collections \& Iterators](#collections--iterators)
+    - [Collections Framework](#collections-framework)
+    - [Iterator Patterns](#iterator-patterns)
+    - [Custom Collections](#custom-collections)
+  - [Closures in Java](#closures-in-java)
+  - [Enumeration (enum) in Java](#enumeration-enum-in-java)
+  - [Java 8: Functional Programming](#java-8-functional-programming)
+    - [Streams \& Filtering](#streams--filtering)
+    - [Date/Time API](#datetime-api)
+    - [Method References](#method-references)
+    - [Default Methods](#default-methods)
+    - [Annotations](#annotations)
+    - [Advanced Java 8 Examples](#advanced-java-8-examples)
+      - [CollectorWithJava8/](#collectorwithjava8)
+      - [Interview\_code/](#interview_code)
+      - [MapQuestion/](#mapquestion)
+      - [random\_que/](#random_que)
+  - [Java 9 Features](#java-9-features)
+  - [Java 10-11 Features](#java-10-11-features)
+  - [Java 14: Switch Expressions](#java-14-switch-expressions)
+  - [Java 15: Text Blocks](#java-15-text-blocks)
+  - [Java 16: Records](#java-16-records)
+  - [Java 17: Sealed Classes](#java-17-sealed-classes)
+  - [Java 21: Pattern Matching](#java-21-pattern-matching)
+  - [Java 22: Unnamed Variables](#java-22-unnamed-variables)
+  - [Java 25: Compact Source Files \& Instance Main](#java-25-compact-source-files--instance-main)
+  - [Java Persistence API (JPA)](#java-persistence-api-jpa)
+  - [Multithreading \& Concurrency](#multithreading--concurrency)
+    - [Basic Threading](#basic-threading)
+    - [Deep-Dive Multithreading Tutorials](#deep-dive-multithreading-tutorials)
+  - [Design Patterns](#design-patterns)
+    - [Singleton Pattern](#singleton-pattern)
+  - [String \& Wrapper Classes](#string--wrapper-classes)
+    - [String Operations](#string-operations)
+    - [Wrapper Classes](#wrapper-classes)
+    - [Documentation Files](#documentation-files)
+  - [Supporting Documentation](#supporting-documentation)
+    - [Fundamental Concepts](#fundamental-concepts)
+    - [Advanced Topics](#advanced-topics)
+    - [Utilities](#utilities)
+  - [Learning Path](#learning-path)
+    - [Beginner Level (2-3 weeks)](#beginner-level-2-3-weeks)
+    - [Intermediate Level (3-4 weeks)](#intermediate-level-3-4-weeks)
+    - [Advanced Level (4+ weeks)](#advanced-level-4-weeks)
+    - [Interview Preparation Track (2-3 weeks)](#interview-preparation-track-2-3-weeks)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation Steps](#installation-steps)
+    - [Running Examples](#running-examples)
+      - [Basic Compilation](#basic-compilation)
+      - [Compiling with Packages](#compiling-with-packages)
+      - [Using Modern Java Features (Java 9+)](#using-modern-java-features-java-9)
+      - [IDE Setup](#ide-setup)
+    - [Recommended Study Approach](#recommended-study-approach)
+    - [Quick Navigation Guide](#quick-navigation-guide)
+  - [Tips for Effective Learning](#tips-for-effective-learning)
+  - [Version Compatibility](#version-compatibility)
+  - [File Organization Best Practices](#file-organization-best-practices)
+  - [Contributing Notes](#contributing-notes)
+  - [Additional Resources](#additional-resources)
 
 ## Project Overview
 
@@ -61,8 +111,8 @@ core_Java/
 ├── Java22/                     # Unnamed variables
 ├── Java25/                     # Compact source files and instance main
 ├── MultiThreading/             # Basic threading and synchronization
-├── Singleton_6_Ways/           # Design pattern implementations
-├── (Documentation files)       # .one files for specific topics
+├── Singleton/                  # Design pattern implementations
+├── (Documentation files)       # .one files and Notes files for specific topics
 └── README.md                   # This file
 ```
 
@@ -162,6 +212,35 @@ Understanding iterator behavior when collections are modified during iteration:
 - **`Test.java`** - Testing custom collection
 
 **Key Topics:** Collection interface, generics, dynamic array implementation
+
+---
+
+## Closures in Java
+
+**Location:** `Closure_In_Java_Notes`
+
+Understanding closures is fundamental to functional programming in Java:
+
+- **What is a Closure?** - A closure is a function/lambda that remembers and uses variables from its outer scope
+- **Closure Capture** - Lambda expressions capture variables from their surrounding context
+- **Common Uses** - Functional programming, Streams API, multithreading, event handling, callbacks
+
+**Key Topics:** Lambda expression closures, variable capture rules, effectively final variables, practical closure patterns
+
+---
+
+## Enumeration (enum) in Java
+
+**Location:** `Enumeration.one`, `Enumeration_Notes`
+
+Enumerations provide a type-safe way to define a fixed set of constants:
+
+- **What is enum?** - A special data type for defining enumerated constants
+- **Why use enum?** - Improves type safety, readability, and maintainability over hardcoded constants
+- **enum Methods** - Methods to work with enum constants and values
+- **Best Practices** - When and how to use enums effectively
+
+**Key Topics:** Enum definition, enum constants, enum methods, comparisons, enum collections
 
 ---
 
@@ -443,6 +522,27 @@ Write simple Java programs without boilerplate class definitions:
 
 ---
 
+## Java Persistence API (JPA)
+
+**Location:** `JPA`
+
+JPA provides a standard interface for Object-Relational Mapping (ORM) in Java:
+
+- **What is JPA?** - Java Persistence API is a specification for managing relational data in Java applications
+- **ORM Concepts** - Automatic mapping between Java objects and database tables
+- **Why JPA?** - Eliminates boilerplate JDBC code, handles transactions, provides query language (JPQL)
+- **JPA vs ORM vs Hibernate** - Understanding the differences between concepts, specifications, and implementations
+- **Key Features**
+  - Automatic object-to-table mapping
+  - Transaction management
+  - Caching and lazy loading
+  - JPQL (Java Persistence Query Language)
+  - Support for multiple ORM providers (Hibernate, EclipseLink, etc.)
+
+**Key Topics:** Entity mapping, ORM fundamentals, JDBC problems, Object-Relational mismatch, persistence configuration
+
+---
+
 ## Multithreading & Concurrency
 
 ### Basic Threading
@@ -567,7 +667,7 @@ Six different implementations of the Singleton design pattern with detailed docu
 
 ## Supporting Documentation
 
-The repository includes several comprehensive reference documents in .one format (OneNote files):
+The repository includes several comprehensive reference documents in multiple formats:
 
 ### Fundamental Concepts
 
@@ -575,6 +675,8 @@ The repository includes several comprehensive reference documents in .one format
 - **`Basic Java 2.one`** - Advanced basic concepts, control structures
 - **`Control Flow Statement.one`** - If/else, switch, loops (for, while, do-while)
 - **`Enumeration.one`** - Enum types, enum constants, enum methods
+- **`Enumeration_Notes`** - Why use enumerations, types without enum, enum problems and solutions
+- **`Closure_In_Java_Notes`** - Closure concepts, lambda closures, variable capture, practical examples
 - **`PackageAndModifier.one`** - Package organization, access modifiers (public, private, protected, default)
 - **`String.one`** - String API, String vs StringBuffer vs StringBuilder
 - **`Wrapper class.one`** - Wrapper classes for primitives, boxing/unboxing
@@ -585,6 +687,7 @@ The repository includes several comprehensive reference documents in .one format
 - **`Modern Java Features (Java 9–25)`** - Comprehensive guide to all modern features
 - **`Preview_VS_Permanent_Feature_Notes`** - Understanding Java feature lifecycle
 - **`Work_With_Multiple_Java_Version.txt`** - Managing multiple JDK installations
+- **`JPA`** - Java Persistence API, ORM concepts, JDBC problems and solutions
 - **`Interface+OOPS Concept.7z`** - Compressed archive of interface and OOP materials
 
 ### Utilities
@@ -618,24 +721,28 @@ Start with Java fundamentals before moving to advanced concepts:
 
 ### Intermediate Level (3-4 weeks)
 
-Build practical skills with design patterns and basic concurrency:
+Build practical skills with design patterns, closures, and basic concurrency:
 
-1. **Week 1: Design Patterns**
-   - `Singleton_6_Ways` - Learn different implementation strategies
+1. **Week 1: Closures & Enumerations**
+   - `Closure_In_Java_Notes` - Understand closures and variable capture
+   - `Enumeration_Notes` - Master enumerations and type safety
+
+2. **Week 2: Design Patterns**
+   - `Singleton` - Learn different implementation strategies
    - [Sample/](Sample/) - Custom collection implementations
 
-2. **Week 2: Threading Basics**
+3. **Week 3: Threading Basics**
    - [MultiThreading/](MultiThreading/) - Thread creation and synchronization
    - Learn about thread safety and race conditions
 
-3. **Week 3-4: Java 8 Functional Programming**
+4. **Week 4: Java 8 Functional Programming**
    - [java8/StreamApiConcept/](java8/StreamApiConcept/) - Stream API basics
    - [java8/methodReference/](java8/methodReference/) - Functional programming
    - [java8/DateTimeAPI/](java8/DateTimeAPI/) - Modern date/time handling
 
 ### Advanced Level (4+ weeks)
 
-Master modern Java features and advanced concurrency:
+Master modern Java features, database persistence, and advanced concurrency:
 
 1. **Week 1-2: Advanced Java 8**
    - [Java8_code/CollectorWithJava8/](Java8_code/CollectorWithJava8/) - Complex streams
@@ -652,7 +759,11 @@ Master modern Java features and advanced concurrency:
    - [Java22/](Java22/) - Unnamed variables
    - [Java25/](Java25/) - Compact source files
 
-3. **Week 4+: Advanced Concurrency**
+3. **Week 4: Database & Persistence**
+   - `JPA` - Java Persistence API, ORM fundamentals, entity mapping
+   - Understand object-relational mapping and transaction management
+
+4. **Week 5+: Advanced Concurrency**
    - `DD_Multithreading_Concurrency` - Concurrency patterns
    - `DD_Multithreading__ExecutorService` - Thread pool management
    - `DD_Multithreading_Executors_ExecutorHierarchy_Future` - Future API
@@ -763,6 +874,8 @@ java FileName
 | OOP Fundamentals | [Basic_concept/](Basic_concept/) |
 | Inheritance & Polymorphism | [Inheritance/](Inheritance/), [Polymorphism/](Polymorphism/) |
 | Collections | [Collection/](Collection/), [Iterator/](Iterator/) |
+| Closures | `Closure_In_Java_Notes` |
+| Enumerations | `Enumeration.one`, `Enumeration_Notes` |
 | Lambda & Streams | [java8/StreamApiConcept/](java8/StreamApiConcept/), [java8/methodReference/](java8/methodReference/) |
 | Date/Time | [java8/DateTimeAPI/](java8/DateTimeAPI/) |
 | Type Inference | [Java10_11/](Java10_11/) |
@@ -771,7 +884,8 @@ java FileName
 | Pattern Matching | [Java21/](Java21/) |
 | Threading | [MultiThreading/](MultiThreading/) |
 | Advanced Concurrency | `DD_Multithreading_*` folders |
-| Design Patterns | `Singleton_6_Ways` |
+| Design Patterns | `Singleton` |
+| Database/ORM | `JPA` |
 | Interview Problems | [Java8_code/Interview_code/](Java8_code/Interview_code/) |
 | Real-world Problems | [Java8_code/CollectorWithJava8/](Java8_code/CollectorWithJava8/) |
 | String Operations | [StringEx/](StringEx/) |
