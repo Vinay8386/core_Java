@@ -1,0 +1,476 @@
+===============================================================================
+                JAVA 9 → JAVA 25 PRACTICE ROADMAP
+          (Feature Practice Through Real Coding Questions)
+===============================================================================
+
+=> MODULE 1: RECORDS, SEALED CLASSES & PATTERN MATCHING
+
+    Q1. Create an immutable Employee object having:
+        -> id
+        -> name
+        -> department
+        -> salary
+
+        Requirements:
+        -> Object should be immutable
+        -> No manual getters/setters
+        -> Proper equals(), hashCode(), toString()
+
+        Feature:
+        -> Records
+
+    Q2. Design employee hierarchy:
+
+        Employee
+           |
+           |-- PermanentEmployee
+           |-- ContractEmployee
+           |-- Intern
+
+        Requirements:
+        -> No other employee type should be allowed
+
+        Feature:
+        -> Sealed Classes
+
+    Q3. Given:
+
+        Employee emp
+
+        Print:
+
+        -> Permanent Employee
+        -> Contract Employee
+        -> Intern
+
+        based on actual object type.
+
+        Feature:
+        -> Pattern Matching for Switch
+
+    Q4. Generate Employee Offer Letter.
+
+        Expected Output:
+
+        Dear Vinay,
+
+        Welcome to ABC Company.
+
+        Department : Engineering
+        Salary     : 1200000
+
+        Feature:
+        -> Text Blocks
+
+    Q5. Generate Employee JSON Response.
+
+        Expected:
+
+        {
+          "id":101,
+          "name":"Vinay"
+        }
+
+        Feature:
+        -> Text Blocks
+        -> String Templates (Optional)
+
+
+===============================================================================
+=> MODULE 2: STREAM API PRACTICE
+===============================================================================
+
+    Q6. Find employees earning more than 10 LPA.
+
+        Feature:
+        -> Streams
+        -> var
+
+    Q7. Group employees department-wise.
+
+        Expected:
+
+        Engineering -> [...]
+        HR          -> [...]
+        Finance     -> [...]
+
+        Feature:
+        -> groupingBy()
+
+    Q8. Find top 3 highest-paid employees.
+
+        Feature:
+        -> Streams
+        -> Comparator
+
+    Q9. Find duplicate employee names.
+
+        Feature:
+        -> Streams
+        -> Collectors
+
+    Q10. Partition employees.
+
+        Expected:
+
+        Salary > 1000000
+        Salary <= 1000000
+
+        Feature:
+        -> partitioningBy()
+
+
+===============================================================================
+=> MODULE 3: OPTIONAL PRACTICE
+===============================================================================
+
+    Q11. Find employee by ID.
+
+        Return:
+
+        Optional<Employee>
+
+        Requirements:
+        -> Print employee if present
+        -> Print "Employee Not Found" otherwise
+
+        Feature:
+        -> ifPresentOrElse()
+
+    Q12. Fetch employee from:
+
+        -> Cache
+        -> Database
+
+        Requirements:
+        -> If cache misses, use database
+
+        Feature:
+        -> Optional.or()
+
+    Q13. Convert Optional<Employee> to Stream<Employee>
+         and process it.
+
+        Feature:
+        -> Optional.stream()
+
+
+===============================================================================
+=> MODULE 4: COLLECTION FACTORY METHODS
+===============================================================================
+
+    Q14. Create a read-only list of departments.
+
+        Departments:
+
+        -> Engineering
+        -> HR
+        -> Finance
+        -> DevOps
+
+        Try modifying the list.
+
+        Feature:
+        -> List.of()
+
+    Q15. Create immutable set of company locations.
+
+        Feature:
+        -> Set.of()
+
+    Q16. Create immutable configuration map.
+
+        Example:
+
+        DB_URL      -> localhost
+        DB_USER     -> admin
+        DB_PASSWORD -> secret
+
+        Feature:
+        -> Map.of()
+
+
+===============================================================================
+=> MODULE 5: STREAM ENHANCEMENTS (JAVA 9)
+===============================================================================
+
+    Q17. Given:
+
+        1 2 3 4 5 6 7 8
+
+        Read elements until value becomes > 4.
+
+        Expected:
+
+        1 2 3 4
+
+        Feature:
+        -> takeWhile()
+
+    Q18. Given:
+
+        1 2 3 4 5 6 7 8
+
+        Skip elements until value becomes > 4.
+
+        Expected:
+
+        5 6 7 8
+
+        Feature:
+        -> dropWhile()
+
+    Q19. Create stream from Optional value.
+
+        Feature:
+        -> Stream.ofNullable()
+
+
+===============================================================================
+=> MODULE 6: HTTP CLIENT (JAVA 11)
+===============================================================================
+
+    Q20. Call public REST API.
+
+        Example:
+
+        https://jsonplaceholder.typicode.com/users
+
+        Print response.
+
+        Feature:
+        -> HttpClient
+
+    Q21. Send POST request using HttpClient.
+
+        Feature:
+        -> HttpRequest
+        -> HttpResponse
+
+    Q22. Call multiple APIs asynchronously.
+
+        Example:
+
+        -> Users API
+        -> Posts API
+        -> Comments API
+
+        Feature:
+        -> HttpClient Async
+
+
+===============================================================================
+=> MODULE 7: COMPLETABLE FUTURE
+===============================================================================
+
+    Q23. Fetch:
+
+        -> Employee Details
+        -> Salary Details
+        -> Project Details
+
+        in parallel.
+
+        Combine all results.
+
+        Feature:
+        -> CompletableFuture
+
+    Q24. If task takes more than 2 seconds:
+
+        Return:
+
+        "Default Response"
+
+        Feature:
+        -> completeOnTimeout()
+
+    Q25. Throw timeout exception after 2 seconds.
+
+        Feature:
+        -> orTimeout()
+
+    Q26. Chain multiple async operations.
+
+        Feature:
+        -> thenApply()
+        -> thenCompose()
+        -> thenCombine()
+
+
+===============================================================================
+=> MODULE 8: VIRTUAL THREADS (JAVA 21)
+===============================================================================
+
+    Q27. Create 10,000 tasks using Platform Threads.
+
+        Measure:
+        -> Memory Usage
+        -> Execution Time
+
+    Q28. Execute same 10,000 tasks using Virtual Threads.
+
+        Compare:
+
+        -> Performance
+        -> Memory Consumption
+
+        Feature:
+        -> Virtual Threads
+
+    Q29. Build simple request processor using
+         Virtual Threads.
+
+        Feature:
+        -> Executors.newVirtualThreadPerTaskExecutor()
+
+
+===============================================================================
+=> MODULE 9: RECORD PATTERNS (JAVA 21)
+===============================================================================
+
+    Q30. Create:
+
+        record Address(String city, String state)
+
+        record Employee(String name,
+                        Address address)
+
+        Extract city directly.
+
+        Feature:
+        -> Record Patterns
+
+    Q31. Nested Record Deconstruction.
+
+        Feature:
+        -> Record Pattern Matching
+
+
+===============================================================================
+=> MODULE 10: SCOPED VALUES & STRUCTURED CONCURRENCY
+===============================================================================
+
+    Q32. Store Request ID once and access it across
+         multiple child tasks.
+
+        Feature:
+        -> Scoped Values
+
+    Q33. Fetch:
+
+        -> Employee Data
+        -> Salary Data
+        -> Project Data
+
+        in parallel.
+
+        If one task fails:
+
+        -> Cancel remaining tasks
+
+        Feature:
+        -> Structured Concurrency
+
+
+===============================================================================
+=> MODULE 11: MODERN STRING APIS
+===============================================================================
+
+    Q34. Remove leading/trailing spaces.
+
+        Feature:
+        -> strip()
+
+    Q35. Check blank string.
+
+        Feature:
+        -> isBlank()
+
+    Q36. Convert multiline string into stream.
+
+        Feature:
+        -> lines()
+
+    Q37. Repeat string 10 times.
+
+        Feature:
+        -> repeat()
+
+    Q38. Format dynamic string.
+
+        Feature:
+        -> formatted()
+
+
+===============================================================================
+=> MODULE 12: FILE API ENHANCEMENTS
+===============================================================================
+
+    Q39. Read complete file content.
+
+        Feature:
+        -> Files.readString()
+
+    Q40. Write complete file content.
+
+        Feature:
+        -> Files.writeString()
+
+    Q41. Build employee report and save it to file.
+
+        Feature:
+        -> Modern File APIs
+
+
+===============================================================================
+=> MODULE 13: ADVANCED MODERN JAVA
+===============================================================================
+
+    Q42. Create modular application.
+
+        Modules:
+
+        -> employee-service
+        -> salary-service
+        -> common
+
+        Feature:
+        -> JPMS (Module System)
+
+    Q43. Explore JShell and test APIs interactively.
+
+        Feature:
+        -> JShell
+
+    Q44. Create native memory allocation example.
+
+        Feature:
+        -> Foreign Function & Memory API
+
+
+===============================================================================
+=> FINAL CHALLENGE PROJECT
+===============================================================================
+
+    Build Employee Management System using:
+
+        -> Records
+        -> Sealed Classes
+        -> Pattern Matching
+        -> Record Patterns
+        -> Text Blocks
+        -> Optional
+        -> Streams
+        -> Immutable Collections
+        -> HttpClient
+        -> CompletableFuture
+        -> Virtual Threads
+        -> Structured Concurrency
+        -> Scoped Values
+        -> Modern File APIs
+
+    Goal:
+        -> One project that combines most Java 9–25 features
+           into a realistic production-style application.
+===============================================================================

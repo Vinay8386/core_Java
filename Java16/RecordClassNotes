@@ -131,7 +131,7 @@
 
 -> Java Automatically Generates (for Record Classes):
 
-    -> 1. Private Final Fields
+    -> 1. Private Final Fields  
 
             private final double length;
             private final double width;
@@ -834,3 +834,36 @@
 	• All record classes in Java automatically extend java.lang.Record.
 	• java.lang.Record is automatically imported by default (like all classes in java.lang), so you don’t need to import it explicitly.
 	• This means when you declare a record like record Employee(...) {}, it actually extends java.lang.Record behind the scenes.
+
+=> Important summary in record class:
+    -> Members Allowed in Record Class
+
+        -> Instance:
+            -> Additional instance variables are NOT allowed.
+            -> Instance initializer blocks are NOT allowed.
+            -> Instance methods are allowed.
+            -> An instance method may have any name.
+            -> If a method name is the same as a component name, it must
+            be the accessor method with the same signature and return type
+            (i.e., overriding the generated accessor).
+
+        -> Static:
+            -> Static variables are allowed.
+            -> Static methods are allowed.
+            -> Static initializer blocks are allowed.
+            -> Static member names should not conflict with component names
+            because it creates ambiguity and is generally not allowed.
+
+    -> Record Declaration Rules
+
+        -> A record can be declared as a top-level type.
+
+        -> A record can also be declared inside another class
+        (nested record).
+
+        -> A record can also be declared inside an interface.
+
+        -> A local record can be declared inside a method or block.
+
+        -> Record components define the complete instance state of a record.
+        Therefore, additional instance fields are not allowed.

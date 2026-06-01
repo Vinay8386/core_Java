@@ -40,4 +40,10 @@ public class Rectangle {
                 ", width=" + width +
                 '}';
     }
+
+    public static void main(String[] args) {
+        Rectangle rectangle = new Rectangle(10, 20);
+        System.out.println(rectangle.length());
+        System.out.println(rectangle.width);
+    }
 }

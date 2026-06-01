@@ -1,0 +1,9 @@
+=> Write a program that performs the following:
+
+    If object is String -> Print the length of the string
+
+    If object is Integer -> Print the square of the number
+
+    If object is Double -> Print the rounded value
+
+    Otherwise -> Print "Unsupported Type"

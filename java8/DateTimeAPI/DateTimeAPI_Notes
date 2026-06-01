@@ -1,0 +1,386 @@
+=> Before Java8, we were using :
+    -> java.util.Date
+    -> java.util.Calendar
+    -> java.util.SimpleDateFormat
+
+=> Problems with old Date and Calendar API:
+    -> Not thread safe
+    -> Mutable objects
+    -> Poor API design
+
+=> JSR(Java Specification Request) 310 introduced a new Date and Time API in the java.time package in Java 8, which is based on the ISO(International Organization for Standardization) calendar system and inspired by the Joda-Time library.
+
+    -> Problems with old Date and Time API:
+        -> java.util.Date was mutable and not thread-safe.
+        -> Calendar API was complex and difficult to use.
+        -> SimpleDateFormat was not thread-safe.
+        -> Poor timezone handling.
+        -> Confusing design and deprecated methods.
+
+    -> Advantages of new Date and Time API:
+        -> Immutable and thread-safe classes.
+        -> Clear separation between date, time, and timezone.
+        -> Better timezone support.
+        -> Easy formatting and parsing.
+        -> Fluent and readable API design.
+        -> Supports multiple calendar systems.
+
+    -> main packages of Date and Time API:
+
+        -> java.time:
+            -> Contains the core classes for date and time manipulation, such as LocalDate, LocalTime, LocalDateTime, ZonedDateTime, etc.
+
+            -> Important class in java.time package:
+
+                -> LocalDate:
+                    -> Represents a date without time.
+                    -> Example: 2024-06-01
+                    -> Example:
+                        -> LocalDate date = LocalDate.now();
+
+                -> LocalTime:
+                    -> Represents a time without date.
+                    -> Example: 10:30:00
+                    -> Example:
+                        -> LocalTime time = LocalTime.now();
+
+                -> LocalDateTime:
+                    -> Represents a date and time without timezone.
+                    -> Example: 2024-06-01T10:30:00
+                    -> Example:
+                        -> LocalDateTime dt = LocalDateTime.now();
+
+                -> ZonedDateTime:
+                    -> Represents a date and time with timezone.
+                    -> Example: 2024-06-01T10:30:00+05:30[Asia/Kolkata]
+                    -> Example:
+                        -> ZonedDateTime zoned =
+                                ZonedDateTime.now(
+                                    ZoneId.of("Asia/Kolkata")
+                                );
+
+                -> OffsetDateTime:
+                    -> Represents a date and time with an offset from UTC(Coordinated Universal Time).
+                    -> Example: 2024-06-01T10:30:00+05:30
+                    -> Difference:
+                        -> Contains only UTC offset.
+                        -> Does not contain complete timezone rules like DST(Daylight Saving Time).
+
+                -> Instant:
+                    -> Represents a machine timestamp or a point in time in UTC.
+                    -> Example: 2024-06-01T10:30:00Z
+                    -> Mostly used in:
+                        -> Logging
+                        -> Distributed systems
+                        -> Databases
+                        -> Server-side applications
+
+                -> Duration:
+                    -> Represents a time-based amount.
+                    -> Works with hours, minutes, seconds, nanoseconds.
+                    -> Example: PT2H30M
+                    -> Meaning:
+                        -> P = Period designator
+                        -> T = Time section starts
+                        -> 2H = 2 Hours
+                        -> 30M = 30 Minutes
+                    -> Example:
+                        -> Duration duration =
+                                Duration.ofHours(2);
+
+                -> Period:
+                    -> Represents a date-based amount.
+                    -> Works with years, months, and days.
+                    -> Example: P1Y2M3D
+                    -> Meaning:
+                        -> P = Period designator
+                        -> 1Y = 1 Year
+                        -> 2M = 2 Months
+                        -> 3D = 3 Days
+                    -> Example:
+                        -> Period period =
+                                Period.ofDays(10);
+
+                -> Clock:
+                    -> Represents a time source.
+                    -> Used for:
+                        -> Current time retrieval
+                        -> Testing
+                        -> Mocking time in applications
+                    -> Example:
+                        -> Clock clock = Clock.systemUTC();
+
+                -> ZoneId:
+                    -> Represents a timezone ID.
+                    -> Example:
+                        -> ZoneId.of("Asia/Kolkata")
+
+                -> ZoneOffset:
+                    -> Represents offset from UTC.
+                    -> Example:
+                        -> +05:30
+
+        -> java.time.format:
+            -> Contains classes for formatting and parsing date and time objects, such as DateTimeFormatter.
+
+            -> Important class in java.time.format package:
+
+                -> DateTimeFormatter:
+                    -> Used for formatting and parsing date and time objects.
+                    -> Thread-safe and immutable.
+                    -> Provides predefined formatters like:
+                        -> ISO_LOCAL_DATE
+                        -> ISO_LOCAL_TIME
+                        -> ISO_LOCAL_DATE_TIME
+
+                    -> Custom Pattern Example:
+                        -> DateTimeFormatter formatter =
+                                DateTimeFormatter.ofPattern(
+                                    "dd/MM/yyyy"
+                                );
+
+                    -> Common Pattern Symbols:
+
+                        -> dd   -> Day
+                        -> MM   -> Month number
+                        -> MMM  -> Month short name
+                        -> yyyy -> Year
+                        -> HH   -> Hour(24-hour format)
+                        -> mm   -> Minutes
+                        -> ss   -> Seconds
+
+                    -> Example:
+                        -> LocalDate date =
+                                LocalDate.now();
+
+                        -> String output =
+                                date.format(formatter);
+
+                -> DateTimeFormatterBuilder:
+                    -> Used for building complex date and time formatters with custom patterns and optional sections.
+
+                    -> Works using Builder Pattern.
+
+                    -> Step-by-step understanding:
+                        -> Create empty formatter builder.
+                        -> Add formatting rules.
+                        -> Convert builder into formatter using toFormatter().
+
+                    -> Example:
+                        -> DateTimeFormatter formatter =
+                                new DateTimeFormatterBuilder()
+                                        .appendPattern(
+                                            "dd/MM/yyyy"
+                                        )
+                                        .toFormatter();
+
+                    -> Output:
+                        -> 01/06/2024
+
+                    -> Useful when:
+                        -> Optional sections needed.
+                        -> Multiple parsing formats needed.
+                        -> Complex formatting rules required.
+
+                    -> Example with optional section:
+                        -> DateTimeFormatter formatter =
+                                new DateTimeFormatterBuilder()
+                                        .appendPattern(
+                                            "dd/MM/yyyy"
+                                        )
+                                        .optionalStart()
+                                        .appendPattern(
+                                            " HH:mm"
+                                        )
+                                        .optionalEnd()
+                                        .toFormatter();
+
+                    -> Accepts:
+                        -> 01/06/2024
+                        -> 01/06/2024 10:30
+
+                -> DecimalStyle:
+                    -> Used for formatting numbers in date and time objects according to a specific locale.
+
+                    -> Helps in:
+                        -> Digit formatting
+                        -> Decimal separators
+                        -> Locale-specific number formatting
+
+                    -> Example:
+                        -> DecimalStyle decimalStyle =
+                                DecimalStyle.of(Locale.US);
+
+                    -> Output Example:
+                        -> 1,000,000
+
+        -> java.time.temporal:
+            -> Contains classes for working with temporal fields and units.
+
+            -> Mainly used by:
+                -> Framework developers
+                -> Library writers
+                -> Advanced date manipulation
+
+            -> Important interfaces/classes:
+
+                -> Temporal:
+                    -> Base interface for date-time objects.
+
+                -> TemporalField:
+                    -> Represents a field such as:
+                        -> YEAR
+                        -> MONTH_OF_YEAR
+                        -> DAY_OF_MONTH
+
+                -> TemporalUnit:
+                    -> Represents units such as:
+                        -> DAYS
+                        -> MONTHS
+                        -> YEARS
+                        -> HOURS
+
+                -> ChronoUnit:
+                    -> Common implementation of TemporalUnit.
+
+                    -> Example:
+                        -> long days =
+                                ChronoUnit.DAYS.between(
+                                    startDate,
+                                    endDate
+                                );
+
+                -> TemporalAdjuster:
+                    -> Used to adjust dates.
+
+                    -> Example:
+                        -> Get next Sunday.
+
+                    -> Example:
+                        -> LocalDate nextSunday =
+                                LocalDate.now()
+                                        .with(
+                                            TemporalAdjusters.next(
+                                                DayOfWeek.SUNDAY
+                                            )
+                                        );
+
+                -> TemporalAdjusters:
+                    -> Utility class containing predefined adjusters.
+
+                    -> Common methods:
+                        -> firstDayOfMonth()
+                        -> lastDayOfMonth()
+                        -> next()
+                        -> previous()
+
+        -> java.time.chrono:
+            -> Contains classes for working with different calendar systems.
+
+            -> By default Java uses ISO-8601 Gregorian calendar.
+
+            -> Supports other calendar systems such as:
+
+                -> JapaneseChronology
+                -> ThaiBuddhistChronology
+                -> HijrahChronology
+                -> MinguoChronology
+
+            -> Example:
+                -> HijrahDate hijrahDate =
+                        HijrahDate.now();
+
+            -> Useful for:
+                -> International applications
+                -> Region-specific calendars
+                -> Religious calendar systems
+
+        -> java.time.zone:
+            -> Contains classes related to timezone rules and timezone handling.
+
+            -> Important classes:
+
+                -> ZoneRules:
+                    -> Contains timezone rules like DST changes.
+
+                -> ZoneOffsetTransition:
+                    -> Represents transition between offsets.
+
+            -> Useful for:
+                -> Global applications
+                -> Airline systems
+                -> International scheduling
+                -> Cloud applications
+
+    -> Difference between Duration and Period:
+
+        -> Duration:
+            -> Time-based.
+            -> Works with seconds and nanoseconds.
+            -> Used with LocalTime or Instant.
+
+        -> Period:
+            -> Date-based.
+            -> Works with years, months, days.
+            -> Used with LocalDate.
+
+    -> Difference between ZonedDateTime and OffsetDateTime:
+
+        -> ZonedDateTime:
+            -> Contains complete timezone information.
+            -> Handles DST changes.
+            -> Example:
+                -> Asia/Kolkata
+
+        -> OffsetDateTime:
+            -> Contains only UTC offset.
+            -> Does not contain timezone rules.
+            -> Example:
+                -> +05:30
+
+    -> Commonly used predefined formatters:
+
+        -> DateTimeFormatter.ISO_LOCAL_DATE
+        -> DateTimeFormatter.ISO_LOCAL_TIME
+        -> DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        -> DateTimeFormatter.ISO_ZONED_DATE_TIME
+
+    -> Real-world use cases:
+
+        -> Banking systems
+        -> REST APIs
+        -> Microservices
+        -> Logging systems
+        -> Scheduling applications
+        -> Distributed systems
+        -> Cloud-native applications
+
+    -> Important Interview Questions:
+
+        -> Why is new Date-Time API better?
+            -> Immutable
+            -> Thread-safe
+            -> Better design
+            -> Better timezone handling
+
+        -> Why is SimpleDateFormat unsafe?
+            -> Mutable and not thread-safe.
+
+        -> Which class represents machine timestamp?
+            -> Instant
+
+        -> Which class should be used for timezone-aware date and time?
+            -> ZonedDateTime
+
+        -> Difference between LocalDateTime and ZonedDateTime?
+            -> LocalDateTime has no timezone.
+            -> ZonedDateTime contains timezone information.
+
+        -> Which package handles formatting/parsing?
+            -> java.time.format
+
+        -> Which package handles non-ISO calendars?
+            -> java.time.chrono
+
+        -> Which package handles timezone rules?
+            -> java.time.zone

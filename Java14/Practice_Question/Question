@@ -1,0 +1,125 @@
+=========================================================
+Question 1 : Grade Evaluation
+=========================================================
+
+Write a Java program that accepts a student's grade
+(A, B, C, or D) and displays the corresponding performance message.
+
+Rules:
+    A -> Excellent
+    B -> Good
+    C -> Average
+    D -> Poor
+    Any other value -> Invalid Grade
+
+Task:
+    1. Solve using Traditional Switch Statement.
+    2. Refactor using Switch Expression.
+
+
+=========================================================
+Question 2 : Day Finder
+=========================================================
+
+Write a Java program that accepts a day number (1-7)
+and prints the corresponding day name.
+
+Rules:
+    1 -> Monday
+    2 -> Tuesday
+    3 -> Wednesday
+    4 -> Thursday
+    5 -> Friday
+    6 -> Saturday
+    7 -> Sunday
+    Otherwise -> Invalid Day
+
+Task:
+    1. Solve using Traditional Switch Statement.
+    2. Refactor using Switch Expression.
+
+
+=========================================================
+Question 3 : Simple Calculator
+=========================================================
+
+Write a Java program that accepts two numbers and
+an operator (+, -, *, /).
+
+Perform the corresponding mathematical operation and
+display the result.
+
+Example:
+    num1 = 10
+    num2 = 5
+    operator = '+'
+
+Output:
+    Result = 15
+
+Task:
+    1. Solve using Traditional Switch Statement.
+    2. Refactor using Switch Expression.
+
+
+=========================================================
+Question 4 : Quarter Finder
+=========================================================
+
+Write a Java program that accepts a month number
+(1 to 12) and determines in which quarter of the year
+the month belongs.
+
+Rules:
+    Months 1,2,3    -> Q1
+    Months 4,5,6    -> Q2
+    Months 7,8,9    -> Q3
+    Months 10,11,12 -> Q4
+
+Any other value should display:
+    Invalid Month
+
+Task:
+    1. Solve using Traditional Switch Statement.
+    2. Refactor using Switch Expression.
+
+
+=========================================================
+Question 5 : Traffic Signal Controller
+=========================================================
+
+Create an enum named TrafficSignal containing:
+
+    RED
+    YELLOW
+    GREEN
+
+Write a Java program that accepts a traffic signal
+and displays the corresponding action.
+
+Rules:
+    RED    -> STOP
+    YELLOW -> READY
+    GREEN  -> GO
+
+Task:
+    1. Solve using Traditional Switch Statement.
+    2. Refactor using Switch Expression.
+
+
+=========================================================
+Question 6 : Employee Bonus Percentage
+=========================================================
+
+Input:
+    Rating
+
+Output:
+    EXCELLENT -> 30%
+    GOOD      -> 20%
+    AVERAGE   -> 10%
+    POOR      -> 0%
+
+Learning:
+    Perfect example for switch expression
+    because it returns a value.

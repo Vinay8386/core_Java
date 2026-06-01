@@ -91,7 +91,7 @@ public class SwitchYieldDemo {
      * @return Employee grade based on experience
      */
     public static String switchExpressionWithYield(Employee emp) {
-        return switch (emp.experience) {
+        String result = switch (emp.experience) {
 
             // Single-expression case: no yield needed
             case 0, 1, 2 -> "Junior";
@@ -110,6 +110,10 @@ public class SwitchYieldDemo {
             // Default single-expression case
             default -> "Legend";
         };
+
+        System.out.println("After switch");
+
+        return result;
     }
 }
 

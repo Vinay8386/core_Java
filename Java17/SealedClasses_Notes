@@ -201,31 +201,14 @@
 
         -> Permitted subclasses must be in the same module or package as the sealed class
 
-        -> Permitted subclasses must be declared as below modifier to describe their relationship with the sealed class:
-            -> final: Cannot be extended further
-            -> sealed: Can be extended by other sealed or non-sealed classes
-            -> non-sealed: Can be extended by any class
+        -> Every direct subclass of a sealed class must be declared as:
+            -> final: No further inheritance allowed.
+            -> sealed: Only permitted subclasses can inherit.
+            -> non-sealed: Inheritance is unrestricted.
 
-            -> Example:
+            -> Here each keyword determines whether further inheritance is allowed.
 
-                    public sealed class Shape
-                        permits Circle, Square, Rectangle {
-
-                    }
-
-                    // Circle is final, cannot be extended further
-                    final class Circle extends Shape { }
-
-                    // Square is sealed, can be extended by other sealed or non-sealed classes
-                    sealed class Square extends Shape
-                        permits ColoredSquare {
-
-                    }
-
-                    // Rectangle is non-sealed, can be extended by any class
-                    non-sealed class Rectangle extends Shape { }
-
-                    final class ColoredSquare extends Square { }
+            -> Example: Refer SealedClassVerification.java
 
     ---------------------------------------------------
 
@@ -260,81 +243,39 @@
 
                     public record Rectangle(double width, double height) implements Shape { }
 
-    ---------------------------------------------------
-    -> Sealed Classes and Pattern Matching:
+        -> Record and Sealed Types
 
-        -> Sealed classes work well with pattern matching (introduced in Java 16) because the compiler knows all possible subclasses.
+            -> Every record implicitly extends java.lang.Record.
 
-        -> This allows for exhaustive pattern matching, where the compiler can check if all cases are handled.
+            -> Since Java does not support multiple class inheritance, a record cannot extend any other class.
 
-            -> Example:
+            -> Therefore, a record cannot be a direct subclass of a sealed class.
 
-                    public sealed interface Shape
-                        permits Circle, Square, Rectangle { }
+            -> If we want records to participate in a sealed hierarchy, the parent should be declared as a sealed interface.
 
-                    public record Circle(double radius) implements Shape { }
+            -> This is a common design pattern in modern Java (Java 17+) when using Records + Sealed Types together.
 
-                    public record Square(double side) implements Shape { }
-
-                    public record Rectangle(double width, double height) implements Shape { }
-
-                    public class ShapeAreaCalculator {
-                        public double calculateArea(Shape shape) {
-                            return switch (shape) {
-                                case Circle c -> Math.PI * c.radius() * c.radius();
-                                case Square s -> s.side() * s.side();
-                                case Rectangle r -> r.width() * r.height();
-                            };
-                        }
-                    }
 
     ---------------------------------------------------
     -> Sealed Classes and Serialization:
 
-        -> Sealed classes can be serialized, but all permitted subclasses must also be serializable.
+        -> A sealed class or sealed interface can implement Serializable.
 
-        -> This ensures that the entire hierarchy can be serialized and deserialized correctly.
+        -> For serialization to work, the runtime object must implement Serializable either directly or indirectly.
 
-            -> Example:
+        -> If the sealed parent implements/extends Serializable, all permitted subtypes automatically become Serializable through inheritance.
 
-                    public sealed class Shape implements Serializable
-                        permits Circle, Square, Rectangle { }
+        -> In this case, permitted subtypes do NOT need to explicitly implement Serializable.
 
-                    public record Circle(double radius) extends Shape { }
+        -> If the sealed parent is NOT Serializable, then each subtype that needs serialization must implement Serializable itself.
 
-                    public record Square(double side) extends Shape { }
+        -> Example to verify above five points: Refer Java17/Payment_Processing
 
-                    public record Rectangle(double width, double height) extends Shape { }
+        -> Records are a good choice for serialization because they are immutable and mainly used to store data. 
 
-    ---------------------------------------------------
-    -> Sealed Classes and Reflection:
+        -> A record can be serialized if it implements Serializable directly or inherits Serializable from a parent interface.
 
-        -> Reflection in java allows you to inspect classes and their members at runtime. With sealed classes, you can still use reflection to inspect the class and its permitted subclasses.
-
-        -> Sealed classes can be inspected using reflection, but the permitted subclasses are also known at compile time.
-
-        -> This allows for better performance and security when using reflection with sealed classes.
-
-            -> Example:
-
-                    public sealed class Shape
-                        permits Circle, Square, Rectangle { }
-
-                    public record Circle(double radius) extends Shape { }
-
-                    public record Square(double side) extends Shape { }
-
-                    public record Rectangle(double width, double height) extends Shape { }
-
-                    public class ReflectionExample {
-                        public static void main(String[] args) {
-                            Class<?> shapeClass = Shape.class;
-                            System.out.println("Permitted subclasses of Shape:");
-                            for (Class<?> subclass : shapeClass.getPermittedSubclasses()) {
-                                System.out.println(" - " + subclass.getSimpleName());
-                            }
-                        }
-                    }
+    
     ---------------------------------------------------
     -> Sealed Classes and Access Modifiers:
 
@@ -377,27 +318,12 @@
 
                     final class Rectangle extends Shape { }
 
-    ---------------------------------------------------
-    -> Sealed Classes and Record Classes:
-
-        -> Record classes can also be used as permitted subclasses of a sealed class or interface.
-
-        -> This allows for concise and immutable data carriers within a sealed hierarchy.
-
-            -> Example:
-
-                    public sealed interface Shape
-                        permits Circle, Square, Rectangle { }
-
-                    public record Circle(double radius) implements Shape { }
-
-                    public record Square(double side) implements Shape { }
-
-                    public record Rectangle(double width, double height) implements Shape { }
 
     ---------------------------------------------------
     -> Sealed Classes and Enums:
 
+        -> In Java, An enum can't extend any other class because it implicitely extends java.lang.Enum.
+        
         -> Enums cannot be sealed classes, but they can implement a sealed interface.
 
         -> This allows for a fixed set of enum constants while still benefiting from the control provided by sealed interfaces.
@@ -426,6 +352,63 @@
 
                     public final class LargeBox<T> extends Box<T> { }
 
+    ---------------------------------------------------
+    -> Sealed Classes and Pattern Matching:
+
+        -> Sealed classes work well with pattern matching (introduced in Java 16) because the compiler knows all possible subclasses.
+
+        -> This allows for exhaustive pattern matching, where the compiler can check if all cases are handled.
+
+            -> Example:
+
+                    public sealed interface Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) implements Shape { }
+
+                    public record Square(double side) implements Shape { }
+
+                    public record Rectangle(double width, double height) implements Shape { }
+
+                    public class ShapeAreaCalculator {
+                        public double calculateArea(Shape shape) {
+                            return switch (shape) {
+                                case Circle c -> Math.PI * c.radius() * c.radius();
+                                case Square s -> s.side() * s.side();
+                                case Rectangle r -> r.width() * r.height();
+                            };
+                        }
+                    }
+
+    ---------------------------------------------------
+    -> Sealed Classes and Reflection:
+
+        -> Reflection in java allows you to inspect classes and their members at runtime. With sealed classes, you can still use reflection to inspect the class and its permitted subclasses.
+
+        -> Sealed classes can be inspected using reflection, but the permitted subclasses are also known at compile time.
+
+        -> This allows for better performance and security when using reflection with sealed classes.
+
+            -> Example:
+
+                    public sealed class Shape
+                        permits Circle, Square, Rectangle { }
+
+                    public record Circle(double radius) extends Shape { }
+
+                    public record Square(double side) extends Shape { }
+
+                    public record Rectangle(double width, double height) extends Shape { }
+
+                    public class ReflectionExample {
+                        public static void main(String[] args) {
+                            Class<?> shapeClass = Shape.class;
+                            System.out.println("Permitted subclasses of Shape:");
+                            for (Class<?> subclass : shapeClass.getPermittedSubclasses()) {
+                                System.out.println(" - " + subclass.getSimpleName());
+                            }
+                        }
+                    }
     ---------------------------------------------------
     -> Sealed Classes and Modules:
 

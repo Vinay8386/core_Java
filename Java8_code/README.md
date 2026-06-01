@@ -31,12 +31,12 @@ Stream utilities and functional programming patterns. FlatMap, parallel streams,
 
 ## Quick Navigation
 
-| Folder | Focus | Best For |
-|--------|-------|----------|
+| Folder             | Focus            | Best For                         |
+|--------------------|------------------|----------------------------------|
 | CollectorWithJava8 | Data aggregation | Learning collectors and grouping |
-| Interview_code | Problem solving | Interview preparation |
-| MapQuestion | Map operations | Data transformation |
-| random_que | Stream utilities | Functional programming |
+| Interview_code     | Problem solving  | Interview preparation            |
+| MapQuestion        | Map operations   | Data transformation              |
+| random_que         | Stream utilities | Functional programming           |
 
 ## Key Topics Covered
 

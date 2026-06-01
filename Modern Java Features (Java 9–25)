@@ -116,39 +116,8 @@ Key Highlights:
 
 
 ==========================================================================! Java 14: Switch Expressions and Statements !======================================================================
-=> Switch Expressions: 
-	-> Switch expressions are a modern and safer way to write switch statements in Java.
-	-> They reduce mistakes like accidental fall-through and make the code more readable.
-	-> In a switch expression, each case can directly return a value using the -> syntax.
-	-> This is a key difference from traditional switch statements, which cannot return values directly from a case.
 
-=> Fall-Through 
-	-> In traditional switch statements, if you forget to add a break statement, the program will continue executing the next case unexpectedly. This is called fall-through.
-	-> Switch expressions use case L -> labels, which eliminate the need for break statements.
-	-> Each case executes directly, and no further cases are executed unless explicitly defined.
-	-> This prevents unintended execution and makes the code safer and clearer.
-	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchEnhancementDemo.java
-
-=> How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
-	-> In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
-	-> In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
-	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchReturnDemo.java
-
-=> Yield Keyword:
-	-> The yield keyword is used when you want to execute multiple statements in a case block and still return a value.
-	-> Introduced in Java 12, it addresses the need for returning values from a block of statements inside a switch expression.
-	-> Without yield, the compiler cannot determine what value to return when a case contains more than one statement (like printing, calculations, or method calls).
-	-> yield explicitly specifies the value to be returned from the case block.
-	-> Code Example: https://github.com/Vinay8386/core_Java/blob/main/Java14/SwitchYieldDemo.java
-
-=> Difference Between Switch statements (regular switch) and switch expressions?
-	-> Switch statements use case L: and can have fall-through, meaning you need to use break to prevent running into the next case.
-	-> Switch expressions use case L -> and automatically return a value for that case, making your code cleaner and easier to read.
-			
-=> Summary: 
-	-> Before Java 12: No yield keyword. Traditional switch statements had case L: labels with optional break statements and no direct value returns from cases.
-	-> From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
-		
+=> Refer Java14/Switch_Statement_And_Expression_Notes
 
 ==========================================================================! Java 15 : Text Block Introduction (Multiline String Literals) !======================================================================
 => Text Block: New way to represent String in Java. A text block starts with three double-quote characters (""") followed by a line terminator (newline).

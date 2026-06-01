@@ -1,0 +1,61 @@
+=> Traditional Switch Statement (Before Java 14)
+    -> Used to execute different blocks of code based on a value.
+    -> Uses colon (:) syntax.
+    -> Requires break statement to stop execution.
+    -> If break is forgotten, execution continues to the next case (called fall-through).
+    -> Cannot directly return a value from the switch.
+    -> Example: Java14/TraditionalSwitchStatement.java
+
+=> Switch Statement After Java 14+
+    -> Still a switch statement because its purpose is to execute code.
+    -> Uses the new arrow (->) syntax.
+    -> No need to write break.
+    -> No possibility of accidental fall-through.
+    -> Does not produce a value.
+    -> Example: Example: Java14/ModernSwitchStatement.java
+
+=> Traditional Switch Expression (Before Java 14)
+	-> Java did not have a real switch expression.
+	-> Developers had to use a switch statement and manually assign values.
+	-> More code was required.
+    -> Example: Java14/TraditionalSwitchExpression.java
+
+=> Switch Expression After Java 14+
+    -> Introduced to directly produce a value.
+    -> Uses arrow (->) syntax.
+    -> No need for break.
+    -> Result can be assigned to a variable or returned from a method.
+    -> Makes the code shorter and easier to read.
+    -> Example: Java14/ModernSwitchExpression.java
+
+=> Difference Between Switch Statement and Switch Expression
+    -> Switch statement only execute code and doesn't return any value.
+    -> Switch expression execute code and return a value.
+
+=> Fall-Through 
+	-> In traditional switch statements, if you forget to add a break statement, the program will continue executing the next case unexpectedly. This is called fall-through.
+	-> Switch expressions use case L -> labels, which eliminate the need for break statements.
+	-> Each case executes directly, and no further cases are executed unless explicitly defined.
+	-> This prevents unintended execution and makes the code safer and clearer.
+	-> Code Example: Java14/SwitchEnhancementDemo.java
+
+=> How values are returned in traditional switch statement and a switch expression in Java using the return keyword.?
+	-> In a traditional switch statement, you can't directly return a value from a case. Instead, you need to store the value in a variable, and later return that value from the method using the return keyword.
+	-> In a switch expression, you can directly return a value from each case using the -> syntax. There's no need to store the value in a variable beforehand.
+	-> Code Example: Java14/SwitchReturnDemo.java
+
+=> Yield Keyword:
+	-> The yield keyword is used when you want to execute multiple statements in a case block and still return a value.
+	-> Introduced in Java 12, it addresses the need for returning values from a block of statements inside a switch expression.
+	-> Without yield, the compiler cannot determine what value to return when a case contains more than one statement (like printing, calculations, or method calls).
+	-> yield explicitly specifies the value to be returned from the case block.
+    -> In a switch expression, if a case contains a block with multiple statements, then yield is used to specify the value that the case should return.
+    -> we can't use return keyword in case of yield because:
+        -> return exit the entire method
+        -> Yield returns a value from the current switch expression case.
+	-> Code Example: Java14/SwitchYieldDemo.java
+			
+=> Summary: 
+	-> Before Java 12: No yield keyword. Traditional switch statements had case L: labels with optional break statements and no direct value returns from cases.
+	-> From Java 12 onwards: Switch expressions were introduced with the case L -> label, and the yield keyword was added to allow returning values from case blocks.
+		
