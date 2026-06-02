@@ -75,6 +75,7 @@ A comprehensive educational Java repository covering foundational concepts throu
   - [File Organization Best Practices](#file-organization-best-practices)
   - [Contributing Notes](#contributing-notes)
   - [Additional Resources](#additional-resources)
+  - [Folder README index](#folder-readme-index)
 
 ## Project Overview
 
@@ -957,3 +958,33 @@ To explore and understand any file:
 ---
 
 This repository provides a structured, comprehensive learning journey from Java fundamentals to cutting-edge Java 25 features. Use it as both a learning resource and a reference guide throughout your Java development career.
+
+---
+
+## Folder README index
+
+A quick index of the main topic folders (open a folder to view its README or examples):
+
+- [Basic_concept/](Basic_concept/)
+- [Collection/](Collection/)
+- [Constructor/](Constructor/)
+- [Inheritance/](Inheritance/)
+- [Iterator/](Iterator/)
+- [Polymorphism/](Polymorphism/)
+- [Sample/](Sample/)
+- [StringEx/](StringEx/)
+- [WrapperClassEx/](WrapperClassEx/)
+- [java8/](java8/)
+- [Java8_code/](Java8_code/)
+- [Java9/](Java9/)
+- [Java10_11/](Java10_11/)
+- [Java14/](Java14/)
+- [Java15/](Java15/)
+- [Java16/](Java16/)
+- [Java17/](Java17/)
+- [Java21/](Java21/)
+- [Java22/](Java22/)
+- [Java25/](Java25/)
+- [Latest_Feature_Practice/](Latest_Feature_Practice/)
+- [MultiThreading/](MultiThreading/)
+- [Singleton/](Singleton/)
