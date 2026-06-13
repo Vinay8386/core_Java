@@ -19,7 +19,7 @@ Factory Method (General Meaning): A factory method is a method whose main job is
                                   Example: Instead of:
                                         ThreadPoolExecutor pool = new ThreadPoolExecutor(5, 5, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
                                   You can write:
-                                        ExecutorService pool = Executors.Executors.newFixedThreadPool(5);
+                                        ExecutorService pool = Executors.newFixedThreadPool(5);
                                   Here, newFixedThreadPool(5) is a factory method because, It creates a ThreadPoolExecutor internally, returns it as an ExecutorService and you don't care about construction details.
 
 Future: A Future is an interface which represents the result of an asynchronous computation. Methods are provided to check if the computation is complete, to wait for its completion, and to retrieve the result of the computation. 

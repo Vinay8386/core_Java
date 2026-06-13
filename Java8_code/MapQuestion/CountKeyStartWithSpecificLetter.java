@@ -40,7 +40,8 @@ public class CountKeyStartWithSpecificLetter {
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
-                        (a,b)->a, LinkedHashMap::new
+                        (a,b)->a,           //It is required if duplicate element will be generated
+                        LinkedHashMap::new  //if you want to specify a custom map supplier, you must also provide a merge function, even if it never gets used.
                 ));
     }
 

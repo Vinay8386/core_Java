@@ -1,0 +1,14 @@
+=> Difference between Arrays.asList(), List.of(), new ArrayList<>()
+    -> Arrays.asList()  → Fixed Size (set allowed)
+    -> List.of()        → Immutable (nothing allowed)
+    -> ArrayList        → Fully Mutable (everything allowed)
+
+    | Feature         | Arrays.asList()  | List.of()       | new ArrayList<>()    |
+    | --------------- | ---------------  | --------------- | ---------------------|
+    | Add             | ❌               | ❌               | ✅                 |
+    | Remove          | ❌               | ❌               | ✅                 |
+    | Update (`set`)  | ✅               | ❌               | ✅                 |
+    | Allows null     | ✅               | ❌               | ✅                 |
+    | Fixed Size      | ✅               | N/A (Immutable)  | ❌                  |
+    | Mutable         | Partial           | ❌               | ✅                 |
+    | Backed by Array | ✅               | ❌               | ❌                 |

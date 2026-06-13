@@ -15,7 +15,7 @@ Concurrency in the Java Platform:
 Concurrency vs Parallelism:
     Concurrency → Can be single-threaded or multi-threaded, focus is on making progress on multiple tasks (time slicing, cooperative scheduling, async calls, etc.).
     Parallelism → Always multi-threaded (or multi-process), focus is on doing multiple things at the exact same time.
-
+      
 Processes and Threads:
     In concurrent programming, there are two basic units of execution: processes and threads. In the Java programming language, concurrent programming is mostly concerned with threads. However, processes are also important.
       Process: A process has a self-contained execution environment. A process generally has a complete, private set of basic run-time resources; in particular, each process has its own memory space.
@@ -23,6 +23,7 @@ Processes and Threads:
               Threads exist within a process — every process has at least one. Threads share the process's resources, including memory and open files.
               Multithreaded execution is an essential feature of the Java platform. Every application has at least one thread — or several, if you count "system" threads that do things like memory management and signal handling. But from the application programmer's point of view, you start with just one thread, called the main thread. 
               This thread has the ability to create additional threads, as we'll demonstrate in the next section.
+
 Thread Objects:
     Each thread is associated with an instance of the class Thread. There are two basic strategies for using Thread objects to create a concurrent application.
         Direct Thread Management (Manual Way): To directly control thread creation and management, simply instantiate Thread each time the application needs to initiate an asynchronous task. 
@@ -30,7 +31,7 @@ Thread Objects:
                                                Code Example:
                                                public class DirectThreadExample {
                                                     public static void main(String[] args) {
-                                                        // Task 1
+                                                        // Task 1 
                                                         Thread t1 = new Thread(() -> {
                                                             System.out.println("Task 1 is running in: " + Thread.currentThread().getName());
                                                         });

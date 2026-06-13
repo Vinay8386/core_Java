@@ -36,6 +36,7 @@ This folder contains essential threading concepts, thread synchronization, and t
 | `SharedResource.java` | Resource sharing between threads | Demonstrating synchronization need |
 | `DeadlockCondition.java` | Deadlock scenarios | Understanding deadlock |
 | `ExecutorFrameworkEx.java` | Basic executor usage | Thread pool management |
+| `Executor_Framework_Hierarchy_Complete.md` | Full hierarchy and pool reference | Interfaces, classes, utility methods, pool types |
 | `CallableTask.java` | Callable interface with return values | Task with results |
 | `RunnableTask.java` | Runnable interface implementation | Task without return value |
 | `Main.java` | Integration examples | Putting it together |
