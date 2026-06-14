@@ -1,0 +1,297 @@
+=> Mutex vs Semaphore
+
+    -> Both are synchronization mechanisms used in concurrent programs.
+
+    -> Both are used to control access to shared resources and avoid race conditions.
+
+    ----------------------------------------------------------------
+
+    -> Mutex (Mutual Exclusion)
+
+        -> Mutex allows only ONE thread to access a critical section at a time.
+
+        -> Works like a lock.
+
+        -> Before entering critical section:
+
+              lock()
+
+        -> After leaving critical section:
+
+              unlock()
+
+        -> If one thread acquires the mutex, all other threads must wait.
+
+        -> Used to achieve Mutual Exclusion.
+
+        -> Ownership exists.
+
+           Thread that locks the mutex must unlock it.
+
+        Example:
+
+            Shared Bank Account
+
+            T1 wants to update balance
+            T2 wants to update balance
+
+            T1 acquires mutex
+
+                balance = balance + 100
+
+            T2 waits
+
+            T1 releases mutex
+
+            Now T2 can access balance
+
+        Result:
+
+            Only one thread modifies balance at a time.
+
+    ----------------------------------------------------------------
+
+    -> Semaphore
+
+        -> Semaphore is a signaling mechanism.
+
+        -> Allows multiple threads to access a resource.
+
+        -> Uses a counter.
+
+        -> Counter represents available resources.
+
+        Operations:
+
+            wait() / P()
+
+                Decrease counter by 1
+
+            signal() / V()
+
+                Increase counter by 1
+
+        -> No ownership concept.
+
+        -> Any thread can signal().
+
+        Example:
+
+            Parking Lot
+
+            Total Parking Slots = 3
+
+            Semaphore Count = 3
+
+            Cars:
+
+                Car1 enters -> Count = 2
+                Car2 enters -> Count = 1
+                Car3 enters -> Count = 0
+
+            Car4 arrives
+
+                Must wait
+
+            Car1 leaves
+
+                signal()
+
+                Count = 1
+
+            Car4 enters
+
+        Result:
+
+            Maximum 3 cars allowed simultaneously.
+
+    ----------------------------------------------------------------
+
+    -> Binary Semaphore
+
+        -> Semaphore value can be:
+
+              0 or 1
+
+        -> Behaves similar to Mutex.
+
+        -> Still does NOT have ownership.
+
+        Example:
+
+            Resource available = 1
+
+            Thread acquires:
+
+                Count = 0
+
+            Other threads wait.
+
+    ----------------------------------------------------------------
+
+    -> Counting Semaphore
+
+        -> Semaphore value can be greater than 1.
+
+        Example:
+
+            Database Connection Pool
+
+            Total Connections = 10
+
+            Semaphore Count = 10
+
+            Maximum 10 threads can access database simultaneously.
+
+    ----------------------------------------------------------------
+
+    -> Mutex Example
+
+        Suppose:
+
+            Shared Printer
+
+        Multiple users want to print.
+
+        Printer can handle only one print job at a time.
+
+        Use:
+
+            Mutex
+
+        Flow:
+
+            T1 -> Lock Printer
+            T2 -> Wait
+            T3 -> Wait
+
+            T1 finishes
+
+            Unlock Printer
+
+            T2 starts
+
+    ----------------------------------------------------------------
+
+    -> Semaphore Example
+
+        Suppose:
+
+            Swimming Pool Capacity = 4
+
+        Total People:
+
+            P1
+            P2
+            P3
+            P4
+            P5
+
+        Use:
+
+            Semaphore Count = 4
+
+        Flow:
+
+            P1 enters -> Count=3
+            P2 enters -> Count=2
+            P3 enters -> Count=1
+            P4 enters -> Count=0
+
+            P5 waits
+
+            P2 leaves -> Count=1
+
+            P5 enters
+
+    ----------------------------------------------------------------
+
+    -> Race Condition
+
+        Problem:
+
+            count = 0
+
+            T1 -> count++
+
+            T2 -> count++
+
+        Expected:
+
+            count = 2
+
+        Actual:
+
+            count = 1
+
+        Because both threads access shared variable simultaneously.
+
+        Solution:
+
+            Use Mutex or Semaphore.
+
+    ----------------------------------------------------------------
+
+    -> Key Differences
+
+        Mutex
+
+            -> Locking mechanism
+            -> Mutual exclusion
+            -> Only one thread allowed
+            -> Ownership exists
+            -> Used for critical section protection
+            -> Binary state (Locked/Unlocked)
+
+        Semaphore
+
+            -> Signaling mechanism
+            -> Resource management
+            -> Multiple threads allowed
+            -> No ownership
+            -> Used for resource pool management
+            -> Counter based
+
+    ----------------------------------------------------------------
+
+    -> Easy Memory Trick
+
+        Mutex
+
+            One Bathroom
+            One Key
+
+            Only one person can enter.
+
+        Semaphore
+
+            Parking Lot
+
+            Multiple slots available.
+
+            Number of people allowed depends on semaphore count.
+
+    ----------------------------------------------------------------
+
+    -> Java Mapping
+
+        Mutex
+
+            synchronized
+            ReentrantLock
+
+        Semaphore
+
+            java.util.concurrent.Semaphore
+
+    ----------------------------------------------------------------
+
+    -> Remember
+
+        Mutex
+
+            "Who owns the lock?"
+
+        Semaphore
+
+            "How many resources are available?"
