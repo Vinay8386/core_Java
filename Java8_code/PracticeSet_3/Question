@@ -1,0 +1,301 @@
+==========================================
+JAVA LIST<Integer> PRACTICE QUESTIONS
+==========================================
+
+Input:
+
+List<Integer> numbers = Arrays.asList(
+12, 5, 8, 12, 19, 25, 8, 30, 45, 50,
+67, 89, 90, 100, 23, 17, 50, 60, 75, 99
+);
+
+--------------------------------------------------
+
+1. Find all even numbers
+
+Expected Output:
+[12, 8, 12, 8, 30, 50, 90, 100, 50, 60]
+
+--------------------------------------------------
+
+2. Find all odd numbers
+
+Expected Output:
+[5, 19, 25, 45, 67, 89, 23, 17, 75, 99]
+
+--------------------------------------------------
+
+3. Remove duplicate numbers
+
+Expected Output:
+[12, 5, 8, 19, 25, 30, 45, 50, 67, 89, 90, 100, 23, 17, 60, 75, 99]
+
+--------------------------------------------------
+
+4. Sort numbers in ascending order
+
+Expected Output:
+[5, 8, 8, 12, 12, 17, 19, 23, 25, 30, 45, 50, 50, 60, 67, 75, 89, 90, 99, 100]
+
+--------------------------------------------------
+
+5. Sort numbers in descending order
+
+Expected Output:
+[100, 99, 90, 89, 75, 67, 60, 50, 50, 45, 30, 25, 23, 19, 17, 12, 12, 8, 8, 5]
+
+--------------------------------------------------
+
+6. Find maximum number
+
+Expected Output:
+100
+
+--------------------------------------------------
+
+7. Find minimum number
+
+Expected Output:
+5
+
+--------------------------------------------------
+
+8. Find second highest number
+
+Expected Output:
+99
+
+--------------------------------------------------
+
+9. Find second lowest number
+
+Expected Output:
+8
+
+--------------------------------------------------
+
+10. Count total elements
+
+Expected Output:
+20
+
+--------------------------------------------------
+
+11. Count distinct elements
+
+Expected Output:
+17
+
+--------------------------------------------------
+
+12. Find sum of all numbers
+
+Expected Output:
+884
+
+--------------------------------------------------
+
+13. Find average of all numbers
+
+Expected Output:
+44.2
+
+--------------------------------------------------
+
+14. Find numbers greater than 50
+
+Expected Output:
+[67, 89, 90, 100, 60, 75, 99]
+
+--------------------------------------------------
+
+15. Find numbers divisible by 5
+
+Expected Output:
+[5, 25, 30, 45, 50, 90, 100, 50, 60, 75]
+
+--------------------------------------------------
+
+16. Find numbers divisible by both 2 and 3
+
+Expected Output:
+[12, 12, 30, 90, 60]
+
+--------------------------------------------------
+
+17. Square every number
+
+Expected Output:
+[144, 25, 64, 144, 361, 625, 64, 900, 2025, 2500, 4489, 7921, 8100, 10000, 529, 289, 2500, 3600, 5625, 9801]
+
+--------------------------------------------------
+
+18. Cube every number
+
+Expected Output:
+[1728, 125, 512, 1728, ...]
+
+--------------------------------------------------
+
+19. Find first number greater than 50
+
+Expected Output:
+67
+
+--------------------------------------------------
+
+20. Find any even number
+
+Expected Output:
+12
+
+--------------------------------------------------
+
+21. Check if all numbers are positive
+
+Expected Output:
+true
+
+--------------------------------------------------
+
+22. Check if any number is greater than 100
+
+Expected Output:
+false
+
+--------------------------------------------------
+
+23. Check if no number is negative
+
+Expected Output:
+true
+
+--------------------------------------------------
+
+24. Print top 5 highest numbers
+
+Expected Output:
+[100, 99, 90, 89, 75]
+
+--------------------------------------------------
+
+25. Skip first 5 numbers
+
+Expected Output:
+[25, 8, 30, 45, 50, 67, 89, 90, 100, 23, 17, 50, 60, 75, 99]
+
+--------------------------------------------------
+
+26. Multiply every number by 10
+
+Expected Output:
+[120, 50, 80, 120, 190, 250, ...]
+
+--------------------------------------------------
+
+27. Count frequency of each number
+
+Expected Output:
+12 -> 2
+8 -> 2
+50 -> 2
+5 -> 1
+...
+99 -> 1
+
+--------------------------------------------------
+
+28. Find duplicate numbers
+
+Expected Output:
+[12, 8, 50]
+
+--------------------------------------------------
+
+29. Find unique numbers (appearing only once)
+
+Expected Output:
+[5, 19, 25, 30, 45, 67, 89, 90, 100, 23, 17, 60, 75, 99]
+
+--------------------------------------------------
+
+30. Partition numbers into Even and Odd
+
+Expected Output:
+true -> [12, 8, 12, 8, 30, 50, 90, 100, 50, 60]
+false -> [5, 19, 25, 45, 67, 89, 23, 17, 75, 99]
+
+--------------------------------------------------
+
+31. Join all numbers using comma
+
+Expected Output:
+12,5,8,12,19,25,8,30,45,50,67,89,90,100,23,17,50,60,75,99
+
+--------------------------------------------------
+
+32. Find product of all numbers using reduce()
+
+Expected Output:
+(Huge Long Value)
+
+--------------------------------------------------
+
+33. Find all prime numbers
+
+Expected Output:
+[5, 19, 23, 17, 67, 89]
+
+--------------------------------------------------
+
+34. Group numbers into Even and Odd
+
+Expected Output:
+Even -> [12, 8, 12, 8, 30, 50, 90, 100, 50, 60]
+Odd -> [5, 19, 25, 45, 67, 89, 23, 17, 75, 99]
+
+--------------------------------------------------
+
+35. Find summary statistics
+
+Expected Output:
+Count : 20
+Sum   : 884
+Min   : 5
+Max   : 100
+Average : 44.2
+
+--------------------------------------------------
+
+36. Sort distinct numbers in descending order
+
+Expected Output:
+[100, 99, 90, 89, 75, 67, 60, 50, 45, 30, 25, 23, 19, 17, 12, 8, 5]
+
+--------------------------------------------------
+
+37. Reverse the list
+
+Expected Output:
+[99, 75, 60, 50, 17, 23, 100, 90, 89, 67, 50, 45, 30, 8, 25, 19, 12, 8, 5, 12]
+
+--------------------------------------------------
+
+38. Find the first duplicate number
+
+Expected Output:
+12
+
+--------------------------------------------------
+
+39. Count occurrence of even numbers
+
+Expected Output:
+10
+
+--------------------------------------------------
+
+40. Convert List<Integer> to Set<Integer>
+
+Expected Output:
+[12, 5, 8, 19, 25, 30, 45, 50, 67, 89, 90, 100, 23, 17, 60, 75, 99]

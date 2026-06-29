@@ -1,0 +1,251 @@
+==========================================
+JAVA STRING PRACTICE QUESTIONS
+==========================================
+
+Input:
+String str = "Java is Powerful and Java is Fast and Secure";
+
+--------------------------------------------------
+
+1. Count total number of characters (including spaces)
+
+Expected Output:
+45
+
+--------------------------------------------------
+
+2. Count total number of words
+
+Expected Output:
+9
+
+--------------------------------------------------
+
+3. Count frequency of each word
+
+Expected Output:
+Java -> 2
+is -> 2
+Powerful -> 1
+and -> 2
+Fast -> 1
+Secure -> 1
+
+--------------------------------------------------
+
+4. Find the first repeated word
+
+Expected Output:
+Java
+
+--------------------------------------------------
+
+5. Find all duplicate words
+
+Expected Output:
+[Java, is, and]
+
+--------------------------------------------------
+
+6. Find all unique words
+
+Expected Output:
+[Powerful, Fast, Secure]
+
+--------------------------------------------------
+
+7. Print words in alphabetical order
+
+Expected Output:
+[Fast, Java, Java, Powerful, Secure, and, and, is, is]
+
+--------------------------------------------------
+
+8. Print distinct words in alphabetical order
+
+Expected Output:
+[Fast, Java, Powerful, Secure, and, is]
+
+--------------------------------------------------
+
+9. Convert every word to uppercase
+
+Expected Output:
+[JAVA, IS, POWERFUL, AND, JAVA, IS, FAST, AND, SECURE]
+
+--------------------------------------------------
+
+10. Convert every word to lowercase
+
+Expected Output:
+[java, is, powerful, and, java, is, fast, and, secure]
+
+--------------------------------------------------
+
+11. Find the longest word
+
+Expected Output:
+Powerful
+
+--------------------------------------------------
+
+12. Find the shortest word
+
+Expected Output:
+is
+
+--------------------------------------------------
+
+13. Count frequency of each character (ignore spaces)
+
+Expected Output:
+J -> 2
+a -> 9
+v -> 2
+i -> 2
+s -> 4
+...
+(remaining characters)
+
+--------------------------------------------------
+
+14. Find duplicate characters
+
+Expected Output:
+[a, J, v, i, s, n, d]
+
+--------------------------------------------------
+
+15. Find unique characters
+
+Expected Output:
+[P, o, w, e, r, f, u, l, F, t, S, c]
+
+--------------------------------------------------
+
+16. Reverse every word
+
+Expected Output:
+avaJ
+si
+lufrewoP
+dna
+avaJ
+si
+tsaF
+dna
+eruceS
+
+--------------------------------------------------
+
+17. Reverse the complete sentence
+
+Expected Output:
+eruceS dna tsaF si avaJ dna lufrewoP si avaJ
+
+--------------------------------------------------
+
+18. Print words sorted by length
+
+Expected Output:
+is
+is
+and
+and
+Java
+Java
+Fast
+Secure
+Powerful
+
+--------------------------------------------------
+
+19. Find the second longest word
+
+Expected Output:
+Secure
+
+--------------------------------------------------
+
+20. Find words starting with 'J'
+
+Expected Output:
+[Java, Java]
+
+--------------------------------------------------
+
+21. Find words ending with 'd'
+
+Expected Output:
+[and, and]
+
+--------------------------------------------------
+
+22. Count vowels in the sentence
+
+Expected Output:
+18
+
+--------------------------------------------------
+
+23. Count consonants in the sentence
+
+Expected Output:
+20
+
+--------------------------------------------------
+
+24. Remove duplicate words while preserving order
+
+Expected Output:
+Java is Powerful and Fast Secure
+
+--------------------------------------------------
+
+25. Join all words using "-"
+
+Expected Output:
+Java-is-Powerful-and-Java-is-Fast-and-Secure
+
+--------------------------------------------------
+
+26. Check whether the sentence contains "Secure"
+
+Expected Output:
+true
+
+--------------------------------------------------
+
+27. Find index of the first occurrence of "Java"
+
+Expected Output:
+0
+
+--------------------------------------------------
+
+28. Find index of the last occurrence of "Java"
+
+Expected Output:
+22
+
+--------------------------------------------------
+
+29. Replace "Java" with "Spring"
+
+Expected Output:
+Spring is Powerful and Spring is Fast and Secure
+
+--------------------------------------------------
+
+30. Print words in reverse order
+
+Expected Output:
+Secure
+and
+Fast
+is
+Java
+and
+Powerful
+is
+Java
