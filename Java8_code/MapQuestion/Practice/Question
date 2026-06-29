@@ -1,0 +1,254 @@
+==========================================
+JAVA 8 STREAM PRACTICE QUESTIONS
+==========================================
+
+1. Group employees by department
+
+Expected Output:
+IT -> [Vinay, Amit, Priya, Sneha, Arjun]
+HR -> [Rahul, Pooja]
+Finance -> [Neha, Rohit]
+Sales -> [Karan]
+
+--------------------------------------------------
+
+2. Count employees by department
+
+Expected Output:
+IT -> 5
+HR -> 2
+Finance -> 2
+Sales -> 1
+
+--------------------------------------------------
+
+3. Group employees by city
+
+Expected Output:
+Bangalore -> [Vinay, Priya]
+Delhi -> [Rahul, Sneha]
+Hyderabad -> [Neha, Arjun]
+Pune -> [Amit, Pooja]
+Mumbai -> [Karan, Rohit]
+
+--------------------------------------------------
+
+4. Find employees with salary greater than 80,000
+
+Expected Output:
+[Vinay, Neha, Priya, Sneha, Rohit, Arjun]
+
+--------------------------------------------------
+
+5. Find active employees
+
+Expected Output:
+[Vinay, Rahul, Neha, Amit, Priya, Sneha, Rohit, Pooja, Arjun]
+
+--------------------------------------------------
+
+6. Find inactive employees
+
+Expected Output:
+[Karan]
+
+--------------------------------------------------
+
+7. Sort employees by salary ascending
+
+Expected Output:
+[Pooja, Rahul, Karan, Amit, Vinay, Sneha, Neha, Arjun, Rohit, Priya]
+
+--------------------------------------------------
+
+8. Sort employees by salary descending
+
+Expected Output:
+[Priya, Rohit, Arjun, Neha, Sneha, Vinay, Amit, Karan, Rahul, Pooja]
+
+--------------------------------------------------
+
+9. Find highest salary employee
+
+Expected Output:
+Priya -> 120000
+
+--------------------------------------------------
+
+10. Find second highest salary employee
+
+Expected Output:
+Rohit -> 98000
+
+--------------------------------------------------
+
+11. Find average salary by department
+
+Expected Output:
+IT -> 92800.0
+HR -> 62500.0
+Finance -> 94000.0
+Sales -> 70000.0
+
+--------------------------------------------------
+
+12. Find maximum salary by department
+
+Expected Output:
+IT -> Priya -> 120000
+HR -> Rahul -> 65000
+Finance -> Rohit -> 98000
+Sales -> Karan -> 70000
+
+--------------------------------------------------
+
+13. Find employees with experience greater than 5 years
+
+Expected Output:
+[Rahul, Neha, Priya, Karan, Rohit, Arjun]
+
+--------------------------------------------------
+
+14. Find distinct cities
+
+Expected Output:
+[Bangalore, Delhi, Hyderabad, Pune, Mumbai]
+
+--------------------------------------------------
+
+15. Find distinct departments
+
+Expected Output: [IT, HR, Finance, Sales]
+
+--------------------------------------------------
+
+16. Employees joined after 2022
+
+Expected Output: [Amit, Pooja]
+
+--------------------------------------------------
+
+17. Partition employees by active status
+
+Expected Output:
+true -> [Vinay, Rahul, Neha, Amit, Priya, Sneha, Rohit, Pooja, Arjun]
+false -> [Karan]
+
+--------------------------------------------------
+
+18. Top 3 highest salary employees
+
+Expected Output:
+[Priya, Rohit, Arjun]
+
+--------------------------------------------------
+
+19. Group employees by manager
+
+Expected Output:
+Rajesh -> [Vinay, Amit, Sneha]
+Anita -> [Rahul, Pooja]
+Vikas -> [Neha, Rohit]
+Suresh -> [Priya, Arjun]
+Deepak -> [Karan]
+
+--------------------------------------------------
+
+20. Join all employee names with comma
+
+Expected Output:
+Vinay, Rahul, Neha, Amit, Priya, Karan, Sneha, Rohit, Pooja, Arjun
+
+--------------------------------------------------
+
+21. Count employees in each city
+
+Expected Output:
+Bangalore -> 2
+Delhi -> 2
+Hyderabad -> 2
+Pune -> 2
+Mumbai -> 2
+
+--------------------------------------------------
+
+22. Find all employee names
+
+Expected Output:
+[Vinay, Rahul, Neha, Amit, Priya, Karan, Sneha, Rohit, Pooja, Arjun]
+
+--------------------------------------------------
+
+23. Convert List<Employee> to Map<Integer, Employee>
+
+Expected Output:
+101 -> Employee(...)
+102 -> Employee(...)
+...
+110 -> Employee(...)
+
+--------------------------------------------------
+
+24. Convert List<Employee> to Map<String, Double> (Name -> Salary)
+
+Expected Output:
+Vinay -> 85000
+Rahul -> 65000
+Neha -> 90000
+...
+Arjun -> 93000
+
+--------------------------------------------------
+
+25. Find employee having highest experience
+
+Expected Output:
+Karan -> 10 Years
+
+--------------------------------------------------
+
+26. Find employee having lowest experience
+
+Expected Output:
+Pooja -> 2 Years
+
+--------------------------------------------------
+
+27. Sort employees by Experience, then Salary
+
+Expected Output:
+Pooja
+Amit
+Vinay
+Sneha
+Rahul
+Arjun
+Neha
+Rohit
+Priya
+Karan
+
+--------------------------------------------------
+
+28. Find employees with Rating > 4.5
+
+Expected Output:
+Neha
+Priya
+Sneha
+Arjun
+
+--------------------------------------------------
+
+29. Find all unique Managers
+
+Expected Output:
+[Rajesh, Anita, Vikas, Suresh, Deepak]
+
+--------------------------------------------------
+
+30. Total salary paid by company
+
+Expected Output:
+849000.0
+
