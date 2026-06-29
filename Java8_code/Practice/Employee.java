@@ -1,4 +1,4 @@
-package Java8_code.MapQuestion.Practice;
+package Java8_code.Practice;
 
 import java.time.LocalDate;
 
