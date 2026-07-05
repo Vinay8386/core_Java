@@ -1,0 +1,224 @@
+=> Why is composition generally preferred over inheritance in Java?
+    
+    -> Whenever we talk about Composition vs Inheritance, we first need clarity about IS-A vs HAS-A relationships:
+        -> IS-A Relationship: It means one class becomes another class.
+        -> HAS-A Relationship: It means one class contains another class.
+
+    -> Whenever we have an IS-A relationship, the child class represents a specialized version of the parent class and cannot exist conceptually without the parent.
+        -> For example:
+            -> UPI IS-A Payment Method: It means UPI won't exist without a Payment Method.
+
+    -> Whenever we have a HAS-A relationship, it means one class can exist without the other.
+        -> For example:
+            -> Website HAS-A Payment Method: It means a website can exist without a payment method as well.
+
+    -> Example:
+                     Car
+                      |
+                    Engine
+                    / | \
+                 Petrol Electric Hybrid
+
+            -> Here, Car <-> Engine: HAS-A Relationship
+            -> Engine <-> (Petrol, Electric, Hybrid): IS-A Relationship
+
+    -> For a better application design, we need to use both together to achieve our goals.
+
+    -> Why is Composition Preferred?
+        -> Loose Coupling:
+            -> Composition provides loose coupling in nature by not exposing all the properties of another class.
+            -> In inheritance, all the properties of the parent class are exposed, and the child class depends on the parent class, so it results in tight coupling.
+
+        -> Follows Open-Closed Principle:
+            -> Composition allows extension without forcing modification.
+            -> In inheritance, if we make any changes in the parent class, it may force modifications in the child classes.
+
+        -> Runtime Flexibility:
+            -> Inheritance is fixed at compile time; you can't change it (Example: Dog extends Animal).
+            -> In composition, you can change the behavior at runtime.
+
+        -> Better Testing:
+            -> Suppose: class PaymentService { private PaymentGateway gateway; }
+            -> Instead of the actual gateway, you can pass a FakeGateway or MockGateway, so mocking becomes very easy.
+            -> But inheritance makes mocking harder.
+
+        -> Avoids Fragile Base Class Problem:
+            -> Suppose 100 child classes are extending one parent class.
+            -> Later, if we make any changes or modifications in the parent class, it can impact all the child classes because of tight coupling.
+            -> Composition reduces this risk because the contained object has a well-defined interface rather than exposing the entire superclass implementation.
+
+        -> Avoids Deep Hierarchies
+
+        -> Reuse Only What You Need:
+            -> Suppose the parent has 10 methods; every child automatically inherits all of them.
+            -> If one child needs only one method, then it is not possible with inheritance.
+            -> In composition, you can expose only the necessary methods.
+
+        -> Better Encapsulation:
+            -> Inheritance exposes the parent implementation.
+            -> Composition hides it.
+
+    -> Java 8 Improvement (Default & Static Methods/Interface Evolution)
+        -> Before Java 8, if we added a new method to an interface, all implementing classes had to implement that method.
+        -> This was solved in Java 8 by introducing default methods.
+        -> Now we can add a new method to an interface without breaking existing implementations.
+
+        -> But this does NOT solve the Composition vs Inheritance problem.
+        -> Default methods only solve the interface evolution problem.
+        -> They do not solve:
+            -> Tight Coupling
+            -> Fragile Base Class Problem
+            -> Deep Inheritance Hierarchy
+            -> Runtime Flexibility
+
+        -> So, even after Java 8, Composition is still preferred over Inheritance for designing flexible and maintainable applications.
+
+=> How would you ensure running threads always see a consistent configuration when configuration is refreshed?
+
+    -> Suppose our application reads configuration from:
+        -> Database
+        -> Config Server
+        -> application.yml
+        -> External API
+
+    -> Sometimes configuration needs to be refreshed while the application is running.
+
+    -> Example:
+
+            class AppConfig {
+
+                String paymentGateway;
+                int timeout;
+                boolean loggingEnabled;
+
+            }
+
+    -> Multiple threads may be using this configuration simultaneously.
+
+    -> Problem
+
+        -> Suppose Thread-1 starts updating the configuration.
+
+                paymentGateway = "Stripe"
+
+        -> Before timeout and loggingEnabled are updated, Thread-2 starts reading the configuration.
+
+        -> Thread-2 may observe:
+
+                paymentGateway = "Stripe"
+                timeout = 30
+                loggingEnabled = false
+
+        -> This is called an Inconsistent Configuration.
+        -> Some values are old and some are new.
+
+    -> Bad Approach
+
+        -> Updating individual fields one by one.
+
+                config.paymentGateway = "Stripe";
+                config.timeout = 60;
+                config.loggingEnabled = true;
+
+        -> Different threads may observe partially updated data.
+
+    -> Better Approach
+
+        -> Create a completely new configuration object.
+
+                AppConfig newConfig =
+                        new AppConfig(...);
+
+        -> Initialize all values.
+
+        -> After the object is completely ready, replace the old reference with the new reference.
+
+    -> Example
+
+            private volatile AppConfig config;
+
+            config = newConfig;
+
+    -> Now every thread will observe either:
+
+            Old Configuration
+
+        -> OR
+
+            New Configuration
+
+        -> But never a partially updated configuration.
+
+    -> We can also use:
+
+            AtomicReference<AppConfig>
+
+        -> When we want to atomically replace the entire object reference.
+
+    -> Why is this approach preferred?
+
+        -> Configuration object becomes Immutable.
+        -> No Shared Mutable State inside the configuration.
+        -> Better Thread Safety.
+        -> No partially updated object is visible to other threads.
+        -> Running threads always observe a consistent configuration.
+
+    -> Interview Definition
+
+        -> Instead of modifying a shared configuration object, create a new immutable configuration object and atomically replace the reference using volatile or AtomicReference. This ensures every thread sees either the old configuration or the fully initialized new configuration, never a partially updated one.
+
+=> Which Java Collections would you use to optimize a Spring Boot application?
+
+    -> It depends on the use case.
+
+    -> HashMap
+        -> For O(1) lookup based on key.
+        -> Example:
+            -> Caching
+            -> Configuration lookup
+            -> User Session Mapping
+
+    -> ConcurrentHashMap
+        -> For thread-safe access in Singleton Beans.
+        -> Better than synchronized HashMap because it allows concurrent reads and minimizes locking.
+
+    -> ArrayList
+        -> When frequent reads are required.
+        -> Fast random access using index.
+
+    -> LinkedList
+        -> When frequent insertion and deletion happen in the middle of the collection.
+        -> Not suitable for random access.
+
+    -> HashSet
+        -> To remove duplicates.
+        -> O(1) average search.
+
+    -> TreeSet
+        -> When sorted unique data is required.
+        -> O(log n) operations.
+
+    -> PriorityQueue
+        -> Scheduling.
+        -> Task Processing.
+        -> Top-K Problems.
+
+    -> CopyOnWriteArrayList
+        -> Read-heavy and write-light scenarios.
+        -> Suitable when iteration happens much more frequently than modifications.
+
+    -> BlockingQueue
+        -> Producer-Consumer Pattern.
+        -> Asynchronous Processing.
+        -> Executor Framework.
+
+    -> EnumMap
+        -> Better performance than HashMap when keys are Enum.
+
+    -> WeakHashMap
+        -> Cache where entries should be garbage collected when keys are no longer referenced.
+
+    -> Interview Summary
+
+        -> I don't choose collections based on popularity.
+        -> I choose them based on access pattern, concurrency requirements, ordering, memory usage, and time complexity.

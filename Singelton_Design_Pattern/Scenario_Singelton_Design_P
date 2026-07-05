@@ -1,0 +1,95 @@
+=> Scenario:
+   Above we have covered both Factory as well as Abstract Factory. Now what if There is a component that should have ONLY ONE instance across the whole application?
+   For Example: Every notification system needs logging Email Sent, Sms Sent, push delivered.
+   If 10 email operations run, we do NOT want 10 Logger objects.
+   We want one shared logger, used everywhere → Singleton. That’s where Singleton fits!
+
+======================================! Singleton Pattern – 5 Ways (Step-by-step, with limitations) !====================================================
+=> EAGER INITIALIZATION (Simplest): Instance is created at class loading.
+    -> TestEager: Main class
+    -> LoggerEager: EAGER INITIALIZATION class
+    -> Advantage in LoggerEager is, it is thread safe and there is no risk of multiple objects.
+    -> Problem here is Instance created even if we never call getInstance() and it will be a waste of memory in case of no use.
+    -> So, It is not good for heavy objects.
+    -> So, to solve this issue we can proceed with Lazy Initialization.
+
+=> LAZY INITIALIZATION (Created only when needed): Instance is created only when getInstance() is called.
+    -> In this we will create the object only when needed.
+    -> In Eager Singleton: Object was created at startup even if you never used it.
+    -> Implementation: LoggerLazy
+    -> Advantage: Now object will be created only if getInstance will be called.
+    -> But now new problem appear, which is thread-safety.
+    -> Suppose two thread run at the same time:
+        -> Thread A: if(instance == null) -> true
+        -> Thread B: if(instance == null) -> true
+        -> Two logger created and singleton is broken. So now we must fix thread safety using THREAD-SAFE SINGLETON.
+        ->
+
+=> THREAD-SAFE SINGLETON (synchronized): Instance is created only when getInstance() is called. 100% safe but slower due to synchronization overhead.
+    -> Lazy Singleton solved memory wastage, BUT it was not safe when multiple threads call getInstance() simultaneously.
+    -> To solve this, add locking so two threads cannot create two objects. This is the next natural improvement over Lazy Singleton.
+    -> Implementation: LoggerThreadSafe
+    -> Advantage: Now we have both Lazy loading as well as thread safety.
+    -> But, new problem appears: PERFORMANCE becomes slow. synchronized locks the whole method. Even after object is created, every thread must wait in line:
+    -> Think 1000 threads call getInstance() → all must wait in queue. so to fix this we can use Double-Checked Locking.
+
+=> DOUBLE-CHECKED LOCKING (Fast + Lazy + Thread-safe)
+    -> Let's understand volatile keyword importance in java:
+        -> Suppose we have two or more thread T1, T2, T3....etc
+        -> Normal thread memory flow
+            -> Thread1-------->CPU1------->Cache1-------> RAM
+               Thread2-------->CPU2------->Cache2-------> RAM
+               Thread3-------->CPU3------->Cache3-------> RAM
+            -> ✔ What actually happens:
+                -> Each CPU core has its own cache
+                -> Threads running on those cores read/write variables through cache
+                -> RAM (Main memory) is slower → caches help performance
+            -> ❌ Problem Without volatile
+                -> Let’s say multiple threads share a variable: "int sharedCounter;"
+                -> Now:
+                    -> Thread1 updates sharedCounter
+                    -> update goes to Cache1
+                    -> update may later be written to RAM
+                    -> but Caches 2 and 3 still hold stale (old) values
+                    -> So,
+                        -> Thread1 - NEW value (from Cache1)
+                        -> Thread2 - OLD value (from Cache2)
+                        -> Thread3 - OLD value (from Cache3)
+                    -> This creates:
+                        ❌ Visibility issue
+                        ❌ Memory inconsistency
+                        ❌ One variable appears to have multiple values
+                        ❌ Happens-before rules broken
+                -> How volatile fixes this
+                    -> When a variable is marked volatile: When a variable is marked volatile:
+                    -> Java gives two guarantees:
+                        -> Guarantee 1 — Visibility
+                            -> Whenever a thread writes to a volatile variable: Value is immediately written to main memory
+                            -> Other thread reading the volatile variable: does not read its own cache and reads from main memory (up-to-date value)
+                        -> Guarantee 2 — Happens-Before Relationship
+                            -> A write to a volatile variable happens-before any read of that variable.
+                            -> This means: All writes done before updating volatile variable become visible to all other threads.
+    -> Implementation: LoggerDoubleCheckedLocking
+    -> Advantage:
+        -> It Removes heavy synchronized overhead
+        -> Locks only at FIRST object creation
+        -> Fast after instance is created
+    -> But, the code is now complex and easy to misunderstand and to make it simple we can use Bill Pugh Singleton.
+    -> Bill Pugh Singleton will achieve:
+        -> Lazy loading
+        -> Thread Safety
+        -> Zero synchronization cost
+        -> Good Performance with Clean, simple code
+        -> No locking overhead
+        -> Most used in enterprise apps
+
+=> Bill Pugh Singleton (BEST APPROACH):
+    -> Implementation:
+    -> Holder class is not loaded until getInstance() is called.
+    -> When loaded, JVM guarantees thread-safe initialization.
+    -> now we achieved all this:
+        -> Lazy
+        -> Fast
+        -> Safe
+        -> Clean
+        -> No heavy lock

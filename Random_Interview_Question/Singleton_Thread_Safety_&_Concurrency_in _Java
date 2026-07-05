@@ -1,0 +1,1142 @@
+=> Explain advanced strategies for initializing a service while ensuring thread safety and minimal performance overhead. or 
+   Suppose multiple threads access a service for the first time. How will you initialize it safely without hurting performance?
+
+    -> Whenever we create a service/object, we need to ensure:
+        -> Only one instance should be created (if Singleton is required).
+        -> Multiple threads should not create multiple instances.
+        -> Creating multiple instances can involve:
+            -> Memory allocation
+            -> Constructor execution
+            -> Garbage collection later
+            -> More CPU work
+        -> This is unnecessary if the service has no per-thread state.
+
+        -> Benefit of using a single instance:
+            -> Suppose we have PaymentService, and Spring creates only one object.
+
+                @Service
+                class PaymentService {
+
+                    public int add(int a, int b) {
+                        return a + b;
+                    }
+
+                }
+
+            -> Imagine 1000 threads are using this same object.
+            -> There is no problem as long as PaymentService is stateless.
+            -> Every thread calls the add() method.
+            -> The local variables (a, b) are stored in each thread's own stack.
+            -> So, the threads do not interfere with one another.
+
+        -> Performance overhead should be minimal.
+
+        -> To ensure only one object is created, even when multiple threads initialize it concurrently, we have multiple strategies as shown below:
+
+            -> 1. Eager Initialization
+            -> 2. Synchronized Method (Lazy Initialization)
+            -> 3. Double-Checked Locking (DCL)
+            -> 4. Initialization-on-Demand Holder (Holder Pattern) or Bill Pugh Singleton
+            -> 5. Enum Singleton
+            -> 6. Spring Singleton Bean
+
+            -> Singleton Pattern
+                        |
+                        |---- Eager Initialization
+                        |
+                        |---- Lazy Initialization
+                                |
+                                |---- Simple Lazy (Not Thread-safe)
+                                |
+                                |---- Synchronized Method
+                                |
+                                |---- Double-Checked Locking
+                                |
+                                |---- Holder Pattern (Bill Pugh)
+
+        -> But the best strategy in Core Java is the Holder Pattern because it provides:
+            -> Thread Safety
+            -> Lazy Initialization
+            -> No Synchronization Overhead
+            -> Better Performance
+
+        -> Double-Checked Locking is also a good choice when implemented correctly using the volatile keyword.
+
+        -> In Spring Boot applications, we generally don't implement the Singleton pattern manually because Spring creates Singleton beans by default and manages their lifecycle.
+
+    -> One important point:
+        -> Singleton only guarantees that one object is created.
+        -> It does NOT guarantee Thread Safety.
+        -> Therefore, Singleton services should preferably be Stateless.
+        -> Stateless means the service should not store mutable business data inside instance variables.
+        -> Storing immutable dependencies like Repository or Service through Constructor Dependency Injection is completely safe because they are initialized once and never change.
+
+        -> Double-Checked Locking is also a good choice when implemented correctly using the volatile keyword.
+
+            -> Why do we use volatile?
+
+                -> Without volatile, the JVM may reorder instructions while creating the object.
+
+                -> Object creation internally involves three steps:
+                    -> Allocate memory.
+                    -> Initialize the object by executing the constructor.
+                    -> Assign the reference to the instance variable.
+
+                -> Due to instruction reordering, the JVM may execute them like this:
+                    -> Allocate memory.
+                    -> Assign the reference to the instance variable.
+                    -> Execute the constructor.
+
+                -> Now another thread may see that the instance is not null.
+                -> It will start using the object even though the constructor has not finished executing.
+                -> This results in a Partially Initialized Object.
+
+                -> volatile prevents instruction reordering.
+                -> It also guarantees that changes made by one thread are immediately visible to other threads.
+
+                -> Therefore, Double-Checked Locking must always be used with the volatile keyword.
+
+=> Why is volatile required in Double-Checked Locking (DCL)?
+
+    -> Suppose we have the following Singleton implementation:
+
+            class PaymentService {
+
+                private static volatile PaymentService instance;
+
+                private PaymentService(){}
+
+                public static PaymentService getInstance() {
+
+                    if(instance == null) {
+
+                        synchronized (PaymentService.class) {
+
+                            if(instance == null) {
+                                instance = new PaymentService();
+                            }
+
+                        }
+                    }
+
+                    return instance;
+                }
+            }
+
+    -> Many developers think:
+        -> We use volatile only because multiple threads are accessing the same variable.
+        -> This is NOT the complete reason.
+
+    -> volatile is required for two reasons:
+        -> It prevents Instruction Reordering.
+        -> It guarantees Visibility between threads.
+
+    -> Let's first understand what happens internally when we create an object.
+
+        -> When we write:
+
+                instance = new PaymentService();
+
+        -> JVM does NOT execute this statement in a single step.
+
+        -> Internally, it performs three steps:
+
+            -> Step 1:
+                -> Allocate memory for the object.
+
+            -> Step 2:
+                -> Execute the constructor.
+                -> Initialize all instance variables.
+
+            -> Step 3:
+                -> Assign the object reference to the instance variable.
+
+    -> Expected execution order:
+
+            Step-1: Allocate Memory
+
+                    ↓
+
+            Step-2: Execute Constructor
+
+                    ↓
+
+            Step-3: Assign Reference
+
+    -> But for optimization, JVM may reorder these instructions.
+
+        -> It may execute them like this:
+
+            Step-1: Allocate Memory
+
+                    ↓
+
+            Step-3: Assign Reference
+
+                    ↓
+
+            Step-2: Execute Constructor
+
+    -> Let's understand this with an example.
+
+        -> Initially:
+
+                instance = null
+
+        -> Thread-1 calls getInstance().
+
+                if(instance == null)
+                    TRUE
+
+                synchronized(...)
+                {
+                    instance = new PaymentService();
+                }
+
+        -> Because of instruction reordering, JVM may execute:
+
+                Allocate Memory
+
+                    ↓
+
+                Assign Reference
+
+                    ↓
+
+                Execute Constructor (Still Running...)
+
+        -> Now, before Thread-1 completes the constructor,
+           Thread-2 also calls getInstance().
+
+                if(instance == null)
+
+        -> Thread-2 sees:
+
+                instance != null
+
+        -> So it skips the synchronized block and starts using the object.
+
+        -> But the constructor has not completed yet.
+
+        -> Therefore, Thread-2 gets a Partially Initialized Object.
+
+    -> Example:
+
+            class PaymentService {
+
+                private String gateway;
+
+                public PaymentService() {
+                    gateway = "Stripe";
+                }
+
+            }
+
+        -> Thread-1:
+
+                Allocate Memory
+
+                    ↓
+
+                Assign Reference
+
+                    ↓
+
+                Constructor is still executing...
+
+        -> Thread-2:
+
+                PaymentService service = getInstance();
+
+                System.out.println(service.gateway);
+
+        -> Output:
+
+                null
+
+        -> Expected Output:
+
+                Stripe
+
+        -> Why did we get null?
+
+            -> Because the constructor had not completed.
+            -> The gateway variable had not been initialized yet.
+            -> Thread-2 started using the object too early.
+
+    -> How does volatile solve this?
+
+        -> volatile prevents Instruction Reordering.
+
+        -> Now JVM must execute:
+
+                Allocate Memory
+
+                    ↓
+
+                Execute Constructor
+
+                    ↓
+
+                Assign Reference
+
+        -> Only after the constructor completes can another thread access the object.
+
+    -> Another advantage of volatile:
+
+        -> It also guarantees Visibility.
+
+        -> Whenever one thread updates the instance variable,
+           all other threads immediately see the latest value.
+
+    -> Interview Definition:
+
+        -> volatile is mandatory in Double-Checked Locking because:
+            -> It prevents Instruction Reordering.
+            -> It guarantees Visibility between threads.
+
+        -> Without volatile, another thread may observe a non-null reference before the object is fully initialized, resulting in a Partially Initialized Object.
+
+    -> Trick to Remember:
+
+        -> Without volatile
+
+                Allocate Memory
+
+                    ↓
+
+                Assign Reference
+
+                    ↓
+
+                Execute Constructor
+
+                ❌ Wrong
+
+        -> With volatile
+
+                Allocate Memory
+
+                    ↓
+
+                Execute Constructor
+
+                    ↓
+
+                Assign Reference
+
+                ✅ Correct
+
+=> Stateless vs Stateful Object (Very Important for Singleton & Spring Boot)
+
+    -> What is State?
+        -> A class has state if it stores data in instance variables. Example:
+            class CounterService {
+
+                private int count = 0;    // State
+
+                public void increment() {
+                    count++;
+                }
+
+            }
+        
+            -> Here private int count = 0; is the state of the object. The value of count changes over time.
+
+    -> What is Stateless?
+        -> A class is stateless if it does not store request-specific or changing data in instance variables.
+        -> Stateless does NOT mean:
+            -> No instance variables.
+            -> No dependency injection.
+            -> No composition.
+
+        -> Stateless means:
+            -> The object should not store mutable business data that changes for every request.
+            -> Every request should pass its own data through method parameters.
+
+        -> There are mainly two types of instance variables:
+
+            -> 1. Dependency Reference (Safe)
+                -> These variables are injected only once when the object is created.
+                -> They never change while processing requests.
+                -> They are shared safely across all threads.
+
+                -> Example:
+
+                    @Service
+                    class PaymentService {
+
+                        private final PaymentRepository repository;
+
+                        public PaymentService(PaymentRepository repository) {
+                            this.repository = repository;
+                        }
+
+                        public void processPayment(PaymentRequest request) {
+                            repository.save(request);
+                        }
+
+                    }
+
+                -> Here:
+                    -> repository is an instance variable.
+                    -> But it is NOT mutable business state.
+                    -> It is only a dependency.
+                    -> It is assigned only once by Spring.
+                    -> Therefore, this class is still Stateless.
+
+            -> 2. Mutable Business State (Unsafe)
+                -> These variables change while processing requests.
+                -> Since Singleton object is shared by multiple threads, multiple threads can modify the same variable.
+                -> This may lead to Race Condition.
+
+                -> Example:
+
+                    @Service
+                    class PaymentService {
+
+                        private String currentUser;
+
+                        public void process(String user) {
+                            currentUser = user;
+                        }
+
+                    }
+
+                -> Suppose:
+                    -> Thread-1
+                        -> currentUser = "Vinay"
+
+                    -> Before Thread-1 completes, Thread-2 executes
+
+                        -> currentUser = "Rahul"
+
+                    -> Now Thread-1 continues.
+                    -> currentUser is already changed to Rahul.
+                    -> This is called Shared Mutable State.
+                    -> This can lead to inconsistent results.
+
+    -> Local Variables are always Thread Safe
+
+        -> Example:
+
+                public int add(int a, int b) {
+                    return a + b;
+                }
+
+        -> Here:
+            -> a and b are local variables.
+            -> Every thread gets its own copy or have their own stack.
+            -> Local variables are stored in Thread Stack.
+            -> So threads never interfere with each other.
+
+    -> Composition also uses Instance Variables
+
+        -> Example:
+
+                class PaymentService {
+
+                    private final PaymentRepository repository;
+
+                }
+
+        -> Here repository is an instance variable.
+        -> But it is only a dependency reference.
+        -> It does not change for every request.
+        -> Therefore, Composition does NOT make a class Stateful.
+
+    -> Constructor Dependency Injection also uses Instance Variables
+
+        -> Example:
+
+                public PaymentService(PaymentRepository repository) {
+                    this.repository = repository;
+                }
+
+        -> Here Spring injects the dependency only once while creating the bean.
+        -> After that, every thread uses the same repository object.
+        -> Since the reference never changes, it is completely safe.
+
+    -> Rule to Remember
+
+        -> Having instance variables does NOT mean the object is Stateful.
+
+        -> Ask these two questions:
+
+            -> Is this variable changing while processing requests?
+
+                -> YES -> Mutable Business State (Unsafe)
+
+                -> NO -> Continue
+
+            -> Is this variable just a dependency like Repository, Service, Logger, ObjectMapper, RestTemplate etc.?
+
+                -> YES -> Safe Dependency Reference
+
+    -> Interview Definition
+
+        -> Stateless Object:
+            -> An object that does not store mutable business data inside instance variables.
+            -> All request-specific data is passed through method parameters.
+
+        -> Stateful Object:
+            -> An object that stores mutable business data inside instance variables.
+            -> Since Singleton objects are shared across multiple threads, this may cause Race Conditions.
+
+        -> Whenever we hear "Singleton beans should be stateless", many developers think:
+            -> A class should not have any instance variables.
+            -> This is NOT correct. Class should have instance variable but that instance variable does not store mutable business data inside it. 
+
+    -> Conclusion
+
+        -> Singleton Pattern only guarantees that only one object is created.
+
+        -> Singleton Pattern does NOT guarantee Thread Safety.
+
+        -> A Singleton object should preferably be Stateless.
+
+        -> Dependency Injection and Composition are completely safe because they store immutable dependency references, not mutable business data.
+
+    => Trick to Remember
+
+        -> Dependency Reference = Safe
+        -> Mutable Business Data = Unsafe
+
+        Examples:
+
+            repository      -> Safe
+            service         -> Safe
+            logger          -> Safe
+            objectMapper    -> Safe
+
+            currentUser     -> Unsafe
+            currentOrder    -> Unsafe
+            counter         -> Unsafe
+            balance         -> Unsafe
+
+=> Does removing final make a Singleton Bean Stateful?
+
+    -> Many developers think:
+        -> If we remove final from constructor dependency injection, the instance variable becomes mutable.
+        -> Since it is mutable, the object becomes Stateful.
+        -> This is NOT correct.
+
+    -> Example without final:
+
+            @Service
+            class PaymentService {
+
+                private PaymentRepository repository;
+
+                public PaymentService(PaymentRepository repository) {
+                    this.repository = repository;
+                }
+
+            }
+
+    -> Here repository is not final.
+    -> So, theoretically, it can be reassigned like below.
+
+            @Service
+            class PaymentService {
+
+                private PaymentRepository repository;
+
+                public PaymentService(PaymentRepository repository) {
+                    this.repository = repository;
+                }
+
+                public void processPayment(PaymentRequest request) {
+                    repository.save(request);
+                }
+
+                // Later, another developer adds this method
+                public void changeRepository(PaymentRepository anotherRepository) {
+                    this.repository = anotherRepository;   // ✅ Allowed
+                }
+            }
+
+    -> But ask yourself:
+        -> Does every request modify this variable?
+            -> NO
+
+        -> Does Spring change this dependency for every request?
+            -> NO
+
+        -> Is this variable storing request-specific business data?
+            -> NO
+
+    -> Therefore:
+        -> This does NOT become Shared Mutable State.
+        -> The service is still Stateless because the dependency is assigned only once during bean creation and is only used afterwards.
+
+    -> Then why do we use final?
+
+        -> final prevents accidental reassignment.
+
+        -> Example:
+
+                repository = anotherRepository;
+
+        -> If repository is final:
+            -> Compiler will not allow reassignment.
+            -> It makes the dependency reference immutable.
+            -> It improves code safety and readability.
+            -> It follows good design practices.
+
+    -> Now compare with Shared Mutable State
+
+            @Service
+            class PaymentService {
+
+                private String currentUser;
+
+                public void process(String user) {
+                    currentUser = user;
+                }
+
+            }
+
+    -> Here every request updates currentUser.
+
+        -> Request-1
+            -> currentUser = "Vinay"
+
+        -> Request-2
+            -> currentUser = "Rahul"
+
+        -> Request-3
+            -> currentUser = "Amit"
+
+    -> Since Singleton Bean is shared by multiple threads,
+       every request is modifying the same variable.
+
+    -> This is called Shared Mutable State.
+    -> This may lead to Race Condition.
+    -> Therefore, this object becomes Stateful.
+
+    -> Difference
+
+        -> Mutable Dependency Reference
+            -> Can be changed by a developer.
+            -> Does NOT normally change during request processing.
+            -> Does NOT make the service Stateful.
+            -> Using final is recommended to prevent accidental reassignment.
+
+        -> Shared Mutable Business State
+            -> Changes while processing requests.
+            -> Every request may update the same variable.
+            -> Can cause Race Conditions.
+            -> Makes the Singleton Bean Stateful.
+
+    -> Interview Definition
+
+        -> final is used to make the dependency reference immutable.
+
+        -> Stateless means the object should not store Shared Mutable Business Data.
+
+        -> These are two different concepts.
+
+    -> Trick to Remember
+
+        -> final
+            -> Prevents reassignment of Dependency Reference.
+
+        -> Stateless
+            -> Prevents storing Shared Mutable Business State.
+
+        -> Every Shared Mutable State is Mutable.
+        -> But every Mutable field is NOT Shared Mutable State.
+
+=> How does volatile guarantee Visibility?
+
+    -> One of the responsibilities of volatile is to guarantee Visibility between threads.
+
+    -> Let's understand the problem first.
+
+        -> Suppose we have:
+
+                class Counter {
+
+                    private int count = 0;
+
+                }
+
+        -> Assume two threads are running.
+
+                Thread-1
+                Thread-2
+
+        -> Initially:
+
+                count = 0
+
+    -> Without volatile
+
+        -> Thread-1 updates the value.
+
+                count = 10;
+
+        -> But Thread-2 may still read:
+
+                count = 0;
+
+        -> Why?
+
+            -> Every CPU has its own cache.
+            -> A thread may read the value from its CPU cache instead of seeing the latest value updated by another thread.
+            -> As a result, different threads may observe different values.
+            -> This is called a Visibility Problem.
+
+        -> Conceptually, it looks like this:
+
+                        Main Memory
+                             |
+                  -------------------------
+                  |                       |
+              CPU Cache               CPU Cache
+              Thread-1                Thread-2
+
+              count = 10              count = 0
+
+                ❌ Thread-2 is reading a stale value.
+
+    -> With volatile
+
+            private volatile int count;
+
+        -> Now whenever Thread-1 updates:
+
+                count = 10;
+
+        -> Java Memory Model guarantees that this updated value becomes visible to all other threads.
+
+        -> When Thread-2 reads count, it is guaranteed to observe the latest value.
+
+        -> Conceptually, we can think of it like this:
+
+                    Thread-1
+                        |
+                        |
+                  Main Memory
+                        |
+                        |
+                    Thread-2
+
+                ✅ Both threads observe the latest value.
+
+    -> Does volatile disable CPU Cache?
+
+        -> NO.
+
+        -> Modern CPUs always use cache.
+
+        -> volatile does NOT bypass the CPU cache.
+
+        -> Instead, JVM uses Memory Barriers and the CPU uses Cache Coherence Protocols to ensure:
+            -> Latest value becomes visible to other threads.
+            -> Threads do not work with stale values.
+            -> Instruction Reordering is prevented around volatile operations.
+
+        -> Therefore, saying "volatile always reads from Main Memory" is only a simplified explanation for beginners.
+
+        -> The technically correct statement is:
+            -> volatile guarantees Visibility according to the Java Memory Model.
+            -> Internally, this is achieved using Memory Barriers and CPU Cache Coherence mechanisms.
+
+    -> Interview Definition
+
+        -> volatile guarantees that:
+            -> Changes made by one thread are immediately visible to other threads.
+            -> Threads always observe the latest value.
+            -> It also prevents Instruction Reordering.
+
+    -> Trick to Remember
+
+        -> Without volatile
+
+                Thread-1 Cache
+
+                    count = 10
+
+                        |
+
+                Thread-2 Cache
+
+                    count = 0
+
+                ❌ Stale Value
+
+        -> With volatile
+
+                Thread-1
+
+                    |
+
+                Main Memory
+
+                    |
+
+                Thread-2
+
+                ✅ Latest Value Visible
+
+=> What is Atomicity?
+
+    -> Atomicity means:
+        -> An operation should be completed as one single indivisible unit.
+        -> No other thread should see the operation in a partially completed state.
+        -> Either the entire operation completes or it does not happen at all.
+
+    -> Let's understand with an example.
+
+            class Counter {
+
+                private int count = 0;
+
+                public void increment() {
+                    count++;
+                }
+
+            }
+
+    -> Many developers think:
+
+            count++;
+
+        -> is a single operation.
+
+        -> This is NOT correct.
+
+    -> Internally, JVM performs three steps:
+
+        -> Step-1
+            -> Read the current value of count.
+
+        -> Step-2
+            -> Increment the value.
+
+        -> Step-3
+            -> Write the updated value back to memory.
+
+    -> Example
+
+            count = 5
+
+        -> Thread-1
+
+            Read count
+                -> 5
+
+        -> Before Thread-1 writes the new value,
+           Thread-2 starts executing.
+
+        -> Thread-2
+
+            Read count
+                -> 5
+
+            Increment
+                -> 6
+
+            Write
+                -> 6
+
+        -> Thread-1 resumes
+
+            Increment
+                -> 6
+
+            Write
+                -> 6
+
+        -> Final Value
+
+                count = 6
+
+        -> Expected Value
+
+                count = 7
+
+        -> This problem is called Race Condition.
+
+    -> Why did this happen?
+
+        -> Because count++ is NOT an Atomic Operation.
+        -> Multiple threads executed the Read → Modify → Write sequence simultaneously.
+
+    -> How can we make it Atomic?
+
+        -> Option-1
+            -> synchronized
+
+                public synchronized void increment() {
+                    count++;
+                }
+
+            -> Only one thread can execute the method at a time.
+            -> Thread Safe.
+            -> But may have synchronization overhead.
+
+        -> Option-2
+            -> AtomicInteger
+
+                class Counter {
+
+                    private final AtomicInteger count =
+                            new AtomicInteger(0);
+
+                    public void increment() {
+                        count.incrementAndGet();
+                    }
+
+                }
+
+            -> incrementAndGet() is an Atomic Operation.
+            -> Multiple threads can safely update the value.
+            -> No explicit synchronized block is required.
+
+    -> Why is AtomicInteger faster?
+
+        -> AtomicInteger internally uses CPU-level Atomic Instructions (CAS - Compare And Set).
+        -> Instead of locking the entire method, it atomically updates only the required variable.
+        -> Therefore, for simple variables like counters, AtomicInteger generally performs better than synchronized.
+
+    -> Common Atomic Classes
+
+        -> AtomicInteger
+            -> Counter
+
+        -> AtomicLong
+            -> Long Counter
+
+        -> AtomicBoolean
+            -> Thread-safe Flag
+
+        -> AtomicReference
+            -> Thread-safe Object Reference
+
+    -> When should we use Atomic Classes?
+
+        -> When multiple threads update a simple shared variable.
+
+        -> Examples:
+            -> Counter
+            -> Visitor Count
+            -> Number of Requests
+            -> Boolean Flag
+            -> Object Reference
+
+    -> When should we NOT use Atomic Classes?
+
+        -> If business logic contains multiple dependent operations.
+
+        -> Example:
+
+                if(balance >= amount) {
+                    balance -= amount;
+                }
+
+        -> Here multiple operations must execute together.
+        -> AtomicInteger alone cannot make the entire business logic thread-safe.
+
+        -> In such cases, use:
+            -> synchronized
+            -> ReentrantLock
+            -> ReadWriteLock
+            -> Other Concurrency Mechanisms
+
+    -> Atomicity vs Visibility
+
+        -> Atomicity
+            -> Ensures an operation completes as one indivisible unit.
+
+        -> Visibility
+            -> Ensures changes made by one thread are immediately visible to other threads.
+
+        -> volatile
+            -> Provides Visibility.
+            -> Prevents Instruction Reordering.
+            -> Does NOT provide Atomicity.
+
+        -> AtomicInteger
+            -> Provides Atomicity.
+            -> Also guarantees Visibility for its own value.
+
+    -> Interview Definition
+
+        -> Atomicity means an operation is executed completely as one indivisible unit without interference from other threads.
+
+        -> Atomic classes provide thread-safe updates for simple shared variables without using explicit synchronization by internally using Compare-And-Set (CAS).
+
+    -> Trick to Remember
+
+        -> volatile
+            -> Visibility
+            -> Instruction Reordering
+            -> NOT Atomic
+
+        -> AtomicInteger
+            -> Atomic Operation
+            -> Lock-Free (CAS)
+            -> Best for Simple Shared Variables
+
+        -> synchronized
+            -> Atomicity
+            -> Complex Business Logic
+            -> Uses Locking
+
+=> Difference between volatile and Atomic Classes
+
+    -> Both volatile and Atomic Classes are used in Concurrent Programming.
+    -> But they solve different problems.
+
+    -> Before deciding whether to use volatile or Atomic Classes, first ask:
+
+        -> Does my Singleton object contain Shared Mutable State?
+
+            -> NO
+
+                -> Example:
+
+                        @Service
+                        class PaymentService {
+
+                            private final PaymentRepository repository;
+
+                            public PaymentService(PaymentRepository repository) {
+                                this.repository = repository;
+                            }
+
+                        }
+
+                -> Here repository is only a Dependency Reference.
+                -> It is initialized once during bean creation.
+                -> It is not modified while processing requests.
+                -> Therefore:
+                    -> No volatile required.
+                    -> No Atomic Class required.
+                    -> The service remains Stateless.
+
+            -> YES
+
+                -> Example:
+
+                        @Service
+                        class VisitorService {
+
+                            private int visitorCount;
+
+                        }
+
+                -> Here visitorCount is Shared Mutable State.
+                -> Multiple threads may read and update this variable simultaneously.
+                -> Therefore, we need Thread Safety.
+
+    -> Now decide based on the type of operation.
+
+        -> Case-1: Only Reading and Writing
+
+                private volatile boolean running = true;
+
+        -> Use volatile.
+
+        -> Why?
+
+            -> Guarantees Visibility.
+            -> Prevents Instruction Reordering.
+            -> Ensures every thread observes the latest value.
+            -> Suitable when threads only read or assign values.
+
+        -> Example:
+
+                running = false;
+
+            -> One thread updates the flag.
+            -> Other threads immediately see the latest value.
+
+    -> Case-2: Read -> Modify -> Write
+
+                visitorCount++;
+
+        -> Do NOT use volatile.
+
+        -> Why?
+
+            -> visitorCount++ is NOT an Atomic Operation.
+            -> Multiple threads may update the value simultaneously.
+            -> This may lead to Race Condition.
+
+        -> Instead use AtomicInteger.
+
+                private final AtomicInteger visitorCount =
+                        new AtomicInteger(0);
+
+                visitorCount.incrementAndGet();
+
+        -> Why?
+
+            -> Provides Atomicity.
+            -> Thread Safe.
+            -> Uses Compare-And-Set (CAS).
+            -> No explicit synchronization required.
+
+    -> Can volatile replace AtomicInteger?
+
+        -> NO.
+
+        -> volatile guarantees:
+            -> Visibility.
+            -> Instruction Reordering.
+
+        -> It does NOT make operations like:
+
+                count++;
+
+            Atomic.
+
+    -> Can AtomicInteger replace volatile?
+
+        -> Not always.
+
+        -> If the requirement is only Visibility, volatile is simpler and more appropriate.
+
+        -> AtomicInteger should be used when multiple threads are modifying the same shared variable.
+
+    -> Summary
+
+        -> Dependency Reference
+
+            -> Repository
+            -> Service
+            -> Logger
+
+            -> Initialized Once
+            -> Immutable (Prefer final)
+            -> No Shared Mutable State
+            -> No volatile
+            -> No Atomic Class
+
+        -> Shared Mutable State
+
+            -> Counter
+            -> Flag
+            -> Request Count
+
+            -> Only Read / Write
+                -> volatile
+
+            -> Read + Modify + Write
+                -> AtomicInteger
+
+            -> Complex Business Logic
+                -> synchronized
+                -> ReentrantLock
+
+    -> Interview Definition
+
+        -> volatile is used when we need Visibility and want to prevent Instruction Reordering.
+
+        -> Atomic Classes are used when multiple threads modify Shared Mutable State and we need Atomic Operations.
+
+        -> Before choosing either one, first identify whether your Singleton object contains Shared Mutable State or only immutable Dependency References.

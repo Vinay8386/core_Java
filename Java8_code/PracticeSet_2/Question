@@ -9,8 +9,7 @@ String str = "Java is Powerful and Java is Fast and Secure";
 
 1. Count total number of characters (including spaces)
 
-Expected Output:
-45
+Expected Output: 45
 
 --------------------------------------------------
 
@@ -49,15 +48,13 @@ Expected Output:
 
 6. Find all unique words
 
-Expected Output:
-[Powerful, Fast, Secure]
+Expected Output:[Powerful, Fast, Secure]
 
 --------------------------------------------------
 
 7. Print words in alphabetical order
 
-Expected Output:
-[Fast, Java, Java, Powerful, Secure, and, and, is, is]
+Expected Output: [Fast, Java, Java, Powerful, Secure, and, and, is, is]
 
 --------------------------------------------------
 

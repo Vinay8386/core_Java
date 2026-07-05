@@ -1,0 +1,345 @@
+=> How would you implement Idempotency in REST APIs?
+
+    -> First understand what Idempotency means.
+
+        -> Idempotency means:
+            -> Executing the same request multiple times should produce the same final result.
+            -> The client should receive the same response instead of creating duplicate data.
+
+    -> Example:
+
+        -> Payment API: POST /payments
+
+        -> Client sends:
+
+                {
+                    "amount":1000
+                }
+
+        -> Payment is successful.
+
+        -> But before the client receives the response, network timeout occurs.
+        -> Client doesn't know whether payment was successful.
+        -> So client retries the same request.
+
+        -> Without Idempotency:
+                Payment-1: ₹1000
+                Payment-2: ₹1000
+                Total Deduction: ₹2000 ❌
+
+    -> This creates Duplicate Transactions.
+
+    -> To avoid this problem, we use Idempotency Key.
+
+        -> Client generates a unique key.
+
+                Idempotency-Key: abc123xyz
+
+        -> Server receives:
+
+                POST /payments
+
+                Headers
+
+                Idempotency-Key = abc123xyz
+
+    -> Server Processing
+
+        -> Check whether this key already exists.
+
+        -> If NOT exists
+
+            -> Process the payment.
+
+            -> Save
+
+                Idempotency Key
+                Response
+                Transaction Id
+
+            -> Return Response.
+
+        -> If key already exists
+
+            -> Do NOT process payment again.
+
+            -> Return the previously stored response.
+
+    -> Database Example
+
+        Idempotency_Key     Transaction_Id     Status
+
+        abc123xyz           TXN1001            SUCCESS
+
+    -> Client retries
+
+            Idempotency-Key
+
+            abc123xyz
+
+    -> Server finds the key.
+
+    -> Returns
+
+            TXN1001
+
+    -> No new payment is created.
+
+    -> This prevents Duplicate Transactions.
+
+    -> Where should Idempotency Key be stored?
+
+        -> Database
+
+        -> Redis
+
+        -> Distributed Cache
+
+    -> Redis is generally preferred because:
+
+        -> Very Fast
+        -> Supports Expiry (TTL)
+        -> Suitable for High Traffic APIs
+
+    -> Thread Safety
+
+        -> If two identical requests arrive simultaneously, both threads may check:
+
+                Key Exists?
+
+                NO
+
+        -> Both may process payment.
+
+        -> To prevent this:
+
+            -> Put a UNIQUE Constraint on Idempotency Key.
+
+            -> OR use Atomic Operations.
+
+            -> OR Distributed Lock (Redis Lock) in Distributed Systems.
+
+    -> Which HTTP Methods are Idempotent?
+
+        -> GET
+            -> Yes
+
+        -> PUT
+            -> Yes
+
+        -> DELETE
+            -> Yes
+
+        -> POST
+            -> No
+
+        -> Therefore, POST APIs like Payment APIs generally implement Idempotency using an Idempotency Key.
+
+    -> Interview Definition
+
+        -> Idempotency ensures that executing the same request multiple times produces the same final result.
+
+        -> For POST APIs, this is typically implemented using an Idempotency Key.
+
+        -> The server stores the key along with the response or transaction details.
+
+        -> If the same key is received again, the server returns the previously stored response instead of processing the request again.
+
+        -> To avoid race conditions when duplicate requests arrive simultaneously, enforce a UNIQUE constraint or use atomic operations/distributed locking.
+
+=> How would you handle Race Condition when multiple requests with the same Idempotency Key arrive simultaneously?
+
+    -> Suppose two requests arrive at exactly the same time.
+
+            Request-1
+
+            Idempotency-Key = abc123
+
+            Request-2
+
+            Idempotency-Key = abc123
+
+    -> Both requests are processed by different threads.
+
+            Thread-1
+
+            Thread-2
+
+    -> Bad Approach
+
+        -> Thread-1 checks:
+
+                Does Key Exist?
+
+                NO
+
+        -> Before Thread-1 saves the key,
+           Thread-2 also checks:
+
+                Does Key Exist?
+
+                NO
+
+        -> Now both threads process the payment.
+
+                Payment-1
+
+                Payment-2
+
+        -> Duplicate Transaction is created.
+
+        -> This is a Race Condition.
+
+    -> Solution-1 (Most Preferred)
+
+        -> Put a UNIQUE Constraint on the Idempotency Key.
+
+                Idempotency_Key
+
+                UNIQUE
+
+        -> Now both threads may still try to insert.
+
+        -> Thread-1
+
+                Insert
+
+                SUCCESS
+
+        -> Thread-2
+
+                Insert
+
+                Database throws Duplicate Key Exception.
+
+        -> Thread-2 catches the exception.
+
+        -> Read the existing transaction.
+
+        -> Return the previously stored response.
+
+        -> Only one transaction is created.
+
+    -> Why is this preferred?
+
+        -> Database guarantees uniqueness.
+        -> Works across multiple application instances.
+        -> No extra locking required.
+        -> Simple and Reliable.
+
+    -> Solution-2
+
+        -> Use Redis SETNX (Set If Not Exists).
+
+        -> Redis operation is Atomic.
+
+                SETNX
+                abc123
+
+        -> Thread-1
+
+                SUCCESS
+
+        -> Thread-2
+
+                FAIL
+
+        -> Only Thread-1 processes the payment.
+
+        -> Thread-2 waits or returns the existing response.
+
+        -> Suitable for High Traffic Applications.
+
+    -> Solution-3
+
+        -> Use Distributed Lock.
+
+                Redis Lock
+                ZooKeeper
+                etc.
+
+        -> Only one application instance can process the request.
+
+        -> Used when multiple services or multiple application instances are running.
+
+    -> Solution-4
+
+        -> Use Database Transaction with proper Isolation Level.
+
+        -> Suitable when transaction consistency is more important than performance.
+
+        -> Usually combined with UNIQUE Constraint.
+
+    -> Which solution is preferred?
+
+        -> Single Database Application
+
+            -> UNIQUE Constraint
+            -> Database Transaction
+
+        -> High Traffic Application
+
+            -> Redis SETNX
+
+        -> Distributed System
+
+            -> Redis Distributed Lock
+            -> ZooKeeper
+
+    -> Interview Definition
+
+        -> Simply checking whether an Idempotency Key exists is not enough because two threads may perform the check simultaneously.
+
+        -> To prevent Race Conditions, the uniqueness must be enforced atomically.
+
+        -> The most common solution is to add a UNIQUE Constraint on the Idempotency Key and handle Duplicate Key Exceptions gracefully.
+
+        -> For high-performance or distributed systems, Redis SETNX or Distributed Locks can also be used.
+
+=> How would you ensure Data Consistency across Distributed Microservices?
+
+    -> In Microservices, each service should own its own database.
+    -> Therefore, we cannot use a single ACID transaction across multiple services.
+
+    -> To maintain data consistency, I would use the Saga Pattern.
+
+        -> Choreography Saga
+            -> Services communicate through events.
+            -> Suitable for simple workflows.
+
+        -> Orchestration Saga
+            -> A central orchestrator coordinates the complete transaction.
+            -> Suitable for complex business workflows.
+
+    -> If any service fails, execute Compensating Transactions to undo previously completed operations.
+
+    -> Use Event-Driven Communication (Kafka/RabbitMQ) for reliable asynchronous communication.
+
+    -> Implement Idempotency to safely handle duplicate events.
+
+    -> Use the Outbox Pattern to ensure database updates and event publishing remain consistent.
+
+    -> Use Retry Mechanism with Exponential Backoff for transient failures.
+
+    -> Monitor failed events using Dead Letter Queue (DLQ).
+
+    -> Interview Summary:
+
+        -> Instead of distributed ACID transactions and 2 Phase Commit, I would use the Saga Pattern with Compensating Transactions, Event-Driven Communication, Idempotency, and the Outbox Pattern to achieve eventual consistency across microservices.
+
+=> How would you handle failure when a downstream service in a Saga fails?
+
+    -> For Temporary Failures:
+        -> Implement Retry with Exponential Backoff.
+        -> If all retries are exhausted, move the event to a Dead Letter Queue (DLQ) for later investigation or manual reprocessing.
+
+    -> For Business Failures:
+        -> Execute Compensating Transactions.
+        -> For example:
+            -> Refund the payment.
+            -> Cancel the order.
+            -> Restore inventory.
+
+    -> Compensation operations should always be Idempotent.
+        -> If the same compensation request is executed multiple times, it should produce the same final result and should not create duplicate side effects.
+
