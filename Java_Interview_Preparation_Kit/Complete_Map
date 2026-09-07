@@ -1,0 +1,173 @@
+=> Is HashMap thread-safe?
+    -> No, HashMap is NOT thread-safe.
+    -> Multiple threads can access and modify it simultaneously.
+    -> Since there is no synchronization mechanism, concurrent modifications can lead to inconsistent results.
+    -> It is suitable only for single-threaded environments.
+    -> If multiple threads need to access a HashMap, additional synchronization is required.
+
+=> What problems occur if multiple threads modify a HashMap?
+    -> Multiple threads may update the same data simultaneously.
+    -> This can lead to:
+        -> Data corruption.
+        -> Lost updates.
+        -> Inconsistent data.
+        -> Unexpected behavior during iteration.
+        -> ConcurrentModificationException (while iterating and modifying in fail-fast scenarios).
+    -> In older Java versions, concurrent resizing (rehashing) could even lead to an infinite loop.
+    -> Interview Tip:
+        -> HashMap is safe for multiple readers only if no thread performs write operations.
+
+=> Why can HashMap lead to data corruption?
+    -> HashMap does not use any synchronization.
+    -> Two or more threads may modify the same bucket at the same time.
+    -> Since updates are not coordinated:
+        -> One thread's changes may overwrite another thread's changes.
+        -> Internal bucket structure may become inconsistent.
+        -> Some entries may become inaccessible.
+        -> Data may be lost.
+    -> This is why HashMap should never be used for concurrent write operations.
+
+=> What should be used instead of HashMap in a multithreaded environment?
+    -> It depends on the use case.
+
+    -> Hashtable
+        -> Thread-safe.
+        -> Synchronizes every operation.
+        -> Locks the entire table.
+        -> Slower under high concurrency.
+
+    -> ConcurrentHashMap (Recommended)
+        -> Thread-safe.
+        -> Better performance than Hashtable.
+        -> Uses fine-grained synchronization and CAS (Compare-And-Swap).
+        -> Allows multiple threads to read and write concurrently.
+        -> Does not allow null keys or null values.
+
+    -> Collections.synchronizedMap()
+        -> Wraps an existing HashMap.
+        -> Makes all operations synchronized.
+        -> Suitable when concurrency is low.
+
+    -> Interview Tip:
+        -> For modern Java applications, prefer ConcurrentHashMap over Hashtable because it provides better scalability and performance in multithreaded environments.
+
+=> Why does ConcurrentHashMap not allow null?
+    -> ConcurrentHashMap does not allow null keys or null values.
+    -> In a multithreaded environment, null creates ambiguity.
+        -> `map.get(key)` returning `null` can mean:
+            -> The key does not exist.
+            -> The value is actually null.
+    -> During concurrent updates, JVM cannot distinguish between these two cases.
+    -> Therefore, ConcurrentHashMap completely disallows null keys and values.
+
+=> Why is ConcurrentHashMap faster than Hashtable?
+    -> ConcurrentHashMap does not lock the entire map.
+    -> It uses:
+        -> Fine-grained synchronization.
+        -> CAS (Compare-And-Swap) for many update operations.
+    -> Multiple threads can work on different parts of the map simultaneously.
+    -> Read operations are mostly lock-free.
+    -> Only the portion being updated is synchronized.
+    -> This significantly improves performance in multithreaded applications.
+
+=> Why is Hashtable slower?
+    -> Hashtable synchronizes every method.
+    -> It locks the entire table for every read/write operation.
+    -> Only one thread can access the Hashtable at a time.
+    -> Even if two threads are accessing different buckets, they must wait.
+    -> This creates high contention and reduces performance.
+
+=> What is fine-grained locking?
+    -> Fine-grained locking means locking only the required portion of a data structure instead of locking the entire structure.
+    -> This allows multiple threads to work simultaneously on different portions.
+    -> In ConcurrentHashMap:
+        -> Only the bucket (or a very small portion) being modified is synchronized.
+        -> Other buckets remain available for other threads.
+    -> Result:
+        -> Better concurrency.
+        -> Better scalability.
+        -> Higher performance.
+
+=> What is CAS (Compare-And-Swap)?
+    -> CAS stands for Compare-And-Swap.
+    -> It is an atomic CPU operation used for thread-safe updates without locking.
+    -> It compares the current value with an expected value.
+    -> If both values are equal:
+        -> It updates the value.
+    -> Otherwise:
+        -> The update fails.
+        -> The thread retries or uses synchronization if required.
+    -> CAS helps reduce locking and improves performance.
+
+=> How does CAS work?
+    -> Step 1:
+        -> Read the current value.
+    -> Step 2:
+        -> Compare it with the expected value.
+    -> Step 3:
+        -> If they match:
+            -> Update the value atomically.
+    -> Step 4:
+        -> If they don't match:
+            -> Another thread has already modified the value.
+            -> CAS fails.
+            -> Retry or synchronize.
+
+=> Explain CAS with an example.
+    -> Suppose the current value is:
+        -> count = 10
+
+    -> Thread A:
+        -> Compare: Is count = 10?
+        -> Yes.
+        -> Update count to 20.
+        -> CAS succeeds.
+
+    -> Thread B:
+        -> Compare: Is count = 10?
+        -> No (it is already 20).
+        -> CAS fails.
+        -> Thread B retries with the latest value.
+
+    -> Result:
+        -> No data corruption.
+        -> No unnecessary locking.
+
+=> When does ConcurrentHashMap use CAS?
+    -> CAS is mainly used during write/update operations.
+        -> put()
+        -> replace()
+        -> update operations
+    -> ConcurrentHashMap first attempts to update using CAS.
+    -> If CAS succeeds:
+        -> No locking is required.
+    -> If CAS fails due to contention:
+        -> It falls back to synchronization for that small portion of the map.
+
+=> Are reads lock-free in ConcurrentHashMap?
+    -> Yes.
+    -> Read operations (`get()`) are mostly lock-free.
+    -> Multiple threads can read simultaneously.
+    -> Reads do not use CAS because they do not modify data.
+    -> This is one of the major reasons ConcurrentHashMap performs much better than Hashtable.
+
+=> What happens if multiple threads try to update the same bucket?
+    -> Contention occurs on that bucket.
+    -> ConcurrentHashMap first attempts the update using CAS.
+    -> If CAS succeeds:
+        -> The update completes immediately.
+    -> If CAS fails:
+        -> The thread retries or synchronizes only that bucket.
+    -> Other buckets remain accessible to other threads.
+    -> The entire map is never locked.
+
+=> What happens if multiple threads are only reading?
+    -> Multiple threads can read concurrently.
+    -> No locking is required.
+    -> No CAS is required.
+    -> Since read operations do not modify data, they do not interfere with each other.
+    -> This makes read performance extremely fast.
+    -> Interview Tip:
+        -> Remember this one-liner:
+            -> Reads are lock-free.
+            -> Writes use CAS first, then synchronize only if necessary.   

@@ -1,0 +1,433 @@
+=> JVM Memory Management
+
+    -> Q1. What are the main JVM Runtime Memory Areas?
+
+        -> JVM mainly uses the following runtime memory areas:
+
+            1. Stack Memory
+            2. Heap Memory
+            3. Method Area / Metaspace
+            4. PC Register
+            5. Native Method Stack
+
+        -> For understanding Java object memory, the three most important areas are:
+
+            -> Stack
+            -> Heap
+            -> Metaspace / Method Area
+
+    -> Q2. What is Stack Memory?
+
+        -> Stack Memory is created separately for each thread.
+
+        -> Whenever a method is called, a new Stack Frame is created for that method.
+
+        -> A Stack Frame mainly contains:
+
+            -> Local variables.
+            -> Local primitive values.
+            -> Local reference variables.
+            -> Information required for method execution.
+
+        Example:
+
+            int age = 25;
+
+        -> If age is a local variable, both the variable and primitive value are stored in the current Stack Frame.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> If e1 is a local variable, e1 is stored in the Stack Frame.
+
+        -> e1 contains a reference to the Employee object created in Heap Memory.
+
+    -> Q3. What is Heap Memory?
+
+        -> Heap Memory is the JVM runtime memory area where objects and arrays are generally allocated.
+
+        -> Heap Memory is shared among all threads of the application.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> The Employee object is created in Heap Memory.
+
+        -> e1 is a local reference variable stored in the Stack Frame.
+
+        -> e1 refers to the Employee object available in Heap Memory.
+
+    -> Q4. What is Metaspace / Method Area?
+
+        -> Method Area is a logical JVM memory area used for class-level information.
+
+        -> In modern HotSpot JVM implementations, class metadata is stored in Metaspace.
+
+        -> It contains information related to loaded classes such as:
+
+            -> Class metadata.
+            -> Method metadata.
+            -> Runtime Constant Pool.
+
+        -> Static fields belong to the class rather than individual objects.
+
+        -> Therefore, static fields have only one logical copy per loaded class.
+
+    -> Q5. What type of data is stored in Stack Memory?
+
+        -> Stack Frames contain method-specific execution data.
+
+        -> This mainly includes:
+
+            -> Local primitive variables.
+            -> Local reference variables.
+            -> Method execution information.
+
+        Example:
+
+            void test() {
+
+                int id = 10;
+                Employee e1 = new Employee();
+            }
+
+        -> id and its primitive value are part of the test() Stack Frame.
+
+        -> e1 is also part of the Stack Frame.
+
+        -> The Employee object referred to by e1 is created in Heap Memory.
+
+    -> Q6. What type of data is stored in Heap Memory?
+
+        -> Objects and arrays are generally allocated in Heap Memory.
+
+        -> Instance variables are part of their corresponding objects.
+
+        Example:
+
+            class Employee {
+
+                int id;
+                String name;
+            }
+
+            Employee e1 = new Employee();
+
+        -> The Employee object is created in Heap Memory.
+
+        -> id and name are instance fields of that Employee object.
+
+        -> Therefore, their storage is associated with the object in Heap Memory.
+
+    -> Q7. Where are local primitive variables stored?
+
+        -> Local primitive variables are stored in the Stack Frame of the method in which they are declared.
+
+        Example:
+
+            void test() {
+
+                int age = 25;
+            }
+
+        -> age and its primitive value 25 are part of the test() Stack Frame.
+
+    -> Q8. Where are local reference variables stored?
+
+        -> A local reference variable is stored in the current method's Stack Frame.
+
+        -> The object referred to by that reference is generally stored in Heap Memory.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        Stack:
+
+            e1
+             |
+             |
+             v
+
+        Heap:
+
+            Employee Object
+
+    -> Q9. Where are objects created using the new keyword stored?
+
+        -> Objects created using new are generally allocated in Heap Memory.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> new Employee() creates an Employee object in Heap Memory.
+
+        -> The returned reference is assigned to e1.
+
+    -> Q10. Where are instance variables stored?
+
+        -> Instance variables belong to an object.
+
+        -> Therefore, they are stored as part of their corresponding object in Heap Memory.
+
+        Example:
+
+            class Employee {
+
+                int id;
+                String name;
+            }
+
+        -> Every Employee object gets its own id and name fields.
+
+    -> Q11. Where are static variables associated with the class?
+
+        -> Static variables belong to the class rather than individual objects.
+
+        -> There is one logical copy of a static field for each loaded class.
+
+        -> Static fields are associated with class-level runtime data.
+
+        -> They are not copied into every object.
+
+    -> Q12. Who provides default values to instance and static variables?
+
+        -> JVM automatically provides default values to instance and static variables.
+
+        Examples:
+
+            int     -> 0
+            long    -> 0L
+            double  -> 0.0
+            boolean -> false
+            reference -> null
+
+    -> Q13. Do local variables receive default values?
+
+        -> No.
+
+        -> Local variables do not receive default values automatically.
+
+        -> A local variable must be initialized before it is used.
+
+        Example:
+
+            void test() {
+
+                int age;
+
+                System.out.println(age);
+            }
+
+        -> This results in a compile-time error because age has not been initialized.
+
+    -> Q14. What happens if we try to use an uninitialized local variable?
+
+        -> We get a compile-time error.
+
+        -> Java requires local variables to be definitely assigned before they are read.
+
+    -> Q15. During which phase do static variables receive their default values?
+
+        -> During the Preparation phase of Linking.
+
+        Example:
+
+            static int count = 10;
+
+        During Preparation:
+
+            count = 0
+
+        -> JVM prepares storage for the static field and initially gives it its default value.
+
+    -> Q16. During which phase do static variables receive their explicitly assigned values?
+
+        -> During the Initialization phase.
+
+        Example:
+
+            static int count = 10;
+
+        During Preparation:
+
+            count = 0
+
+        During Initialization:
+
+            count = 10
+
+    -> Q17. When do instance variables receive their default values?
+
+        -> Instance variables do not receive their default values during the Preparation phase.
+
+        -> Preparation is related to class-level static fields.
+
+        -> Instance variables receive default values when an object is created.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> Memory is allocated for the Employee object.
+
+        -> Its instance fields first receive their default values.
+
+        -> After that, instance field initializers and the constructor initialization process execute.
+
+    -> Q18. What happens in memory when we write Employee e1 = new Employee()?
+
+        -> new Employee() creates a new Employee object in Heap Memory.
+
+        -> Memory is allocated for the object's instance fields.
+
+        -> Instance fields first receive their default values.
+
+        -> Instance initialization and the constructor execute.
+
+        -> new Employee() returns a reference to the created object.
+
+        -> If e1 is a local variable, that reference is stored in the current Stack Frame.
+
+        Flow:
+
+            Stack                           Heap
+
+            e1  ----------------------->  Employee Object
+                                         {
+                                            id   = 0
+                                            name = null
+                                         }
+
+    -> Q19. What exactly does e1 contain?
+
+        -> e1 does not contain the Employee object itself.
+
+        -> e1 contains a reference to the Employee object.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> Employee object exists in Heap Memory.
+
+        -> e1 refers to that object.
+
+    -> Q20. If Employee has one static variable and four instance variables, what happens when an Employee object is created?
+
+        Example:
+
+            class Employee {
+
+                static int count;
+
+                int id;
+                String name;
+                int age;
+                String city;
+            }
+
+        -> count belongs to the Employee class.
+
+        -> It is not copied into every Employee object.
+
+        -> When we create:
+
+            Employee e1 = new Employee();
+
+        -> One Employee object is created in Heap Memory.
+
+        -> That object contains its own instance fields:
+
+            id
+            name
+            age
+            city
+
+        -> count remains shared at the class level.
+
+    -> Q21. If two Employee objects are created, how many copies of a static variable exist?
+
+        Example:
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+        -> Only one logical copy of the static variable exists for the loaded Employee class.
+
+        -> Both objects share that same static variable.
+
+    -> Q22. If two Employee objects are created, how many copies of an instance variable exist?
+
+        -> Two copies exist.
+
+        -> Every object gets its own instance fields.
+
+        Example:
+
+            e1.id = 101;
+            e2.id = 102;
+
+        Heap:
+
+            Employee Object 1
+
+                id = 101
+
+            Employee Object 2
+
+                id = 102
+
+        -> Changing e1.id does not change e2.id.
+
+    -> Q23. What happens when we write e2 = e1?
+
+        Example:
+
+            Employee e1 = new Employee();
+
+            Employee e2 = e1;
+
+        -> No new Employee object is created by e2 = e1.
+
+        -> The reference stored in e1 is copied into e2.
+
+        -> Therefore, both references point to the same Employee object.
+
+        Stack                           Heap
+
+        e1  --------\
+                     \
+                      -----> Employee Object
+                     /
+        e2  --------/
+
+        -> One Employee object exists.
+
+        -> Two references point to that same object.
+
+    -> Q24. If e1 and e2 refer to the same object and we modify the object using e2, what will e1 see?
+
+        Example:
+
+            Employee e1 = new Employee();
+
+            Employee e2 = e1;
+
+            e2.id = 100;
+
+            System.out.println(e1.id);
+
+        Output:
+
+            100
+
+        -> e1 and e2 refer to the same Employee object.
+
+        -> e2.id = 100 changes the id field of that shared object.
+
+        -> Therefore, accessing the object through e1 also sees id = 100.
+

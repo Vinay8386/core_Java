@@ -1,0 +1,369 @@
+=> String Memory & String Constant Pool
+
+    -> Q1. What are the different ways to create a String object?
+
+        -> In Java, we mainly create String objects in two ways:
+
+            1. Using String Literal.
+
+                String s1 = "Hello";
+
+            2. Using new keyword.
+
+                String s2 = new String("Hello");
+
+        -> The memory behavior is different for these two approaches.
+
+    -> Q2. What is a String Literal?
+
+        -> A String created directly using double quotes is called a String Literal.
+
+        Example:
+
+            String s1 = "Hello";
+
+        -> Java uses the String Constant Pool for String Literals.
+
+        -> If "Hello" is already available in the String Constant Pool,
+           Java reuses the existing String object.
+
+        -> If "Hello" is not available, it is added to the String Constant Pool.
+
+    -> Q3. What is the String Constant Pool (SCP)?
+
+        -> String Constant Pool is a special area used by Java to store and reuse Strings.
+
+        -> It avoids creating duplicate String objects for the same String Literal.
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+        -> Java does not need two separate pooled "Hello" objects.
+
+        -> Both s1 and s2 refer to the same pooled String object.
+
+    -> Q4. Where is the String Constant Pool stored?
+
+        -> In modern Java versions, the String Constant Pool is stored in Heap Memory.
+
+        Heap Memory
+
+            String Constant Pool
+
+                "Hello"
+
+            Other Objects
+
+                Employee Object
+                ArrayList Object
+                etc.
+
+        -> Historically, the location was different in older JVM implementations,
+           but for modern Java the String Constant Pool is in the Heap.
+
+    -> Q5. What happens when we write String s1 = "Hello"?
+
+        Example:
+
+            String s1 = "Hello";
+
+        -> JVM checks whether "Hello" is already available in the String Constant Pool.
+
+        -> If it is not available:
+
+            -> "Hello" is added to the String Constant Pool.
+            -> s1 refers to that pooled String object.
+
+        -> If it is already available:
+
+            -> No new pooled String object is needed.
+            -> s1 refers to the existing "Hello" object.
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+        Stack                       Heap
+
+                                    String Constant Pool
+
+        s1 ----------------------\
+                                  -----> "Hello"
+        s2 ----------------------/
+
+        -> Both references point to the same pooled String object.
+
+    -> Q6. What happens when the same String Literal already exists in the String Constant Pool?
+
+        -> JVM reuses the existing String object.
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+        -> When s1 is created, "Hello" is available in the String Constant Pool.
+
+        -> When s2 is created, JVM finds the existing "Hello".
+
+        -> Therefore, another pooled "Hello" object is not created.
+
+        -> Both s1 and s2 refer to the same object.
+
+    -> Q7. What happens when we write String s2 = new String("Hello")?
+
+        Example:
+
+            String s2 = new String("Hello");
+
+        -> The literal "Hello" is associated with the String Constant Pool.
+
+        -> The new keyword explicitly creates a separate String object in Heap Memory.
+
+        -> s2 refers to the new String object created by new.
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = new String("Hello");
+
+        Stack                       Heap
+
+                                    String Constant Pool
+
+        s1 --------------------------> "Hello"
+
+
+                                    Normal Heap Object
+
+        s2 --------------------------> "Hello"
+
+        -> These are two different String objects.
+
+        -> Their contents are the same.
+
+    -> Q8. What is the difference between String Literal creation and String creation using new?
+
+        String Literal:
+
+            String s1 = "Hello";
+
+        -> JVM checks the String Constant Pool.
+        -> Existing pooled String can be reused.
+        -> A duplicate pooled object is not created unnecessarily.
+
+        Using new:
+
+            String s2 = new String("Hello");
+
+        -> new explicitly creates a separate String object.
+        -> s2 refers to this newly created object.
+        -> It does not simply reuse the pooled object as its result.
+
+    -> Q9. How many objects are created by new String("Hello") if "Hello" is not already available in the String Constant Pool?
+
+        Example:
+
+            String s1 = new String("Hello");
+
+        -> Assume "Hello" is not already present in the String Constant Pool.
+
+        -> Two String objects are involved:
+
+            1. "Hello" is added to the String Constant Pool.
+
+            2. new String(...) creates a separate String object in Heap Memory.
+
+        Therefore:
+
+            Total = 2 Objects
+
+        Heap
+
+            String Constant Pool
+
+                "Hello"
+
+            Normal Heap
+
+                new String("Hello")
+
+    -> Q10. How many new objects are created by new String("Hello") if "Hello" is already available in the String Constant Pool?
+
+        -> Assume "Hello" already exists in the String Constant Pool.
+
+        Example:
+
+            String s1 = "Hello";
+
+            String s2 = new String("Hello");
+
+        -> The existing pooled "Hello" is reused as the constructor argument.
+
+        -> new still creates a separate String object.
+
+        -> Therefore, the second statement creates only one additional String object.
+
+        Existing Objects = 1
+        Newly Created Objects = 1
+
+        Total String Objects representing "Hello" = 2
+
+    -> Q11. Why can new String("Hello") result in two objects?
+
+        -> "Hello" is a String Literal.
+
+        -> String Literals are associated with the String Constant Pool.
+
+        -> new String(...) explicitly requests creation of another String object.
+
+        -> Therefore, if "Hello" was not already pooled:
+
+            -> One pooled String object is created for the literal.
+            -> One separate String object is created because of new.
+
+    -> Q12. Why does Java maintain the String Constant Pool?
+
+        -> The main purpose is String reuse and memory optimization.
+
+        -> Strings are used very frequently in Java applications.
+
+        -> Without pooling, identical String Literals could create many duplicate objects.
+
+        Example:
+
+            String s1 = "India";
+            String s2 = "India";
+            String s3 = "India";
+
+        -> Instead of maintaining three pooled "India" objects,
+           Java can reuse one pooled object.
+
+        Stack                       String Constant Pool
+
+        s1 ----------------------\
+        s2 -------------------------> "India"
+        s3 ----------------------/
+
+    -> Q13. How does the String Constant Pool reduce memory usage?
+
+        -> It allows identical String Literals to share the same String object.
+
+        Example:
+
+            String country1 = "India";
+            String country2 = "India";
+
+        -> Instead of creating duplicate pooled objects,
+           both references can reuse the same "India" object.
+
+        -> This reduces unnecessary object creation.
+
+    -> Q14. Why are String Literals generally preferred over new String() in real applications?
+
+        -> String Literals can reuse existing pooled String objects.
+
+        Example:
+
+            String name = "Vinay";
+
+        -> This is simpler and can avoid unnecessary object creation.
+
+        -> Using:
+
+            String name = new String("Vinay");
+
+        -> Explicitly creates another String object even when a pooled
+           "Vinay" already exists.
+
+        -> Therefore, new String() is normally unnecessary when we simply
+           need a String with a particular value.
+
+    -> Q15. Does using new String() always create a new object in Heap Memory?
+
+        -> Yes.
+
+        Example:
+
+            String s1 = new String("Hello");
+
+        -> The new keyword explicitly creates a new String object.
+
+        -> Whether the corresponding literal already exists in the
+           String Constant Pool only affects whether another pooled
+           String object needs to be created.
+
+        -> It does not prevent new from creating its separate object.
+
+    -> Q16. What happens in this example?
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+        -> "Hello" is stored once in the String Constant Pool.
+
+        -> s1 refers to that object.
+
+        -> s2 also refers to that same object.
+
+        Therefore:
+
+            String Objects = 1
+
+            s1 == s2
+
+        Output:
+
+            true
+
+    -> Q17. What happens in this example?
+
+            String s1 = "Hello";
+            String s2 = new String("Hello");
+
+        -> s1 refers to the pooled "Hello" object.
+
+        -> s2 refers to a separate object created using new.
+
+        Therefore:
+
+            s1 == s2
+
+        Output:
+
+            false
+
+        -> Because both references point to different objects.
+
+        But:
+
+            s1.equals(s2)
+
+        Output:
+
+            true
+
+        -> Because both String objects contain the same sequence of characters.
+
+    -> Q18. What is the main memory difference between String Literal and new String()?
+
+        String Literal:
+
+            String s1 = "Hello";
+
+            -> Uses the String Constant Pool.
+            -> Existing pooled object can be reused.
+
+        new String():
+
+            String s2 = new String("Hello");
+
+            -> Explicitly creates a separate String object.
+            -> Can therefore result in unnecessary object creation.
+
+        -> This is why String Literals are generally preferred when
+           we simply need a normal String value.
+

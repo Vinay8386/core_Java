@@ -1,0 +1,165 @@
+# Java Program Execution & Class Loading
+    => Explain the complete lifecycle of a Java program from MyApplication.java until it prints its first output.
+    => What is Bytecode?
+    => Who converts `.java` into `.class`?
+    => What is the role of the JVM after the `.class` file is created?
+    => What is Class Loading?
+    => What are the three types of Class Loaders?
+    => What is the responsibility of Bootstrap ClassLoader?
+    => What is the responsibility of Platform ClassLoader?
+    => What is the responsibility of Application (System) ClassLoader?
+    => Which ClassLoader loads `MyApplication.class`?
+    => What is Parent Delegation?
+    => Why does Java use Parent Delegation?
+    => Why can't we override `java.lang.String`?
+    => What exactly is present inside a `.class` file?
+    => What is the difference between `.java` and `.class`?
+
+# Class Loading Phases
+    => What are the phases of Class Loading?
+    => What happens during the Verification phase?
+    => What happens during the Preparation phase?
+    => During Preparation, what values do static variables get?
+    => During Initialization, what happens?
+    => If both a static block and a static variable exist, which executes first?
+
+# JVM Memory Management
+    => What are the main JVM runtime memory areas?
+    => What is Stack Memory?
+    => What is Heap Memory?
+    => What is Metaspace / Method Area?
+    => What type of data is stored in Stack Memory?
+    => What type of data is stored in Heap Memory?
+    => Where are local primitive variables stored?
+    => Where are local reference variables stored?
+    => Where are objects created using the `new` keyword stored?
+    => Where are instance variables stored?
+    => Where are static variables associated with the class?
+    => Who provides default values to instance and static variables?
+    => Do local variables receive default values?
+    => What happens if we try to use an uninitialized local variable?
+    => During which phase do static variables receive their default values?
+    => During which phase do static variables receive their explicitly assigned values?
+    => When do instance variables receive their default values?
+    => Explain what happens in memory when we write:
+        => `Employee e1 = new Employee();`
+    => What exactly does `e1` contain?
+    => If Employee has one static variable and four instance variables, what happens when an Employee object is created?
+    => If two Employee objects are created, how many copies of a static variable exist?
+    => If two Employee objects are created, how many copies of an instance variable exist?
+    => What happens when we write `e2 = e1`?
+    => If `e1` and `e2` refer to the same object and we modify the object using `e2`, what will `e1` see?
+
+# Local vs Instance vs Static Variables
+    => What is a Local Variable?
+    => What is an Instance Variable?
+    => What is a Static Variable?
+    => What is the scope of a Local Variable?
+    => What is the scope of an Instance Variable?
+    => What is the scope of a Static Variable?
+    => Which variables receive default values automatically?
+    => Why don't local variables receive default values?
+    => Why does a Static Variable have only one copy?
+    => Why does every object have its own copy of Instance Variables?
+    => Does a Static Variable belong to the class or the object?
+    => Does an Instance Variable belong to the class or the object?
+    => Why are Static Variables not serialized as part of an object's state?
+
+# String Memory & String Constant Pool
+    => What are the different ways to create a String object?
+    => What is a String Literal?
+    => What is the String Constant Pool (SCP)?
+    => Where is the String Constant Pool stored?
+    => What happens when we write:
+        => `String s1 = "Hello";`
+    => What happens when the same String Literal already exists in the String Constant Pool?
+    => What happens when we write:
+        => `String s2 = new String("Hello");`
+    => What is the difference between String Literal creation and String creation using `new`?
+    => How many objects are created by `new String("Hello")` if `"Hello"` is not already available in the String Constant Pool?
+    => How many new objects are created by `new String("Hello")` if `"Hello"` is already available in the String Constant Pool?
+    => Why can `new String("Hello")` result in two objects?
+    => Why does Java maintain the String Constant Pool?
+    => How does the String Constant Pool reduce memory usage?
+    => Why are String Literals generally preferred over `new String()` in real applications?
+    => Does using `new String()` always create a new object in Heap Memory?
+
+# == vs equals()
+    => What is the difference between `==` and `equals()` in Java?
+    => What does `==` compare for primitive values?
+    => What does `==` compare for objects?
+    => What does the default `Object.equals()` implementation compare?
+    => How does `String.equals()` differ from `Object.equals()`?
+    => What will happen for:
+        => `String s1 = new String("Hello");`
+        => `String s2 = new String("Hello");`
+        => `s1 == s2`
+        => `s1.equals(s2)`
+    => What will happen for:
+        => `String s1 = "Hello";`
+        => `String s2 = "Hello";`
+        => `s1 == s2`
+        => `s1.equals(s2)`
+    => Why does `==` return true when two String references point to the same pooled String object?
+    => What will happen for:
+        => `String s1 = "Hello";`
+        => `String s2 = new String("Hello");`
+        => `s1 == s2`
+        => `s1.equals(s2)`
+    => Can two different String objects return true when compared using `equals()`?
+    => Can two String references return false with `==` even though their contents are identical?
+    
+# Exception Handling
+    => Explain the flow of:
+        => try
+        => catch
+        => finally
+    => Will the finally block always execute?
+    => In which situations will finally not execute?
+    => Difference between Checked and Unchecked Exceptions.
+    => Give examples of Checked Exceptions.
+    => Give examples of Unchecked Exceptions.
+    => What happens if a method declares `throws IOException`?
+    => Difference between `throw` and `throws`.
+
+# HashMap
+    => Is HashMap thread-safe?
+    => What problems occur if multiple threads modify a HashMap?
+    => Why can HashMap lead to data corruption?
+    => What should be used instead of HashMap in a multithreaded environment?
+
+# Hashtable vs ConcurrentHashMap
+    => Why does ConcurrentHashMap not allow null?
+    => Why is ConcurrentHashMap faster than Hashtable?
+    => Why is Hashtable slower?
+    => What is fine-grained locking?
+    => What is CAS (Compare-And-Swap)?
+    => How does CAS work?
+    => Explain CAS with an example.
+    => When does ConcurrentHashMap use CAS?
+    => Are reads lock-free in ConcurrentHashMap?
+    => What happens if multiple threads try to update the same bucket?
+    => What happens if multiple threads are only reading?
+
+# Fail-Fast vs Fail-Safe
+    => What is a Fail-Fast Iterator?
+    => What is a Fail-Safe Iterator?
+    => Why is it called ConcurrentModificationException?
+    => Does "concurrent" always mean multiple threads?
+    => When exactly is ConcurrentModificationException thrown?
+    => If modification happens before iteration starts, will the exception occur?
+    => If modification happens after iteration completes, will the exception occur?
+    => Why does Fail-Fast throw an exception?
+    => Why doesn't Fail-Safe throw an exception?
+    => Does Fail-Safe modify the snapshot?
+    => Does Fail-Safe merge the snapshot back into the original collection?
+    => When does a Fail-Safe iterator see updated data?
+    => Give a real-world use case of Fail-Fast.
+    => Give a real-world use case of Fail-Safe.
+    => Why don't we use Fail-Safe everywhere?
+    => Why don't we use Fail-Fast everywhere?
+    => In Spring Boot, where do Fail-Fast and Fail-Safe actually apply?
+    => Why don't they apply directly to database queries?
+    => What does "shared collection in memory" mean?
+    => When should you choose Fail-Fast?
+    => When should you choose Fail-Safe?

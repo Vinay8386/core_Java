@@ -1,0 +1,98 @@
+=> Explain the flow of try, catch and finally.
+    -> The execution starts from the `try` block.
+    -> If no exception occurs:
+        -> Remaining code inside `try` executes successfully.
+        -> `catch` block is skipped.
+        -> `finally` block executes.
+    -> If an exception occurs:
+        -> JVM immediately stops executing the remaining statements inside the `try` block.
+        -> JVM searches for the matching `catch` block.
+        -> If a matching `catch` is found:
+            -> It executes the `catch` block.
+            -> Then executes the `finally` block.
+        -> If no matching `catch` is found:
+            -> `finally` block executes.
+            -> Exception is propagated to the caller.
+    -> After `finally`, the remaining program continues (if the exception is handled).
+
+=> Will the finally block always execute?
+    -> In almost all cases, Yes.
+    -> Whether:
+        -> Exception occurs.
+        -> No exception occurs.
+        -> Exception is caught.
+        -> There is a return statement.
+    -> The `finally` block executes before the method exits.
+
+=> In which situations will finally not execute?
+    -> If the JVM terminates abruptly.
+        -> Example: `System.exit(0)`
+    -> JVM crashes.
+    -> Power failure / System shutdown.
+    -> Native code forcibly terminates the JVM.
+    -> Interview Tip:
+        -> Returning from the `try` or `catch` block DOES NOT skip the `finally` block.
+
+=> Difference between Checked and Unchecked Exceptions.
+    -> Checked Exception
+        -> Checked at compile time.
+        -> Compiler forces us to handle or declare them.
+        -> Extend the `Exception` class (excluding RuntimeException).
+        -> Generally occur due to external resources.
+            -> File.
+            -> Database.
+            -> Network.
+    -> Unchecked Exception
+        -> Checked at runtime.
+        -> Compiler does not force handling.
+        -> Extend the `RuntimeException` class.
+        -> Usually occur because of programming mistakes.
+
+=> Give examples of Checked Exceptions.
+    -> IOException
+    -> SQLException
+    -> FileNotFoundException
+    -> ClassNotFoundException
+    -> ParseException
+    -> Custom Exception (extends Exception)
+
+=> Give examples of Unchecked Exceptions.
+    -> NullPointerException
+    -> ArithmeticException
+    -> ArrayIndexOutOfBoundsException
+    -> NumberFormatException
+    -> IllegalArgumentException
+    -> StackOverflowError (Note: It is an Error, not an Exception.)
+    -> Custom Exception (extends RuntimeException)
+
+=> What happens if a method declares `throws IOException`?
+    -> It does NOT handle the exception.
+    -> It simply declares that the method may throw an IOException.
+    -> Responsibility is transferred to the caller.
+    -> The caller must:
+        -> Handle it using `try-catch`.
+        -> Or declare it again using `throws`.
+    -> If nobody handles it:
+        -> The exception propagates up the call stack.
+        -> Eventually reaches the JVM.
+
+=> Difference between throw and throws.
+    -> throw
+        -> Used to explicitly throw an exception.
+        -> Used inside the method body.
+        -> Throws one exception at a time.
+        -> Followed by an Exception object.
+        -> Example:
+            -> throw new IllegalArgumentException("Invalid Age");
+
+    -> throws
+        -> Used to declare that a method may throw exceptions.
+        -> Used with the method signature.
+        -> Can declare multiple exceptions.
+        -> Does not throw the exception itself.
+        -> Responsibility is passed to the caller.
+
+    -> Interview Tip:
+        -> Remember this one-liner:
+            -> `throw` = Actually throws the exception.
+            -> `throws` = Declares that the method may throw the exception.

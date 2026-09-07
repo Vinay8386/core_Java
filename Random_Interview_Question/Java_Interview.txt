@@ -1,3 +1,5 @@
+=> Explain Java Code Life cycle and types of loader used by JVM?
+
 => Why is composition generally preferred over inheritance in Java?
     
     -> Whenever we talk about Composition vs Inheritance, we first need clarity about IS-A vs HAS-A relationships:
@@ -222,3 +224,9 @@
 
         -> I don't choose collections based on popularity.
         -> I choose them based on access pattern, concurrency requirements, ordering, memory usage, and time complexity.
+
+=> Difference between HashMap, HashTable and ConcurrentHashMap?
+
+=> Explain difference between Fail Fast and Fail safe with example and scenario?
+
+=> Explain difference between checked and unchecked exception?

@@ -1,0 +1,146 @@
+=> What is a Fail-Fast Iterator?
+    -> A Fail-Fast Iterator works directly on the original collection.
+    -> If the collection is structurally modified while it is being iterated, it immediately throws a `ConcurrentModificationException`.
+    -> It detects unexpected modifications to prevent inconsistent iteration.
+    -> Common Examples:
+        -> ArrayList
+        -> HashMap
+        -> HashSet
+
+=> What is a Fail-Safe Iterator?
+    -> A Fail-Safe Iterator does NOT iterate over the original collection.
+    -> It reads from a snapshot (copy) of the collection.
+    -> Modifications to the original collection do not affect the current iteration.
+    -> No `ConcurrentModificationException` is thrown.
+    -> Common Examples:
+        -> CopyOnWriteArrayList
+        -> CopyOnWriteArraySet
+
+=> Why is it called ConcurrentModificationException?
+    -> The exception occurs because iteration and modification happen at the same time on the same collection.
+    -> "Concurrent" here means:
+        -> Iteration is in progress.
+        -> Collection is modified before iteration completes.
+    -> It does NOT necessarily mean multiple threads.
+
+=> Does "concurrent" always mean multiple threads?
+    -> No.
+    -> Even in a single thread, this exception can occur.
+    -> Example:
+        -> A loop is iterating over a collection.
+        -> During the loop, the same code modifies the collection.
+        -> The iterator detects the modification and throws the exception.
+
+=> When exactly is ConcurrentModificationException thrown?
+    -> It is thrown when:
+        -> An iterator is actively iterating over a collection.
+        -> The collection is structurally modified before the iteration completes.
+        -> On the iterator's next access, it detects the modification and throws the exception.
+
+=> If modification happens before iteration starts, will the exception occur?
+    -> No.
+    -> The iterator is created after the modification.
+    -> Therefore, it works with the latest state of the collection.
+
+=> If modification happens after iteration completes, will the exception occur?
+    -> No.
+    -> The iterator has already finished its work.
+    -> There is no active iteration to detect the modification.
+
+=> Why does Fail-Fast throw an exception?
+    -> To immediately detect unexpected modifications.
+    -> To prevent inconsistent or unpredictable iteration.
+    -> To help developers identify programming mistakes early.
+
+=> Why doesn't Fail-Safe throw an exception?
+    -> Because it reads from a snapshot of the collection.
+    -> Changes made to the original collection do not affect the current iterator.
+    -> Therefore, iteration continues safely.
+
+=> Does Fail-Safe modify the snapshot?
+    -> No.
+    -> The iterator only reads from the snapshot.
+    -> It never modifies the snapshot.
+
+=> Does Fail-Safe merge the snapshot back into the original collection?
+    -> No.
+    -> The snapshot is only used for reading.
+    -> No changes are copied back to the original collection.
+    -> The original collection continues to be updated independently.
+
+=> When does a Fail-Safe iterator see updated data?
+    -> The current iterator never sees updates made after the snapshot is created.
+    -> Updated data becomes visible only when:
+        -> A new iterator is created.
+        -> The new iterator creates a fresh snapshot of the collection.
+
+=> Give a real-world use case of Fail-Fast.
+    -> Banking applications.
+    -> Financial transactions.
+    -> Inventory management.
+    -> Order processing.
+    -> Any system where data consistency is critical.
+    -> If unexpected modification occurs, it is better to fail immediately.
+
+=> Give a real-world use case of Fail-Safe.
+    -> Event listener lists.
+    -> Logging systems.
+    -> Configuration readers.
+    -> Notification systems.
+    -> Monitoring applications.
+    -> Here, uninterrupted execution is more important than seeing the latest updates immediately.
+
+=> Why don't we use Fail-Safe everywhere?
+    -> Creating snapshots consumes additional memory.
+    -> Copying collections is expensive.
+    -> The iterator may read stale (old) data.
+    -> Not suitable when the latest data must always be visible.
+
+=> Why don't we use Fail-Fast everywhere?
+    -> Any modification during iteration immediately throws an exception.
+    -> Applications may fail even when uninterrupted execution is preferred.
+    -> Not suitable for highly concurrent systems where updates happen frequently.
+
+=> In Spring Boot, where do Fail-Fast and Fail-Safe actually apply?
+    -> They apply only to Java Collections.
+    -> Examples:
+        -> ArrayList
+        -> HashMap
+        -> CopyOnWriteArrayList
+        -> CopyOnWriteArraySet
+    -> They do NOT apply directly to database operations.
+
+=> Why don't they apply directly to database queries?
+    -> Database consistency is managed by:
+        -> Transactions.
+        -> Isolation Levels.
+        -> Locks.
+    -> Database records are not Java Collections.
+    -> Fail-Fast and Fail-Safe are concepts of Java Collection Iterators only.
+
+=> What does "shared collection in memory" mean?
+    -> It means multiple threads access the same Java Collection object stored in application memory.
+    -> Example:
+        -> A shared ArrayList.
+        -> A shared HashMap.
+        -> A shared Cache.
+    -> If one thread modifies the collection while another thread is iterating, Fail-Fast behavior may occur.
+
+=> When should you choose Fail-Fast?
+    -> When data consistency is the highest priority.
+    -> When unexpected modifications should immediately be detected.
+    -> When you want to identify programming bugs early.
+    -> Best for critical business applications.
+
+=> When should you choose Fail-Safe?
+    -> When uninterrupted execution is more important.
+    -> When occasional stale data is acceptable.
+    -> When collections are frequently read while being updated.
+    -> Best for listener lists, logging, monitoring, and configuration data.
+
+=> Interview Tip:
+    -> Remember this simple rule:
+        -> Fail-Fast = Reads Original Collection + Throws ConcurrentModificationException.
+        -> Fail-Safe = Reads Snapshot + Never Throws ConcurrentModificationException.
+        -> Current Iterator = Reads Old Snapshot.
+        -> New Iterator = Reads Updated Snapshot.

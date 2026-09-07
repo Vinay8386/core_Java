@@ -74,22 +74,17 @@ Expected Output:
 
 10. Convert every word to lowercase
 
-Expected Output:
-[java, is, powerful, and, java, is, fast, and, secure]
+Expected Output: [java, is, powerful, and, java, is, fast, and, secure]
 
 --------------------------------------------------
 
-11. Find the longest word
+11. Find the longest word                                                                       //Important
 
-Expected Output:
-Powerful
+Expected Output:Powerful
 
 --------------------------------------------------
 
-12. Find the shortest word
-
-Expected Output:
-is
+12. Find the shortest word  Expected Output: is
 
 --------------------------------------------------
 
@@ -100,9 +95,9 @@ J -> 2
 a -> 9
 v -> 2
 i -> 2
-s -> 4
+s -> 4 
 ...
-(remaining characters)
+(remaining characters) 
 
 --------------------------------------------------
 
@@ -166,71 +161,57 @@ Secure
 
 20. Find words starting with 'J'
 
-Expected Output:
-[Java, Java]
+Expected Output: [Java, Java]
 
 --------------------------------------------------
 
 21. Find words ending with 'd'
 
-Expected Output:
-[and, and]
+Expected Output: [and, and]
 
 --------------------------------------------------
 
 22. Count vowels in the sentence
 
-Expected Output:
-18
+Expected Output: 18
 
 --------------------------------------------------
 
 23. Count consonants in the sentence
 
-Expected Output:
-20
+Expected Output: 20
 
 --------------------------------------------------
 
 24. Remove duplicate words while preserving order
 
-Expected Output:
-Java is Powerful and Fast Secure
+Expected Output: Java is Powerful and Fast Secure
 
 --------------------------------------------------
 
 25. Join all words using "-"
-
-Expected Output:
-Java-is-Powerful-and-Java-is-Fast-and-Secure
+Expected Output: Java-is-Powerful-and-Java-is-Fast-and-Secure
 
 --------------------------------------------------
 
 26. Check whether the sentence contains "Secure"
 
-Expected Output:
-true
+Expected Output: true
 
 --------------------------------------------------
 
 27. Find index of the first occurrence of "Java"
-
-Expected Output:
-0
+Expected Output:0
 
 --------------------------------------------------
 
 28. Find index of the last occurrence of "Java"
-
-Expected Output:
-22
+Expected Output: 22
 
 --------------------------------------------------
 
 29. Replace "Java" with "Spring"
-
-Expected Output:
-Spring is Powerful and Spring is Fast and Secure
+Expected Output: Spring is Powerful and Spring is Fast and Secure
 
 --------------------------------------------------
 

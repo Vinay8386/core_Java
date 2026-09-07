@@ -1,0 +1,330 @@
+=> == vs equals()
+
+    -> Q1. What is the difference between == and equals() in Java?
+
+        -> == is an operator.
+
+        -> equals() is a method defined in the Object class.
+
+        -> For primitive values, == compares the actual values.
+
+        -> For reference variables, == checks whether both references
+           refer to the same object.
+
+        -> equals() behavior depends on how the class implements or overrides it.
+
+    -> Q2. What does == compare for primitive values?
+
+        -> For primitive types, == compares the actual values.
+
+        Example:
+
+            int a = 10;
+            int b = 10;
+
+            System.out.println(a == b);
+
+        Output:
+
+            true
+
+        -> Because both primitive values are 10.
+
+    -> Q3. What does == compare for objects?
+
+        -> For reference types, == compares references.
+
+        -> It checks whether both references point to the same object.
+
+        Example:
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+            System.out.println(e1 == e2);
+
+        Output:
+
+            false
+
+        -> Two different Employee objects were created.
+
+        -> Therefore, e1 and e2 refer to different objects.
+
+    -> Q4. What does the default Object.equals() implementation compare?
+
+        -> equals() is originally defined in the Object class.
+
+        -> The default implementation of Object.equals() performs
+           reference equality.
+
+        -> Therefore, if a class does not override equals(),
+           its behavior is effectively similar to == for object references.
+
+        Example:
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+            e1.equals(e2);
+
+        -> If Employee does not override equals(), this returns false
+           because e1 and e2 are different objects.
+
+    -> Q5. How does String.equals() differ from Object.equals()?
+
+        -> String overrides the equals() method inherited from Object.
+
+        -> String.equals() compares the character content of two Strings.
+
+        Example:
+
+            String s1 = new String("Hello");
+            String s2 = new String("Hello");
+
+            System.out.println(s1.equals(s2));
+
+        Output:
+
+            true
+
+        -> s1 and s2 are different objects.
+
+        -> But both contain the same characters "Hello".
+
+    -> Q6. What happens in this example?
+
+            String s1 = new String("Hello");
+            String s2 = new String("Hello");
+
+            System.out.println(s1 == s2);
+            System.out.println(s1.equals(s2));
+
+        Output:
+
+            false
+            true
+
+        Explanation:
+
+            -> new creates separate String objects.
+
+            -> s1 and s2 therefore refer to different objects.
+
+            -> == compares the references.
+
+            -> Therefore:
+
+                s1 == s2
+
+                false
+
+            -> String.equals() compares the contents.
+
+            -> Both contain "Hello".
+
+            -> Therefore:
+
+                s1.equals(s2)
+
+                true
+
+    -> Q7. What happens in this example?
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+            System.out.println(s1 == s2);
+            System.out.println(s1.equals(s2));
+
+        Output:
+
+            true
+            true
+
+        Explanation:
+
+            -> "Hello" is a String Literal.
+
+            -> JVM uses the String Constant Pool.
+
+            -> s1 refers to the pooled "Hello" object.
+
+            -> When s2 is created, the existing pooled "Hello"
+               object can be reused.
+
+        Memory:
+
+            s1 --------\
+                        \
+                         -----> "Hello"
+                        /
+            s2 --------/
+
+            String Constant Pool
+
+        -> Therefore:
+
+            s1 == s2
+
+            true
+
+        -> They also have the same content.
+
+        -> Therefore:
+
+            s1.equals(s2)
+
+            true
+
+    -> Q8. Why does == return true when two String references point to the same pooled String object?
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = "Hello";
+
+        -> Both references point to the same pooled String object.
+
+        -> == compares reference identity for objects.
+
+        -> Since both references refer to the same object:
+
+            s1 == s2
+
+        Output:
+
+            true
+
+    -> Q9. What happens when one String uses a Literal and another uses new?
+
+        Example:
+
+            String s1 = "Hello";
+            String s2 = new String("Hello");
+
+            System.out.println(s1 == s2);
+            System.out.println(s1.equals(s2));
+
+        Output:
+
+            false
+            true
+
+        Explanation:
+
+            -> s1 refers to the "Hello" object in the String Constant Pool.
+
+            -> new String("Hello") creates a separate String object.
+
+            -> Therefore, s1 and s2 refer to different objects.
+
+            -> == returns false.
+
+            -> Their contents are still the same.
+
+            -> String.equals() returns true.
+
+    -> Q10. Can two different String objects return true when compared using equals()?
+
+        -> Yes.
+
+        Example:
+
+            String s1 = new String("Java");
+            String s2 = new String("Java");
+
+        -> s1 and s2 refer to different objects.
+
+        Therefore:
+
+            s1 == s2
+
+            false
+
+        But:
+
+            s1.equals(s2)
+
+            true
+
+        -> Because String.equals() compares the character content.
+
+    -> Q11. Can two String references return false with == even though their contents are identical?
+
+        -> Yes.
+
+        Example:
+
+            String s1 = new String("Java");
+            String s2 = new String("Java");
+
+        -> Both objects contain "Java".
+
+        -> But they are separate objects.
+
+        Therefore:
+
+            s1 == s2
+
+            false
+
+            s1.equals(s2)
+
+            true
+
+    -> Q12. Does equals() always perform content comparison?
+
+        -> No.
+
+        -> This depends on the class implementation.
+
+        -> Object.equals() performs reference equality by default.
+
+        -> Classes can override equals() to provide logical or content comparison.
+
+        Example:
+
+            String
+
+        -> String overrides equals() to compare character content.
+
+        -> For our own class:
+
+            class Employee {
+
+                int id;
+                String name;
+            }
+
+        -> If Employee does not override equals(), Employee objects
+           use the default Object.equals() behavior.
+
+    -> Q13. What should we remember for interviews?
+
+        -> For primitives:
+
+            ==
+
+            -> Compares values.
+
+        -> For objects:
+
+            ==
+
+            -> Compares whether references point to the same object.
+
+        -> Object.equals():
+
+            -> Performs reference equality by default.
+
+        -> String.equals():
+
+            -> String overrides equals().
+            -> Compares String content.
+
+        -> Custom Classes:
+
+            -> equals() performs logical/content comparison only when
+               the class provides the required equals() implementation.
+

@@ -1,0 +1,328 @@
+=> Local vs Instance vs Static Variables
+
+    -> Q1. What is a Local Variable?
+
+        -> A variable declared inside a method, constructor, or block is called a Local Variable.
+
+        Example:
+
+            void display() {
+
+                int age = 25;
+            }
+
+        -> Here, age is a Local Variable.
+
+        -> Its scope is limited to the method or block where it is declared.
+
+        -> Local variables must be initialized before they are used.
+
+        -> JVM does not automatically provide default values to Local Variables.
+
+    -> Q2. What is an Instance Variable?
+
+        -> A variable declared inside a class but outside methods, constructors, and blocks is called an Instance Variable.
+
+        -> It belongs to an object of the class.
+
+        Example:
+
+            class Employee {
+
+                int id;
+                String name;
+            }
+
+        -> id and name are Instance Variables.
+
+        -> Every Employee object gets its own separate copy of these variables.
+
+        Example:
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+            e1.id = 101;
+            e2.id = 102;
+
+        -> e1 has its own id.
+
+        -> e2 has its own id.
+
+    -> Q3. What is a Static Variable?
+
+        -> A variable declared using the static keyword is called a Static Variable.
+
+        -> It belongs to the class rather than an individual object.
+
+        Example:
+
+            class Employee {
+
+                static int count = 0;
+            }
+
+        -> Only one logical copy of count exists for the loaded Employee class.
+
+        -> All Employee objects share the same count variable.
+
+    -> Q4. What is the scope of a Local Variable?
+
+        -> A Local Variable can only be accessed within the method, constructor, or block where it is declared.
+
+        Example:
+
+            void method1() {
+
+                int age = 25;
+            }
+
+            void method2() {
+
+                // age cannot be accessed here.
+            }
+
+        -> Once execution leaves its scope, that Local Variable is no longer accessible.
+
+    -> Q5. What is the scope of an Instance Variable?
+
+        -> An Instance Variable belongs to an object.
+
+        -> It can be accessed by instance methods of the class.
+
+        -> From outside the class, its accessibility depends on its access modifier.
+
+        Example:
+
+            class Employee {
+
+                int id;
+
+                void display() {
+
+                    System.out.println(id);
+                }
+            }
+
+        -> display() can directly access id because both belong to the object's instance context.
+
+    -> Q6. What is the scope of a Static Variable?
+
+        -> A Static Variable belongs to the class.
+
+        -> It can be directly accessed from static methods of the same class.
+
+        -> It can also be accessed using the class name.
+
+        Example:
+
+            class Employee {
+
+                static int count = 10;
+            }
+
+            Employee.count;
+
+        -> Using the class name is the preferred way to access a Static Variable.
+
+    -> Q7. Which variables receive default values automatically?
+
+        -> Instance Variables and Static Variables receive default values automatically.
+
+        Examples:
+
+            int       -> 0
+            long      -> 0L
+            double    -> 0.0
+            boolean   -> false
+            reference -> null
+
+        -> Local Variables do not receive default values automatically.
+
+    -> Q8. Why don't Local Variables receive default values?
+
+        -> Java requires Local Variables to be explicitly initialized before they are read.
+
+        Example:
+
+            void test() {
+
+                int age;
+
+                System.out.println(age);
+            }
+
+        -> This produces a compile-time error.
+
+        -> Java uses definite-assignment rules to ensure that a Local Variable has a value before it is read.
+
+    -> Q9. Why does a Static Variable have only one copy?
+
+        -> A Static Variable belongs to the class rather than individual objects.
+
+        Example:
+
+            class Employee {
+
+                static int count;
+            }
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+        -> e1 and e2 do not get separate copies of count.
+
+        -> Both objects share the same class-level count variable.
+
+        -> Therefore, no matter how many Employee objects are created, there is one logical count variable for that loaded Employee class.
+
+    -> Q10. Why does every object have its own copy of Instance Variables?
+
+        -> Instance Variables represent the state of an individual object.
+
+        Example:
+
+            class Employee {
+
+                int id;
+            }
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+            e1.id = 101;
+            e2.id = 102;
+
+        -> e1 and e2 represent different Employee objects.
+
+        -> Therefore, each object requires its own id.
+
+        Heap:
+
+            Employee Object e1
+
+                id = 101
+
+            Employee Object e2
+
+                id = 102
+
+    -> Q11. Does a Static Variable belong to the class or the object?
+
+        -> A Static Variable belongs to the class.
+
+        Example:
+
+            static int count;
+
+        -> count is shared by all objects of that class.
+
+        -> Therefore, it should preferably be accessed using:
+
+            Employee.count
+
+        -> Although Java allows access through an object reference, using the class name makes its class-level nature clear.
+
+    -> Q12. Does an Instance Variable belong to the class or the object?
+
+        -> An Instance Variable belongs to an object.
+
+        Example:
+
+            class Employee {
+
+                int id;
+            }
+
+        -> Every Employee object gets its own id.
+
+        Example:
+
+            Employee e1 = new Employee();
+            Employee e2 = new Employee();
+
+        -> e1 has one copy of id.
+
+        -> e2 has another copy of id.
+
+    -> Q13. When are Static Variables initialized?
+
+        -> Static fields are processed as part of class initialization.
+
+        Example:
+
+            static int count = 10;
+
+        -> During the Preparation phase:
+
+            count = 0
+
+        -> During the Initialization phase:
+
+            count = 10
+
+        -> This happens as part of initializing the class and does not depend on creating an object.
+
+    -> Q14. When are Instance Variables initialized?
+
+        -> Instance Variables are initialized when an object is created.
+
+        Example:
+
+            Employee e1 = new Employee();
+
+        -> Memory is allocated for the Employee object.
+
+        -> Instance Variables first receive their default values.
+
+        -> Instance field initializers and instance initialization blocks execute.
+
+        -> After that, the constructor body executes.
+
+    -> Q15. When are Local Variables initialized?
+
+        -> Local Variables are initialized when program execution reaches their initialization statement.
+
+        Example:
+
+            void test() {
+
+                int age = 25;
+            }
+
+        -> age receives 25 when this statement executes.
+
+        -> If we do not initialize age before reading it, Java gives a compile-time error.
+
+    -> Q16. Why are Static Variables not serialized as part of an object's state?
+
+        -> Serialization is used to save the state of an object.
+
+        -> Instance Variables belong to the object and therefore normally participate in serialization.
+
+        -> Static Variables belong to the class, not to any individual object.
+
+        -> Therefore, Static Variables are not serialized as part of an object's state.
+
+    -> Q17. What is the main difference between Local, Instance, and Static Variables?
+
+        Local Variable
+
+            -> Belongs to a method, constructor, or block.
+            -> Does not receive a default value.
+            -> Must be initialized before use.
+            -> Exists within its declared scope.
+
+        Instance Variable
+
+            -> Belongs to an object.
+            -> Every object gets its own copy.
+            -> Receives a default value.
+            -> Stored as part of the object.
+
+        Static Variable
+
+            -> Belongs to the class.
+            -> One logical copy exists per loaded class.
+            -> Shared by all objects.
+            -> Receives a default value during class preparation.
