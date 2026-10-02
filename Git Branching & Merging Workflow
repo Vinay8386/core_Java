@@ -1,123 +1,944 @@
-This is a step-by-step Git branching and merging workflow that helps developers safely create, work on, and integrate new features into a project without affecting the main code. 
-It can be used by anyone working on software projects, from beginners learning Git to experienced developers managing collaborative code.
+=> Git Branching, Pull Request, Approval and Merge Workflow
 
-Step 0 – Verify you are in your repository
-    -> "pwd"
-    -> "ls -la"
-    -> "git status"
-    ->pwd → shows your current directory.
-    ->ls -la → lists files to verify it’s your project folder.
-    ->"git status" → checks current branch and staged/unstaged changes.
+    -> Purpose
+        -> This workflow allows multiple developers to work safely on the same repository.
+        -> Developers should not directly modify the main branch.
+        -> Each developer creates a separate branch for their work.
+        -> Changes are pushed to that branch.
+        -> A Pull Request (PR) is created against main.
+        -> The repository owner/reviewer reviews and approves the PR.
+        -> After approval, the developer can merge the PR into main.
+        -> After successful merge, the old working branch can be deleted.
+        -> For the next task, a fresh branch should be created from the latest main.
 
-Step 1 – Check existing branches
-    -> "git branch"
-    -> This lists all local branches.
-    -> The current branch is highlighted with *.
-    -> "git branch -r" (This lists remote branches.)
 
-Step 2 – Create a new branch
-    -> "git checkout -b feature-branch"
-    -> feature-branch → name of your new branch.
-    -> -b → creates a new branch and switches to it automatically.
-    -> "git branch" (Verify: you should see * feature-branch.)
+=> Example Repository Setup
 
-Step 3 – Make changes to your code
-    -> Edit or add files in your project folder.
-    -> Save changes.
-    -> "git status" (Verify: you should see modified or untracked files.)
+    -> Repository Owner:
+        -> Vinay8386
 
-Step 4 – Stage your changes
-    -> "git add ." (Stages all modified files for commit.)
-    -> "git status" (Verify: files are now in staged state.)
+    -> Collaborator:
+        -> Akansha8386
 
-Step 5 – Commit your changes
-    -> "git commit -m "Added new feature in feature-branch"" (-m → your commit message.)
-    -> "git log --oneline" (Verify: your commit appears at the top of the log.)
+    -> Main Branch:
+        -> main
 
-Step 6 – Push branch to remote
-    -> "git push -u origin feature-branch" (-u → sets the upstream so next time you can just use git push. Verify on GitHub (or your remote repo) that feature-branch exists.)
+    -> Working Branch Example:
+        -> akansha-updates
 
-Step 7 – Switch back to main branch
-    -> "git checkout main" (Verify: git branch shows * main.)
+    -> Workflow:
 
-Step 8 – Merge your feature branch into main
-    -> "git merge feature-branch" (If no conflicts → merge will succeed automatically.)
-    -> If conflicts → Git will tell you which files need manual resolution.
-    -> "git status" (Verify: working tree is clean and merge is done.)
+        Akansha Branch
+              |
+              v
+        Make Changes
+              |
+              v
+        Commit Changes
+              |
+              v
+        Push Branch
+              |
+              v
+        Create Pull Request
+              |
+              v
+        Vinay Reviews
+              |
+              v
+        Vinay Approves
+              |
+              v
+        Akansha Merges PR
+              |
+              v
+            main
 
-Step 9 – Push main branch to remote
-    -> "git push origin main" (Verify on GitHub that main branch now has your feature merged.)
 
-Optional Step 10 – Delete feature branch
-    -> Local branch: "git branch -d feature-branch"
-    -> Remote branch: "git push origin --delete feature-branch"
-    -> Verify: branch is deleted locally and on GitHub.
-    
+=> Step 0 – Verify Repository
 
-Git Issues and Resolutions:
-    -> Issue: Branch Divergence : 
-        -> Observation : Your branch and 'origin/main' have diverged, and have 1 and 1 different commits each, respectively.
-        -> Cause: Local main branch and remote main both had different commits. Git prevents pushing to avoid overwriting remote changes.
-    -> Resolution: 
-        -> Pull the latest changes from remote to merge with local: "git pull origin main"
-        -> Resolve any merge conflicts, stage, and commit: "git add ." then "git commit"
-        -> Push the updated branch: "git push origin main"
-    
-    -> Issue: Deleting other branches in Windows: 
-        -> Observation : 'grep' is not recognized as an internal or external command
-        -> Cause: grep is a Linux command, not available in Windows cmd/PowerShell.
-    -> Resolution: 
-        -> Delete a specific branch : "git branch -D DSA_code_commit"
-        -> Or use PowerShell to delete multiple branches (excluding main): 'git branch | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne "main" } | ForEach-Object { git branch -D $_ }"
-    
-    -> Issue: Feature branch commit not happening: 
-        -> Observation : nothing added to commit but untracked files present
-        -> Cause: Changes were made in files that were untracked or Git was in a wrong directory (Tree/) instead of repo root.
-    -> Resolution: 
-        -> Create a feature branch : "git checkout -b local_dsa_branch"
-        -> Stage only the files you want: "git add ABC/FileName.java"
-        -> Commit the changes: "git commit -m "Added new code for ValidateBST"
-    
-    -> Issue: Merge failure: 
-        -> Observation : merge: feature_branch - not something we can merge
-        -> Cause: The branch feature_branch did not exist; you were using local_dsa_branch.
-    -> Resolution: 
-        -> Verify branches : "git branch"
-        -> Merge the correct branch: "git checkout main" then "git merge local_dsa_branch"
-    
-    -> Issue: Push rejected due to non-fast-forward: 
-        -> Observation : Updates were rejected because the tip of your current branch is behind
-        -> Cause: Remote had new commits that local didn’t..
-    -> Resolution: 
-        -> Pull remote changes first : "git pull origin main"
-        -> Resolve conflicts if any.
-        -> Push after merge/rebase : "git push origin main"
-    
-    -> Issue: Untracked stray files: 
-        -> Observation : Untracked files:  ../../h origin main
-        -> Cause: An accidental or temporary file outside the repo structure.
-    -> Resolution: 
-        -> If not needed, delete it : "git clean -f"
-        -> If you want to keep it locally but ignore in Git, add to .gitignore: "h origin main"
-    
-    ->Successful Commit & Merge Sequence: After resolving the issues, the final working sequence was:
-        # Create and switch to feature branch
-        git checkout -b local_dsa_branch
-        
-        # Stage the file(s)
-        git add BST/ValidateBST.java
-        
-        # Commit changes
-        git commit -m "Added new code for ValidateBST"
-        
-        # Switch back to main
+    -> In Windows CMD:
+
+        cd
+
+        -> Shows the current directory.
+
+        dir
+
+        -> Lists files and folders in the current directory.
+
+        git status
+
+        -> Checks whether the current directory is a Git repository.
+        -> Shows the current branch.
+        -> Shows staged, modified and untracked files.
+
+    -> Example:
+
+        D:\Vinay_git_repo\core_Java>git status
+
+
+=> Step 1 – Check Existing Branches
+
+    -> Check local branches:
+
+        git branch
+
+    -> Example:
+
+          main
+        * akansha-updates
+
+    -> * indicates the currently active branch.
+
+    -> Check remote branches:
+
+        git branch -r
+
+    -> Example:
+
+        origin/main
+        origin/akansha-updates
+
+
+=> Step 2 – Configure Developer Identity
+
+    -> Git commit identity and GitHub login are two different things.
+
+    -> Git commit identity determines:
+
+        Who created the commit?
+
+    -> GitHub authentication determines:
+
+        Which GitHub account pushes the code?
+
+
+    -> For a shared laptop or repository, configure identity only for that repository:
+
+        git config user.name "Akansha"
+
+        git config user.email "Akansha-GitHub-Email"
+
+    -> Do NOT use --global if different people use the same computer.
+
+    -> Verify:
+
+        git config user.name
+
+        git config user.email
+
+
+=> Step 3 – Start Work From Latest Main
+
+    -> Before creating a new working branch, always switch to main:
+
         git checkout main
-        
-        # Pull remote changes
+
+    -> Download latest main changes:
+
         git pull origin main
-        
-        # Merge feature branch
-        git merge local_dsa_branch
-        
-        # Push merged code
+
+    -> This is important because another developer may have updated main.
+
+
+=> Step 4 – Create a New Working Branch
+
+    -> Create and switch to a new branch:
+
+        git checkout -b akansha-updates
+
+    -> -b means:
+
+        Create new branch + switch to that branch.
+
+    -> Verify:
+
+        git branch
+
+    -> Expected:
+
+          main
+        * akansha-updates
+
+
+=> Step 5 – Make Code Changes
+
+    -> Add, modify or delete required project files.
+
+    -> After making changes:
+
+        git status
+
+    -> Git may show:
+
+        modified:
+        deleted:
+        untracked files:
+
+
+=> Step 6 – Stage Changes
+
+    -> Stage all changes:
+
+        git add .
+
+    -> Or stage a specific file:
+
+        git add Java21/Sequenced_Collection/SequencedCollectionNotes
+
+    -> Verify:
+
+        git status
+
+    -> Files should now appear under:
+
+        Changes to be committed
+
+
+=> Step 7 – Commit Changes
+
+    -> Commit staged changes:
+
+        git commit -m "SequencedCollection Update"
+
+    -> Verify commit:
+
+        git log --oneline
+
+    -> Example:
+
+        5ae5694 SequencedCollection Update
+
+
+=> Step 8 – Push Working Branch to GitHub
+
+    -> First push:
+
+        git push -u origin akansha-updates
+
+    -> -u / --set-upstream means:
+
+        Local branch:
+        akansha-updates
+
+        is linked with:
+
+        Remote branch:
+        origin/akansha-updates
+
+    -> After upstream is configured, future pushes can simply use:
+
+        git push
+
+
+=> Step 9 – GitHub Permission Requirement
+
+    -> If another person's GitHub repository is being used:
+
+        Repository Owner:
+        Vinay8386
+
+        Collaborator:
+        Akansha8386
+
+    -> Akansha must have collaborator/write access.
+
+    -> Otherwise push may fail with:
+
+        Permission to Vinay8386/core_Java.git denied to Akansha8386
+        HTTP 403
+
+    -> Resolution:
+
+        Repository Owner
+            -> Repository Settings
+            -> Collaborators
+            -> Add Akansha8386
+
+        Akansha must accept the invitation.
+
+
+=> Step 10 – Install GitHub CLI
+
+    -> GitHub CLI allows Pull Requests and other GitHub operations directly from CMD.
+
+    -> Windows installation:
+
+        winget install --id GitHub.cli
+
+    -> Verify:
+
+        gh --version
+
+
+=> Step 11 – Login to GitHub CLI
+
+    -> Run:
+
+        gh auth login
+
+    -> Select:
+
+        GitHub.com
+        HTTPS
+        Login with a web browser
+
+    -> Authenticate using the developer's GitHub account.
+
+    -> Example:
+
+        Akansha8386
+
+    -> Verify:
+
+        gh auth status
+
+    -> Expected:
+
+        Logged in to github.com account Akansha8386
+        Active account: true
+
+
+=> Step 12 – Verify Branch Before Creating PR
+
+    -> Check:
+
+        git status
+
+    -> Expected:
+
+        On branch akansha-updates
+        Your branch is up to date with 'origin/akansha-updates'.
+        nothing to commit, working tree clean
+
+    -> This confirms all local changes are committed and pushed.
+
+
+=> Step 13 – Create Pull Request
+
+    -> Create PR from:
+
+        akansha-updates
+              |
+              v
+             main
+
+    -> Using GitHub CLI:
+
+        gh pr create --base main --head akansha-updates --title "SequencedCollection Update"
+
+    -> Non-interactive command:
+
+        gh pr create --base main --head akansha-updates --title "SequencedCollection Update" --body "Updated SequencedCollection notes and related file changes."
+
+    -> Meaning:
+
+        --base main
+            -> Destination branch
+
+        --head akansha-updates
+            -> Source branch
+
+        --title
+            -> Pull Request title
+
+        --body
+            -> Pull Request description
+
+
+=> Step 14 – Repository Main Branch Protection
+
+    -> A GitHub Ruleset can protect main.
+
+    -> Recommended rule:
+
+        Require a pull request before merging
+
+    -> Required approvals:
+
+        1
+
+    -> Recommended:
+
+        Dismiss stale pull request approvals when new commits are pushed
+
+    -> This means:
+
+        Akansha creates PR
+                |
+                v
+        Vinay approves
+                |
+                v
+        Akansha pushes another commit
+                |
+                v
+        Previous approval becomes invalid
+                |
+                v
+        Vinay must review and approve again
+
+
+=> Step 15 – Do NOT Enable Latest-Push Approval Requirement for This Workflow
+
+    -> Option:
+
+        Require approval of the most recent reviewable push
+
+    -> Keep this disabled for the current workflow.
+
+    -> Reason:
+
+        If Vinay himself creates a branch and pushes the latest commit,
+        GitHub could require another person to approve that latest push.
+
+    -> Current requirement:
+
+        Require Pull Request
+        +
+        Require 1 Approval
+
+
+=> Step 16 – Repository Owner Reviews Pull Request
+
+    -> Vinay opens the Pull Request.
+
+    -> Review:
+
+        Pull Request
+            -> Files changed
+            -> Review changes
+            -> Approve
+            -> Submit review
+
+    -> After approval:
+
+        Reviewers:
+        Vinay8386 (Approved)
+
+
+=> Step 17 – Verify Approval From Akansha Side
+
+    -> From Akansha's CMD:
+
+        gh pr view 1
+
+    -> Example:
+
+        Open
+        Akansha8386 wants to merge into main
+        Reviewers: Vinay8386 (Approved)
+
+    -> This confirms the required approval has been completed.
+
+
+=> Step 18 – Merge the Pull Request From Akansha Side
+
+    -> After Vinay approves, Akansha can merge the PR.
+
+    -> Run:
+
+        gh pr merge 1
+
+    -> GitHub CLI may provide merge methods:
+
+        Merge commit
+        Squash and merge
+        Rebase and merge
+
+    -> For normal collaborative workflow:
+
+        Merge commit
+
+    -> Important:
+
+        Akansha creates the PR.
+        Vinay reviews and approves it.
+        Akansha performs the final merge.
+
+
+=> Step 19 – What Happens After Merge
+
+    -> Before merge:
+
+        main
+        |
+        +--- existing code
+
+
+        akansha-updates
+        |
+        +--- existing code
+        +--- new Akansha changes
+
+
+    -> After PR merge:
+
+        main
+        |
+        +--- existing code
+        +--- Akansha changes
+
+    -> Therefore the latest approved code is now available in main.
+
+
+=> Step 20 – Delete Old Working Branch
+
+    -> After successful merge, the completed branch is no longer needed.
+
+    -> Delete remote branch:
+
+        git push origin --delete akansha-updates
+
+    -> Delete local branch.
+
+    -> First switch away from it:
+
+        git checkout main
+
+    -> Then delete:
+
+        git branch -d akansha-updates
+
+    -> -d performs safe deletion.
+
+    -> Git normally prevents deletion if the branch contains unmerged work.
+
+
+=> Step 21 – Update Local Main After Merge
+
+    -> After the Pull Request is merged:
+
+        git checkout main
+
+    -> Download the latest merged main:
+
+        git pull origin main
+
+    -> Verify:
+
+        git status
+
+    -> Expected:
+
+        On branch main
+        Your branch is up to date with 'origin/main'.
+        nothing to commit, working tree clean
+
+
+=> Step 22 – Start Akansha's Next Task
+
+    -> Never continue new work on an old completed branch.
+
+    -> Start from latest main:
+
+        git checkout main
+
+        git pull origin main
+
+    -> Create a fresh branch:
+
+        git checkout -b akansha-new-task
+
+    -> Then repeat:
+
+        Make Changes
+            ->
+        git add
+            ->
+        git commit
+            ->
+        git push
+            ->
+        Pull Request
+            ->
+        Vinay Approval
+            ->
+        Akansha Merge
+            ->
+        Delete Branch
+
+
+=> Complete Recommended Workflow
+
+    -> Start from latest main:
+
+        git checkout main
+
+        git pull origin main
+
+
+    -> Create new branch:
+
+        git checkout -b akansha-new-task
+
+
+    -> Make changes.
+
+
+    -> Check changes:
+
+        git status
+
+
+    -> Stage:
+
+        git add .
+
+
+    -> Commit:
+
+        git commit -m "Updated required functionality"
+
+
+    -> Push first time:
+
+        git push -u origin akansha-new-task
+
+
+    -> Create PR:
+
+        gh pr create --base main --head akansha-new-task --title "Updated required functionality" --body "Updated required functionality."
+
+
+    -> Vinay reviews and approves the Pull Request.
+
+
+    -> Check PR:
+
+        gh pr view <PR-NUMBER>
+
+
+    -> After approval, Akansha merges:
+
+        gh pr merge <PR-NUMBER>
+
+
+    -> Switch to main:
+
+        git checkout main
+
+
+    -> Update local main:
+
+        git pull origin main
+
+
+    -> Delete local old branch:
+
+        git branch -d akansha-new-task
+
+
+    -> Delete remote old branch if it was not automatically deleted:
+
+        git push origin --delete akansha-new-task
+
+
+=> Important Rule
+
+    -> Do NOT use this collaborative workflow:
+
+        git checkout main
+        git merge akansha-updates
         git push origin main
+
+    -> Because this directly merges locally and pushes into main.
+
+    -> Instead use:
+
+        Feature Branch
+              |
+              v
+        Pull Request
+              |
+              v
+        Review
+              |
+              v
+        Approval
+              |
+              v
+        Merge PR
+
+    -> This allows GitHub branch protection/rulesets to control changes to main.
+
+
+=> Git Issues and Resolutions
+
+
+    -> Issue 1 – Not a Git Repository
+
+        -> Observation:
+
+            fatal: not a git repository
+            (or any of the parent directories): .git
+
+        -> Cause:
+
+            Command was executed outside the Git repository.
+
+        -> Example:
+
+            D:\Vinay_git_repo>
+
+        -> Repository was actually:
+
+            D:\Vinay_git_repo\core_Java
+
+        -> Resolution:
+
+            cd core_Java
+
+            git status
+
+
+    -> Issue 2 – Git Author Identity Unknown
+
+        -> Observation:
+
+            Author identity unknown
+
+            Please tell me who you are.
+
+        -> Cause:
+
+            Git user.name and user.email were not configured.
+
+        -> Resolution for shared computer:
+
+            git config user.name "Akansha"
+
+            git config user.email "Akansha-GitHub-Email"
+
+        -> Do not use --global when different users may work from the same machine/repository environment.
+
+
+    -> Issue 3 – GitHub Push Permission Denied
+
+        -> Observation:
+
+            Permission to Vinay8386/core_Java.git denied to Akansha8386.
+
+            HTTP 403
+
+        -> Cause:
+
+            Akansha was authenticated correctly,
+            but did not have write permission to Vinay's repository.
+
+        -> Resolution:
+
+            Vinay adds Akansha8386 as repository collaborator.
+
+            Akansha accepts invitation.
+
+            Then retry:
+
+            git push -u origin akansha-updates
+
+
+    -> Issue 4 – Branch Divergence
+
+        -> Observation:
+
+            Your branch and 'origin/main' have diverged.
+
+        -> Cause:
+
+            Local main and remote main contain different commits.
+
+        -> Resolution:
+
+            git checkout main
+
+            git pull origin main
+
+        -> Resolve conflicts if required.
+
+        -> Then continue normally.
+
+
+    -> Issue 5 – Push Rejected Because Local Branch Is Behind
+
+        -> Observation:
+
+            Updates were rejected because the tip of your current branch is behind.
+
+        -> Cause:
+
+            Remote contains newer commits that local branch does not contain.
+
+        -> Resolution:
+
+            git pull origin <branch-name>
+
+        -> Resolve conflicts if required.
+
+        -> Then:
+
+            git push
+
+
+    -> Issue 6 – Nothing Added to Commit
+
+        -> Observation:
+
+            nothing added to commit but untracked files present
+
+        -> Cause:
+
+            Files were changed or created but were not staged.
+
+        -> Resolution:
+
+            git status
+
+            git add <file-name>
+
+        -> Or:
+
+            git add .
+
+        -> Then:
+
+            git commit -m "Commit message"
+
+
+    -> Issue 7 – Wrong Branch Name During Merge
+
+        -> Observation:
+
+            merge: feature_branch - not something we can merge
+
+        -> Cause:
+
+            The specified branch does not exist.
+
+        -> Resolution:
+
+            git branch
+
+        -> Verify the correct branch name before using it.
+
+
+    -> Issue 8 – Linux Commands Not Working in Windows CMD
+
+        -> Observation:
+
+            'grep' is not recognized as an internal or external command.
+
+        -> Cause:
+
+            grep is normally a Linux/Unix command.
+
+        -> Windows CMD alternatives:
+
+            dir
+
+            git branch
+
+        -> PowerShell provides additional filtering capabilities when required.
+
+
+    -> Issue 9 – GitHub CLI Not Found
+
+        -> Observation:
+
+            'gh' is not recognized as an internal or external command.
+
+        -> Cause:
+
+            GitHub CLI was not installed.
+
+        -> Resolution:
+
+            winget install --id GitHub.cli
+
+        -> Open a new CMD after installation.
+
+        -> Verify:
+
+            gh --version
+
+
+    -> Issue 10 – GitHub CLI Not Authenticated
+
+        -> Resolution:
+
+            gh auth login
+
+        -> Login through browser.
+
+        -> Verify:
+
+            gh auth status
+
+
+    -> Issue 11 – Merge Is Blocked
+
+        -> Observation:
+
+            Review required
+
+            Merging is blocked
+
+            At least 1 approving review is required
+
+        -> This is NOT an error.
+
+        -> It means the main branch ruleset is working correctly.
+
+        -> Resolution:
+
+            Vinay reviews the Pull Request.
+
+            Vinay selects:
+
+            Approve
+            -> Submit review
+
+        -> After approval, Akansha can merge the Pull Request.
+
+
+=> Final Collaborative Development Cycle
+
+    -> Every new task should follow this cycle:
+
+        Latest main
+            |
+            v
+        New branch
+            |
+            v
+        Developer changes
+            |
+            v
+        Stage
+            |
+            v
+        Commit
+            |
+            v
+        Push branch
+            |
+            v
+        Create Pull Request
+            |
+            v
+        Owner review
+            |
+            v
+        Owner approval
+            |
+            v
+        Developer merges PR
+            |
+            v
+        Latest code enters main
+            |
+            v
+        Delete completed branch
+            |
+            v
+        Next task starts with a NEW branch from latest main
