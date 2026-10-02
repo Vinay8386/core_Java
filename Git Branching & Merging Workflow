@@ -449,7 +449,327 @@
         git push origin --delete new-task-branch
         -> Delete the completed remote branch if required.
 
+=> Pull Request Merge Methods
 
+    -> When a Pull Request is ready to merge, GitHub may provide three merge options:
+
+        1. Create a merge commit
+        2. Squash and merge
+        3. Rebase and merge
+
+
+    -> Example branch history before merge:
+
+        main:
+
+        A---B
+
+
+        feature branch:
+
+             C---D---E
+
+
+    -> C, D and E are commits created on the feature branch.
+
+
+    -> Option 1 – Create a Merge Commit
+
+        -> Git keeps all commits from the feature branch.
+
+        -> Git also creates one additional merge commit.
+
+        -> Result:
+
+        A---B---------M
+             \       /
+              C---D---E
+
+        -> M represents the merge commit.
+
+        -> Individual commits C, D and E remain visible.
+
+        -> Branch history is also preserved.
+
+        -> Example:
+
+            C -> Added Java file
+            D -> Updated notes
+            E -> Fixed formatting
+            M -> Merge pull request #3
+
+
+        -> Best suited when:
+            -> Complete branch history should be preserved.
+            -> Individual commits are meaningful.
+            -> Team wants to see when a branch was merged.
+
+        -> Advantage:
+            -> Full history is preserved.
+
+        -> Disadvantage:
+            -> Main branch history may contain many merge commits.
+
+
+    -> Option 2 – Squash and Merge
+
+        -> Git combines all commits from the feature branch into one single commit.
+
+        -> Example before merge:
+
+            C -> Added Java file
+            D -> Fixed typo
+            E -> Updated documentation
+
+
+        -> After squash and merge:
+
+        A---B---S
+
+        -> S contains the combined changes of C + D + E.
+
+        -> Individual feature branch commits do not appear separately in main.
+
+        -> Example:
+
+            Feature branch commits:
+
+            Added Java class
+            Fixed typo
+            Updated comments
+            Final correction
+
+
+            Main branch after squash:
+
+            Added complete Java feature
+
+
+        -> Best suited when:
+            -> Feature branch contains many small commits.
+            -> Commit history contains temporary commits such as:
+
+                fix
+                typo fix
+                final fix
+                formatting update
+
+            -> A clean main branch history is preferred.
+
+        -> Advantage:
+            -> Main history remains very clean.
+
+        -> Disadvantage:
+            -> Individual commit history from the feature branch is not preserved in main.
+
+
+    -> Option 3 – Rebase and Merge
+
+        -> Git takes every feature branch commit and places them directly on top of the latest main branch.
+
+        -> Before:
+
+        A---B
+             \
+              C---D---E
+
+
+        -> After rebase and merge:
+
+        A---B---C'---D'---E'
+
+        -> No separate merge commit is created.
+
+        -> C', D' and E' represent recreated versions of the original commits.
+
+        -> Because commits are recreated, their commit hashes normally change.
+
+        -> Main branch history becomes linear.
+
+        -> Best suited when:
+            -> Every individual commit is meaningful.
+            -> A straight and clean commit history is preferred.
+            -> Team understands rebasing clearly.
+
+        -> Advantage:
+            -> Clean linear history.
+            -> Individual commits are preserved.
+
+        -> Disadvantage:
+            -> Commit hashes change.
+            -> Slightly more advanced Git behavior.
+
+
+    -> Quick Comparison
+
+        -> Create a merge commit
+
+            Individual commits preserved:
+            Yes
+
+            Extra merge commit:
+            Yes
+
+            History style:
+            Branch structure visible
+
+
+        -> Squash and merge
+
+            Individual commits preserved:
+            No
+
+            Extra merge commit:
+            No
+
+            History style:
+            One clean commit
+
+
+        -> Rebase and merge
+
+            Individual commits preserved:
+            Yes
+
+            Extra merge commit:
+            No
+
+            History style:
+            Clean linear history
+
+
+    -> Simple Decision Rule
+
+        -> If complete branch history should be preserved:
+
+            Create a merge commit
+
+
+        -> If branch has many small or temporary commits:
+
+            Squash and merge
+
+
+        -> If every commit is meaningful and linear history is preferred:
+
+            Rebase and merge
+
+
+    -> For Current Collaborative Workflow
+
+        Akansha branch
+            ->
+        Commits
+            ->
+        Pull Request
+            ->
+        Vinay approval
+            ->
+        Akansha merges
+
+
+        -> Merge commit is easiest to understand and preserves complete history.
+
+        -> Squash and merge is useful when the branch contains many small commits.
+
+        -> Rebase and merge is useful when a clean linear history is required.
+
+
+=> Cleaning Stale Remote Branch References
+
+    -> Sometimes a branch is already deleted from GitHub, but it may still appear locally when checking remote branches.
+
+    -> Example:
+
+        git branch -r
+        -> Displays remote-tracking branches known by the local repository.
+
+
+    -> Example output:
+
+        origin/main
+        origin/akansha-updates
+        origin/java_folder
+
+
+    -> Suppose akansha-updates was already deleted from GitHub.
+
+    -> If deletion is attempted again:
+
+        git push origin --delete akansha-updates
+        -> Attempts to delete akansha-updates from the remote repository.
+
+
+    -> Git may return:
+
+        error: unable to delete 'akansha-updates': remote ref does not exist
+
+
+    -> Meaning:
+
+        -> The branch is already deleted from GitHub.
+        -> Only the local remote-tracking reference is stale.
+
+
+    -> Resolution:
+
+        git fetch --prune
+        -> Downloads updated remote branch information and removes stale remote-tracking references.
+
+
+    -> Verify:
+
+        git branch -r
+        -> Displays the refreshed remote branch list.
+
+
+    -> Example before prune:
+
+        origin/main
+        origin/akansha-updates
+        origin/java_folder
+
+
+    -> Example after prune:
+
+        origin/main
+        origin/java_folder
+
+
+    -> Important Difference
+
+        git push origin --delete branch-name
+        -> Actually deletes an existing branch from GitHub.
+
+
+        git fetch --prune
+        -> Does NOT delete an active GitHub branch.
+        -> It only removes stale local references to remote branches that no longer exist.
+
+
+    -> Recommended Usage
+
+        git fetch --prune
+        -> Can be used periodically to keep remote branch references clean.
+
+
+    -> Example Cleanup Flow
+
+        git branch -r
+        -> Check currently known remote branches.
+
+
+        git push origin --delete completed-branch
+        -> Delete the completed remote branch if it still exists.
+
+
+        git fetch --prune
+        -> Remove stale local references after remote branch deletion.
+
+
+        git branch -r
+        -> Verify the final remote branch list.
+        
 => GitHub Main Branch Protection
 
     -> Recommended Ruleset
