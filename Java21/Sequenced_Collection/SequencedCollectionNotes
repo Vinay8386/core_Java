@@ -1,0 +1,865 @@
+=> Java 21 Sequenced Collections
+
+     -> 1. Introduction
+          -> Sequenced Collections were introduced in Java 21.
+          -> They provide a common API for collections that have a well-defined encounter order.
+          -> Encounter order means the defined order in which elements are encountered while traversing the collection.
+          -> The main purpose is to provide uniform operations for working with the first and last elements.
+          -> Java 21 introduced three main sequenced interfaces:
+               -> SequencedCollection<E>
+               -> SequencedSet<E>
+               -> SequencedMap<K,V>
+
+
+     -> 2. Why Sequenced Collections Were Needed
+          -> Before Java 21, several collections already maintained some form of order.
+          -> Examples:
+               -> ArrayList maintains positional encounter order.
+               -> LinkedList maintains positional encounter order.
+               -> LinkedHashSet maintains insertion-based encounter order.
+               -> TreeSet maintains sorted encounter order.
+               -> LinkedHashMap maintains insertion-based encounter order.
+               -> TreeMap maintains sorted encounter order based on keys.
+
+          -> However, there was no single common API for accessing and manipulating the first and last elements of all such collections.
+
+          -> Example before Java 21 with List:
+               list.get(0)
+               list.get(list.size() - 1)
+
+          -> LinkedHashSet did not have equivalent common methods such as:
+               getFirst()
+               getLast()
+
+          -> Java 21 solves this by providing common sequenced interfaces and methods.
+
+
+     -> 3. Encounter Order
+          -> Encounter order is the defined order in which elements are encountered during traversal.
+
+          -> Important:
+               Sequenced does NOT necessarily mean insertion ordered.
+
+          -> LinkedHashSet example:
+               Insert: 30, 10, 20
+               Encounter order: 30 -> 10 -> 20
+
+          -> TreeSet example:
+               Insert: 30, 10, 20
+               Encounter order: 10 -> 20 -> 30
+
+          -> HashSet:
+               Does not guarantee encounter order.
+               Therefore, HashSet is not a SequencedSet.
+
+          -> Remember:
+               Sequenced = well-defined encounter order.
+               Encounter order can be insertion-based, positional, or sorted.
+
+
+     -> 4. Basic Hierarchy
+          -> Collection side:
+
+               Iterable
+                  |
+               Collection
+                  |
+               SequencedCollection
+                  |
+               -------------------------
+               |                       |
+              List               SequencedSet
+               |                       |
+          ArrayList              LinkedHashSet
+          LinkedList                 TreeSet
+
+          -> List extends SequencedCollection.
+
+          -> Therefore, ArrayList and LinkedList receive the SequencedCollection operations.
+
+          -> SequencedSet extends both:
+               Set
+               SequencedCollection
+
+          -> Therefore, a SequencedSet provides:
+               Set uniqueness
+               +
+               Defined encounter order
+
+
+     -> 5. SequencedCollection<E>
+          -> SequencedCollection is an interface.
+
+          -> It represents a Collection having a well-defined encounter order from first to last.
+
+          -> It cannot be instantiated directly.
+
+          -> Valid:
+               SequencedCollection<String> sc = new ArrayList<>();
+
+          -> Invalid:
+               new SequencedCollection<>();
+
+          -> Common methods include:
+
+               getFirst()
+                    -> Returns the first element.
+
+               getLast()
+                    -> Returns the last element.
+
+               addFirst(E e)
+                    -> Adds an element at the beginning.
+
+               addLast(E e)
+                    -> Adds an element at the end.
+
+               removeFirst()
+                    -> Removes and returns the first element.
+
+               removeLast()
+                    -> Removes and returns the last element.
+
+               reversed()
+                    -> Returns a reverse-ordered view of the collection.
+
+
+     -> 6. SequencedCollection Does Not Mean Index
+          -> A collection can have a defined encounter order without supporting indexes.
+
+          -> Therefore:
+               Order != Index
+
+          -> Example:
+
+               SequencedCollection<String> sc = new ArrayList<>();
+
+          -> Allowed:
+               sc.getFirst();
+               sc.getLast();
+
+          -> Not allowed:
+               sc.get(0);
+
+          -> Reason:
+               The reference type is SequencedCollection.
+               SequencedCollection does not declare get(int).
+
+          -> ArrayList itself supports indexes because ArrayList implements List.
+
+
+     -> 7. List and SequencedCollection
+          -> List extends SequencedCollection in Java 21.
+
+          -> Therefore:
+
+               List<String> list = new ArrayList<>();
+
+          -> It can use List operations:
+               get(index)
+               set(index, value)
+               add(index, value)
+
+          -> It can also use sequenced operations:
+               getFirst()
+               getLast()
+               addFirst()
+               addLast()
+               removeFirst()
+               removeLast()
+               reversed()
+
+          -> Example:
+
+               list.get(0);
+               list.getFirst();
+
+          -> Both can access the first element, but getFirst() provides a common sequenced abstraction.
+
+
+     -> 8. Reference Type vs Actual Object Type
+          -> Example:
+
+               SequencedCollection<String> sc = new ArrayList<>();
+
+          -> Reference type:
+               SequencedCollection
+
+          -> Actual object type:
+               ArrayList
+
+          -> At compile time:
+               Java checks which methods are available through the reference type.
+
+          -> Therefore:
+               sc.getFirst();   // Valid
+               sc.get(0);       // Compile-time error
+
+          -> Even though the actual object is an ArrayList, get(int) is not declared by SequencedCollection.
+
+
+     -> 9. Casting SequencedCollection to List
+          -> Example:
+
+               SequencedCollection<String> sc = new ArrayList<>();
+
+               List<String> list = (List<String>) sc;
+
+          -> Now:
+               list.get(1);
+
+          -> This works because the actual object is an ArrayList, and ArrayList implements List.
+
+          -> The cast does not change the actual object.
+          -> It only changes how the reference is viewed.
+
+          -> Same concept with LinkedList:
+
+               SequencedCollection<String> sc = new LinkedList<>();
+               List<String> list = (List<String>) sc;
+
+          -> This is valid because LinkedList also implements List.
+
+          -> However:
+
+               SequencedCollection<String> sc = new LinkedHashSet<>();
+               List<String> list = (List<String>) sc;
+
+          -> The explicit cast can compile.
+          -> But it throws ClassCastException at runtime.
+
+          -> Reason:
+               The actual LinkedHashSet object is not a List.
+
+          -> Safe checking:
+
+               if (sc instanceof List) {
+                   List<String> list = (List<String>) sc;
+               }
+
+
+     -> 10. SequencedSet<E>
+          -> SequencedSet combines two properties:
+
+               Set
+                    -> Elements must be unique.
+
+               SequencedCollection
+                    -> Elements have a defined encounter order.
+
+          -> Therefore:
+
+               SequencedSet =
+               Unique elements + Defined encounter order
+
+          -> Important implementations include:
+               LinkedHashSet
+               TreeSet
+
+
+     -> 11. LinkedHashSet as SequencedSet
+          -> LinkedHashSet preserves insertion-based encounter order.
+
+          -> Example:
+
+               SequencedSet<Integer> set = new LinkedHashSet<>();
+
+               set.add(30);
+               set.add(10);
+               set.add(20);
+
+          -> Encounter order:
+
+               30 -> 10 -> 20
+
+          -> Therefore:
+
+               set.getFirst();  // 30
+               set.getLast();   // 20
+
+          -> LinkedHashSet supports sequenced boundary operations such as:
+               addFirst()
+               addLast()
+               getFirst()
+               getLast()
+               removeFirst()
+               removeLast()
+               reversed()
+
+
+     -> 12. TreeSet as SequencedSet
+          -> TreeSet also has a defined encounter order.
+
+          -> However, its encounter order is determined by sorting.
+
+          -> Example:
+
+               Add:
+               30, 10, 20
+
+          -> TreeSet encounter order:
+
+               10 -> 20 -> 30
+
+          -> Therefore:
+
+               getFirst() -> 10
+               getLast()  -> 30
+
+          -> reversed() gives:
+
+               30 -> 20 -> 10
+
+          -> Important:
+               TreeSet controls element positions according to its sorting rule.
+
+          -> Therefore:
+
+               treeSet.addFirst(value);
+               treeSet.addLast(value);
+
+          -> These operations are not supported and throw:
+               UnsupportedOperationException
+
+          -> Even if a value would naturally become the first element after sorting,
+             addFirst() is still unsupported.
+
+          -> Correct approach:
+               treeSet.add(value);
+
+          -> TreeSet itself determines the position.
+
+
+     -> 13. HashSet vs SequencedSet
+          -> HashSet guarantees uniqueness.
+
+          -> However, HashSet does not guarantee encounter order.
+
+          -> Therefore:
+
+               HashSet is a Set.
+               HashSet is NOT a SequencedSet.
+
+          -> LinkedHashSet:
+               Unique + insertion encounter order
+               -> SequencedSet
+
+          -> TreeSet:
+               Unique + sorted encounter order
+               -> SequencedSet
+
+          -> HashSet:
+               Unique + no guaranteed encounter order
+               -> Not SequencedSet
+
+
+     -> 14. reversed()
+          -> reversed() returns a reverse-ordered VIEW.
+
+          -> It does NOT create an independent copy.
+
+          -> It does NOT permanently reverse the original collection.
+
+          -> Example:
+
+               Original:
+               10 -> 20 -> 30
+
+               Reversed view:
+               30 -> 20 -> 10
+
+          -> Calling reversed() alone does not modify the original collection.
+
+          -> The reversed view is backed by the original collection.
+
+          -> Therefore:
+               Changes to original are visible through reversed.
+               Changes through reversed affect the original.
+
+
+     -> 15. Operations Through a Reversed View
+          -> Suppose:
+
+               Original:
+               10 -> 20 -> 30
+
+               Reversed:
+               30 -> 20 -> 10
+
+          -> Operations correspond as follows:
+
+               reversed.getFirst()
+                    = original.getLast()
+
+               reversed.getLast()
+                    = original.getFirst()
+
+               reversed.addFirst(X)
+                    = original.addLast(X)
+
+               reversed.addLast(X)
+                    = original.addFirst(X)
+
+               reversed.removeFirst()
+                    = original.removeLast()
+
+               reversed.removeLast()
+                    = original.removeFirst()
+
+          -> Therefore, "first" and "last" are interpreted according to the view being used.
+
+          -> Also:
+
+               original.reversed().reversed()
+
+          -> gives a view with the original encounter order.
+
+
+     -> 16. SequencedMap<K,V>
+          -> Map is separate from Collection.
+
+          -> Collection stores individual elements.
+          -> Map stores key-value mappings.
+
+          -> Therefore, Java 21 introduced a separate interface:
+
+               SequencedMap<K,V>
+
+          -> SequencedMap represents a Map whose entries have a defined encounter order.
+
+          -> Important implementations include:
+               LinkedHashMap
+               TreeMap
+
+
+     -> 17. Important SequencedMap Methods
+          -> firstEntry()
+               -> Returns the first key-value entry.
+               -> Does not remove it.
+
+          -> lastEntry()
+               -> Returns the last key-value entry.
+               -> Does not remove it.
+
+          -> pollFirstEntry()
+               -> Returns the first entry.
+               -> Also removes it from the map.
+
+          -> pollLastEntry()
+               -> Returns the last entry.
+               -> Also removes it from the map.
+
+          -> putFirst(K key, V value)
+               -> Places the mapping at the beginning when supported.
+
+          -> putLast(K key, V value)
+               -> Places the mapping at the end when supported.
+
+          -> reversed()
+               -> Returns a reverse-ordered backed view of the map.
+
+
+     -> 18. LinkedHashMap as SequencedMap
+          -> LinkedHashMap maintains insertion-based encounter order by default.
+
+          -> Example:
+
+               map.put(10, "A");
+               map.put(20, "B");
+               map.put(30, "C");
+
+          -> Encounter order:
+
+               10=A -> 20=B -> 30=C
+
+          -> Therefore:
+
+               map.firstEntry()
+                    -> 10=A
+
+               map.lastEntry()
+                    -> 30=C
+
+
+     -> 19. putFirst() and putLast() in LinkedHashMap
+          -> Example:
+
+               map:
+               10=A -> 20=B -> 30=C
+
+               map.putFirst(5, "X");
+
+          -> Result:
+
+               5=X -> 10=A -> 20=B -> 30=C
+
+          -> Then:
+
+               map.putLast(40, "Y");
+
+          -> Result:
+
+               5=X -> 10=A -> 20=B -> 30=C -> 40=Y
+
+
+     -> 20. Existing Key with putFirst() / putLast()
+          -> Map keys must be unique.
+
+          -> Suppose:
+
+               10=A -> 20=B -> 30=C
+
+          -> Execute:
+
+               map.putFirst(20, "X");
+
+          -> Key 20 already exists.
+
+          -> Therefore:
+               Its value changes from B to X.
+               Its entry moves to the first position.
+
+          -> Result:
+
+               20=X -> 10=A -> 30=C
+
+          -> Similarly:
+
+               map.putLast(10, "Z");
+
+          -> The existing key is updated and moved to the last position.
+
+
+     -> 21. TreeMap as SequencedMap
+          -> TreeMap has a defined sorted encounter order.
+
+          -> TreeMap sorts entries according to their KEYS.
+
+          -> Example:
+
+               map.put(30, "C");
+               map.put(10, "A");
+               map.put(20, "B");
+
+          -> Encounter order:
+
+               10=A -> 20=B -> 30=C
+
+          -> Therefore:
+
+               firstEntry() -> 10=A
+               lastEntry()  -> 30=C
+
+          -> Values do not determine TreeMap sorting.
+          -> Keys determine the ordering.
+
+          -> TreeMap controls entry positions according to its sorting rule.
+
+          -> Therefore:
+
+               treeMap.putFirst(...)
+               treeMap.putLast(...)
+
+          -> These operations are unsupported and throw:
+               UnsupportedOperationException
+
+          -> Use normal put() instead:
+
+               treeMap.put(5, "X");
+
+          -> TreeMap automatically determines the correct sorted position.
+
+
+     -> 22. pollFirstEntry() and pollLastEntry()
+          -> firstEntry() and lastEntry() only retrieve entries.
+
+          -> pollFirstEntry() and pollLastEntry() retrieve AND remove entries.
+
+          -> Example:
+
+               10=A -> 20=B -> 30=C
+
+               Map.Entry<Integer,String> e =
+                   map.pollFirstEntry();
+
+          -> e:
+               10=A
+
+          -> Remaining map:
+
+               20=B -> 30=C
+
+          -> If:
+
+               map.pollLastEntry();
+
+          -> The last entry is returned and removed.
+
+
+     -> 23. reversed() with SequencedMap
+          -> SequencedMap.reversed() returns a reverse-ordered backed view.
+
+          -> Example:
+
+               Original:
+               10=A -> 20=B -> 30=C
+
+               Reversed:
+               30=C -> 20=B -> 10=A
+
+          -> Calling reversed() alone does NOT modify the original map.
+
+          -> Both views refer to the same underlying map.
+
+          -> Therefore:
+               Modification through original is visible in reversed.
+               Modification through reversed affects original.
+
+
+     -> 24. SequencedMap Reversed-View Operations
+          -> Operations correspond as follows:
+
+               reversed.firstEntry()
+                    = original.lastEntry()
+
+               reversed.lastEntry()
+                    = original.firstEntry()
+
+               reversed.putFirst(K,V)
+                    = original.putLast(K,V)
+
+               reversed.putLast(K,V)
+                    = original.putFirst(K,V)
+
+               reversed.pollFirstEntry()
+                    = original.pollLastEntry()
+
+               reversed.pollLastEntry()
+                    = original.pollFirstEntry()
+
+          -> Example:
+
+               Original:
+               10=A -> 20=B -> 30=C
+
+               Reversed:
+               30=C -> 20=B -> 10=A
+
+          -> Execute:
+
+               reversed.putFirst(40, "D");
+
+          -> Reversed becomes:
+
+               40=D -> 30=C -> 20=B -> 10=A
+
+          -> Original becomes:
+
+               10=A -> 20=B -> 30=C -> 40=D
+
+
+     -> 25. sequencedKeySet()
+          -> SequencedMap provides:
+
+               sequencedKeySet()
+
+          -> It returns:
+
+               SequencedSet<K>
+
+          -> Example map:
+
+               10=A -> 20=B -> 30=C
+
+          -> sequencedKeySet():
+
+               10 -> 20 -> 30
+
+          -> It is a SequencedSet because:
+               Map keys must be unique.
+               Keys follow the map's encounter order.
+
+          -> Therefore:
+
+               Unique keys + Defined encounter order
+               = SequencedSet<K>
+
+
+     -> 26. sequencedValues()
+          -> SequencedMap provides:
+
+               sequencedValues()
+
+          -> It returns:
+
+               SequencedCollection<V>
+
+          -> Example:
+
+               10=A
+               20=A
+               30=B
+
+          -> Values:
+
+               A -> A -> B
+
+          -> Map values can contain duplicates.
+
+          -> Therefore, values cannot generally be represented as a Set.
+
+          -> Hence:
+
+               sequencedValues()
+               -> SequencedCollection<V>
+
+
+     -> 27. sequencedEntrySet()
+          -> SequencedMap provides:
+
+               sequencedEntrySet()
+
+          -> It returns:
+
+               SequencedSet<Map.Entry<K,V>>
+
+          -> Each element represents one key-value mapping.
+
+          -> Example:
+
+               10=A
+               20=B
+               30=C
+
+          -> Entries:
+
+               10=A -> 20=B -> 30=C
+
+          -> Map entries form a Set because mappings are identified through unique keys.
+
+          -> Since the entries also follow the map's defined encounter order:
+
+               sequencedEntrySet()
+               -> SequencedSet<Map.Entry<K,V>>
+
+
+     -> 28. Key, Value and Entry Views - Quick Comparison
+          -> sequencedKeySet()
+               -> SequencedSet<K>
+               -> Keys are unique.
+               -> Maintains map encounter order.
+
+          -> sequencedValues()
+               -> SequencedCollection<V>
+               -> Values may contain duplicates.
+               -> Maintains map encounter order.
+
+          -> sequencedEntrySet()
+               -> SequencedSet<Map.Entry<K,V>>
+               -> Entries form a set.
+               -> Maintains map encounter order.
+
+
+     -> 29. Important Difference - Insertion Order vs Sorted Order
+          -> LinkedHashSet:
+               Encounter order is based on insertion/explicit sequencing.
+
+          -> TreeSet:
+               Encounter order is based on sorted elements.
+
+          -> LinkedHashMap:
+               Encounter order is based on insertion/explicit sequencing.
+
+          -> TreeMap:
+               Encounter order is based on sorted keys.
+
+          -> Therefore:
+
+               Sequenced does NOT mean insertion ordered.
+
+          -> Sequenced only guarantees:
+               A well-defined first-to-last encounter order.
+
+
+     -> 30. Important OCP / Interview Points
+          -> SequencedCollection was introduced in Java 21.
+
+          -> SequencedCollection represents collections with a defined encounter order.
+
+          -> Order does not imply index support.
+
+          -> List extends SequencedCollection.
+
+          -> SequencedSet combines uniqueness with defined encounter order.
+
+          -> LinkedHashSet uses insertion-based encounter order.
+
+          -> TreeSet uses sorted encounter order.
+
+          -> HashSet does not implement SequencedSet because it does not guarantee encounter order.
+
+          -> TreeSet addFirst() and addLast() are unsupported.
+
+          -> SequencedMap is separate because Map is not a Collection.
+
+          -> LinkedHashMap supports explicit first/last positioning.
+
+          -> TreeMap encounter order is determined by sorted keys.
+
+          -> TreeMap putFirst() and putLast() are unsupported.
+
+          -> firstEntry()/lastEntry() retrieve entries without removing them.
+
+          -> pollFirstEntry()/pollLastEntry() retrieve and remove entries.
+
+          -> reversed() returns a backed reverse-order view, not an independent copy.
+
+          -> Modifying a reversed view modifies the underlying collection/map.
+
+          -> sequencedKeySet() returns SequencedSet because keys are unique.
+
+          -> sequencedValues() returns SequencedCollection because values can repeat.
+
+          -> sequencedEntrySet() returns SequencedSet of Map.Entry objects.
+
+
+     -> 31. Final Quick Revision
+          -> SequencedCollection
+               -> Defined encounter order
+               -> getFirst()
+               -> getLast()
+               -> addFirst()
+               -> addLast()
+               -> removeFirst()
+               -> removeLast()
+               -> reversed()
+
+          -> SequencedSet
+               -> Set + SequencedCollection
+               -> Unique elements
+               -> Defined encounter order
+               -> LinkedHashSet
+               -> TreeSet
+
+          -> SequencedMap
+               -> Defined encounter order of mappings
+               -> firstEntry()
+               -> lastEntry()
+               -> putFirst()
+               -> putLast()
+               -> pollFirstEntry()
+               -> pollLastEntry()
+               -> reversed()
+               -> sequencedKeySet()
+               -> sequencedValues()
+               -> sequencedEntrySet()
+
+          -> Core Memory Rule
+               SequencedCollection = ordered elements
+               SequencedSet        = unique + ordered elements
+               SequencedMap        = ordered key-value mappings
+
+          -> Most Important Concept
+               Sequenced means "well-defined encounter order."
+               It does NOT mean "insertion order."
+               It does NOT mean "index-based."
