@@ -147,6 +147,23 @@
 
           -> ArrayList itself supports indexes because ArrayList implements List.
 
+     -> Reference Type Controls Method Accessibility
+          -> Child can use methods inherited from parent.
+          -> Parent reference cannot directly use methods introduced only by child.
+
+          -> List extends SequencedCollection.
+          -> Therefore List gets getFirst() and getLast().
+
+          -> SequencedCollection does not get List-specific methods such as get(int).
+
+          -> Example:
+               SequencedCollection<String> sc = new ArrayList<>();
+
+               sc.getFirst();   // Allowed
+               sc.get(0);       // Not allowed
+
+          -> Even though actual object is ArrayList, compiler checks available methods using reference type first.
+
 
      -> 7. List and SequencedCollection
           -> List extends SequencedCollection in Java 21.

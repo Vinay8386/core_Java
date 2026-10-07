@@ -1,0 +1,1197 @@
+=> Collection Hierarchy
+
+     -> Iterable (I)
+          |
+          -> Collection (I)
+               |
+               |-----------------------------------------
+               |                    |                  |
+               -> Set (I)           -> Queue (I)       -> SequencedCollection (I)
+                    |                    |                       |
+                    |                    |                       |------------------------
+                    |                    |                       |                      |
+                    |                    |                       -> List (I)             -> Deque (I)
+                    |                    |                            |                      |
+                    |                    |                            |                      -> ArrayDeque (C)
+                    |                    |                            |                      -> LinkedList (C)
+                    |                    |                            |
+                    |                    |                            -> ArrayList (C)
+                    |                    |                            -> LinkedList (C)
+                    |                    |                            -> Vector (C)
+                    |                    |                                 |
+                    |                    |                                 -> Stack (C)
+                    |                    |
+                    |                    -> PriorityQueue (C)
+                    |                    |
+                    |                    -> Deque (I)
+                    |
+                    -> HashSet (C)
+                    |
+                    -> SequencedSet (I)
+                         |
+                         -> LinkedHashSet (C)
+                         |
+                         -> SortedSet (I)
+                              |
+                              -> NavigableSet (I)
+                                   |
+                                   -> TreeSet (C)
+
+=> SequencedCollection Interface Methods
+
+     -> First Element Access: getFirst()
+
+     -> Last Element Access: getLast()
+
+     -> First Position Insert: addFirst(E e)
+
+     -> Last Position Insert: addLast(E e)
+
+     -> First Element Removal: removeFirst()
+
+     -> Last Element Removal: removeLast()
+
+     -> Reverse Order View: reversed()
+
+     SequencedCollection = Encounter-order based operations
+
+        -> First
+        -> Last
+        -> Add at beginning
+        -> Add at end
+        -> Remove from beginning
+        -> Remove from end
+        -> Reverse view
+
+=> List Interface Methods
+
+     -> Access Operation
+          -> get(int index)
+
+     -> Insert Operation
+          -> add(int index, E element)
+          -> addAll(int index, Collection<? extends E> c)
+
+     -> Update Operation
+          -> set(int index, E element)
+          -> replaceAll(UnaryOperator<E> operator)
+
+     -> Remove Operation
+          -> remove(int index)
+
+     -> Search Operation
+          -> indexOf(Object o)
+          -> lastIndexOf(Object o)
+
+     -> Iteration Operation
+          -> listIterator()
+          -> listIterator(int index)
+
+     -> Range / Sub-List Operation
+          -> subList(int fromIndex, int toIndex)
+
+     -> Sorting Operation
+          -> sort(Comparator<? super E> c)
+
+=> List Interface Methods(All Methods Available Because List Is Child of SequencedCollection)
+
+     -> List (I)
+          -> extends SequencedCollection (I)
+          -> SequencedCollection extends Collection (I)
+          -> Collection extends Iterable (I)
+
+     -> Therefore List Reference Can Access:
+
+          -> List-Specific Methods
+
+               -> Access
+                    -> get(int index)
+
+               -> Insert
+                    -> add(int index, E element)
+                    -> addAll(int index, Collection<? extends E> c)
+
+               -> Update
+                    -> set(int index, E element)
+                    -> replaceAll(UnaryOperator<E> operator)
+
+               -> Remove
+                    -> remove(int index)
+
+               -> Search
+                    -> indexOf(Object o)
+                    -> lastIndexOf(Object o)
+
+               -> Iteration
+                    -> listIterator()
+                    -> listIterator(int index)
+
+               -> Range
+                    -> subList(int fromIndex, int toIndex)
+
+               -> Sorting
+                    -> sort(Comparator<? super E> c)
+
+
+          -> SequencedCollection Methods
+
+               -> Access
+                    -> getFirst()
+                    -> getLast()
+
+               -> Insert
+                    -> addFirst(E e)
+                    -> addLast(E e)
+
+               -> Remove
+                    -> removeFirst()
+                    -> removeLast()
+
+               -> Reverse View
+                    -> reversed()
+
+
+          -> Collection Methods
+
+               -> Add
+                    -> add(E e)
+                    -> addAll(Collection<? extends E> c)
+
+               -> Remove
+                    -> remove(Object o)
+                    -> removeAll(Collection<?> c)
+                    -> removeIf(Predicate<? super E> filter)
+                    -> retainAll(Collection<?> c)
+                    -> clear()
+
+               -> Search / Check
+                    -> contains(Object o)
+                    -> containsAll(Collection<?> c)
+
+               -> Size
+                    -> size()
+                    -> isEmpty()
+
+               -> Conversion
+                    -> toArray()
+                    -> toArray(T[] a)
+                    -> toArray(IntFunction<T[]> generator)
+
+               -> Stream
+                    -> stream()
+                    -> parallelStream()
+
+               -> Iterator / Processing
+                    -> iterator()
+                    -> spliterator()
+
+
+          -> Iterable Methods
+
+               -> Iteration / Processing
+                    -> iterator()
+                    -> forEach(Consumer<? super T> action)
+                    -> spliterator()
+
+=> List Method Availability Rule
+
+     -> List is a child of SequencedCollection.
+
+     -> Therefore List receives all methods of:
+          -> SequencedCollection
+          -> Collection
+          -> Iterable
+
+     -> And List adds its own index-based methods.
+
+     -> Therefore:
+
+          List = Order + Index
+
+          SequencedCollection = Order but not necessarily Index
+
+=> Set Interface Methods
+
+     -> Set does not add major new instance methods of its own.
+     -> It mainly inherits operations from Collection.
+
+     -> Add Operation
+          -> add(E e)
+          -> addAll(Collection<? extends E> c)
+
+     -> Remove Operation
+          -> remove(Object o)
+          -> removeAll(Collection<?> c)
+          -> removeIf(Predicate<? super E> filter)
+          -> retainAll(Collection<?> c)
+          -> clear()
+
+     -> Search / Check Operation
+          -> contains(Object o)
+          -> containsAll(Collection<?> c)
+
+     -> Size Operation
+          -> size()
+          -> isEmpty()
+
+     -> Iteration Operation
+          -> iterator()
+          -> forEach(Consumer<? super E> action)
+          -> spliterator()
+
+     -> Conversion Operation
+          -> toArray()
+          -> toArray(T[] a)
+          -> toArray(IntFunction<T[]> generator)
+
+     -> Stream Operation
+          -> stream()
+          -> parallelStream()
+
+     -> Comparison Operation
+          -> equals(Object o)
+          -> hashCode()
+
+     -> Static Factory Methods
+          -> Set.of(...)
+          -> Set.copyOf(Collection<? extends E> coll)
+
+=> Set Method Concept
+
+     -> Set extends Collection.
+
+     -> Set mainly changes the rule of the collection:
+          -> Duplicate elements are not allowed.
+
+     -> It does not introduce index-based methods.
+
+     -> Therefore:
+          -> No get(index)
+          -> No set(index, value)
+          -> No indexOf()
+          -> No lastIndexOf()
+
+     -> Because Set does not represent elements using indexes.
+
+=> Set Interface Methods
+   (All Methods Available Because Set Is Child of Collection)
+
+     -> Set (I)
+          -> extends Collection (I)
+          -> Collection extends Iterable (I)
+
+     -> Therefore Set Reference Can Access:
+
+          -> Set-Specific Methods
+
+               -> Set does not introduce major new instance methods.
+               -> It mainly defines the rule:
+                    -> Duplicate elements are not allowed.
+
+
+          -> Collection Methods
+
+               -> Add Operation
+                    -> add(E e)
+                    -> addAll(Collection<? extends E> c)
+
+               -> Remove Operation
+                    -> remove(Object o)
+                    -> removeAll(Collection<?> c)
+                    -> removeIf(Predicate<? super E> filter)
+                    -> retainAll(Collection<?> c)
+                    -> clear()
+
+               -> Search / Check Operation
+                    -> contains(Object o)
+                    -> containsAll(Collection<?> c)
+
+               -> Size Operation
+                    -> size()
+                    -> isEmpty()
+
+               -> Conversion Operation
+                    -> toArray()
+                    -> toArray(T[] a)
+                    -> toArray(IntFunction<T[]> generator)
+
+               -> Stream Operation
+                    -> stream()
+                    -> parallelStream()
+
+               -> Iteration Operation
+                    -> iterator()
+                    -> spliterator()
+
+               -> Comparison Operation
+                    -> equals(Object o)
+                    -> hashCode()
+
+
+          -> Iterable Methods
+
+               -> Iteration / Processing
+                    -> iterator()
+                    -> forEach(Consumer<? super E> action)
+                    -> spliterator()
+
+
+     -> Static Factory Methods of Set
+
+          -> Set.of(...)
+          -> Set.copyOf(Collection<? extends E> coll)
+
+
+     -> Important Rule
+
+          -> Set = Unique Elements
+          -> Set does not support indexes.
+
+          -> Therefore:
+               -> get(index)        ❌
+               -> set(index, value) ❌
+               -> indexOf()         ❌
+               -> lastIndexOf()     ❌
+
+    One small point: iterator() and spliterator() appear through inheritance, 
+                     so you may see them associated with more than one parent level, but from a Set reference they are simply available methods.
+
+=> SequencedSet Interface Methods
+
+     -> SequencedSet (I)
+          -> extends Set (I)
+          -> extends SequencedCollection (I)
+
+     -> Reverse View Operation
+          -> reversed()
+
+     -> Important Point
+          -> SequencedSet does not introduce many completely new operations.
+          -> Its main purpose is to combine:
+
+               -> Set behavior
+                    -> Unique elements
+
+               -> SequencedCollection behavior
+                    -> Defined encounter order
+                    -> First/Last operations
+
+     -> Therefore:
+          SequencedSet = Unique Elements + Defined Encounter Order
+
+=> SequencedSet Interface Methods
+   (All Methods Available Because SequencedSet Is Child of Set + SequencedCollection)
+
+     -> SequencedSet (I)
+          -> extends Set (I)
+          -> extends SequencedCollection (I)
+
+     -> Set extends Collection (I)
+     -> SequencedCollection extends Collection (I)
+     -> Collection extends Iterable (I)
+
+     -> Therefore SequencedSet Reference Can Access:
+
+
+          -> SequencedSet-Specific Method
+
+               -> Reverse View Operation
+                    -> reversed()
+
+
+          -> SequencedCollection Methods
+
+               -> First Element Access
+                    -> getFirst()
+
+               -> Last Element Access
+                    -> getLast()
+
+               -> First Position Insert
+                    -> addFirst(E e)
+
+               -> Last Position Insert
+                    -> addLast(E e)
+
+               -> First Element Removal
+                    -> removeFirst()
+
+               -> Last Element Removal
+                    -> removeLast()
+
+               -> Reverse View
+                    -> reversed()
+
+
+          -> Set Behavior
+
+               -> Duplicate elements are not allowed.
+
+               -> Set itself does not introduce major new instance methods.
+
+
+          -> Collection Methods
+
+               -> Add Operation
+                    -> add(E e)
+                    -> addAll(Collection<? extends E> c)
+
+               -> Remove Operation
+                    -> remove(Object o)
+                    -> removeAll(Collection<?> c)
+                    -> removeIf(Predicate<? super E> filter)
+                    -> retainAll(Collection<?> c)
+                    -> clear()
+
+               -> Search / Check Operation
+                    -> contains(Object o)
+                    -> containsAll(Collection<?> c)
+
+               -> Size Operation
+                    -> size()
+                    -> isEmpty()
+
+               -> Conversion Operation
+                    -> toArray()
+                    -> toArray(T[] a)
+                    -> toArray(IntFunction<T[]> generator)
+
+               -> Stream Operation
+                    -> stream()
+                    -> parallelStream()
+
+               -> Iteration Operation
+                    -> iterator()
+                    -> spliterator()
+
+               -> Comparison Operation
+                    -> equals(Object o)
+                    -> hashCode()
+
+
+          -> Iterable Methods
+
+               -> Iteration / Processing
+                    -> iterator()
+                    -> forEach(Consumer<? super E> action)
+                    -> spliterator()
+
+
+     -> Important Rule
+
+          -> SequencedSet = Set + SequencedCollection
+
+          -> Unique Elements
+          -> Defined Encounter Order
+          -> First / Last Operations
+          -> No Index-Based Access
+
+          -> Therefore:
+               -> get(index)        ❌
+               -> set(index, value) ❌
+               -> indexOf()         ❌
+
+=> SortedSet Interface Methods
+
+     -> SortedSet (I)
+          -> extends SequencedSet (I)
+
+     -> Comparator Operation
+          -> comparator()
+
+     -> Range View Operations
+          -> subSet(E fromElement, E toElement)
+          -> headSet(E toElement)
+          -> tailSet(E fromElement)
+
+     -> Boundary Element Operations
+          -> first()
+          -> last()
+
+     -> Important Point
+
+          -> SortedSet stores elements according to sorting order.
+
+          -> Sorting can be based on:
+
+               -> Natural Ordering
+                    Example:
+                    Integer
+                    String
+
+               -> Custom Comparator
+
+          -> SortedSet = Unique Elements + Sorted Order
+
+=> SortedSet Interface Methods
+   (All Methods Available Because SortedSet Is Child of SequencedSet)
+
+     -> SortedSet (I)
+          -> extends SequencedSet (I)
+
+     -> SequencedSet extends:
+          -> Set (I)
+          -> SequencedCollection (I)
+
+     -> Therefore SortedSet Reference Can Access:
+
+
+          -> SortedSet-Specific Methods
+
+               -> Comparator Operation
+                    -> comparator()
+
+               -> Range View Operation
+                    -> subSet(E fromElement, E toElement)
+                    -> headSet(E toElement)
+                    -> tailSet(E fromElement)
+
+               -> Boundary Access Operation
+                    -> first()
+                    -> last()
+
+
+          -> SequencedSet / SequencedCollection Methods
+
+               -> Access
+                    -> getFirst()
+                    -> getLast()
+
+               -> Insert
+                    -> addFirst(E e)
+                    -> addLast(E e)
+
+               -> Remove
+                    -> removeFirst()
+                    -> removeLast()
+
+               -> Reverse View
+                    -> reversed()
+
+
+          -> Set Behavior
+
+               -> Duplicate elements are not allowed.
+
+
+          -> Collection Methods
+
+               -> add(E e)
+               -> addAll(Collection<? extends E> c)
+
+               -> remove(Object o)
+               -> removeAll(Collection<?> c)
+               -> removeIf(Predicate<? super E> filter)
+               -> retainAll(Collection<?> c)
+               -> clear()
+
+               -> contains(Object o)
+               -> containsAll(Collection<?> c)
+
+               -> size()
+               -> isEmpty()
+
+               -> iterator()
+               -> spliterator()
+
+               -> toArray()
+               -> toArray(T[] a)
+               -> toArray(IntFunction<T[]> generator)
+
+               -> stream()
+               -> parallelStream()
+
+               -> equals(Object o)
+               -> hashCode()
+
+
+          -> Iterable Methods
+
+               -> iterator()
+               -> forEach(Consumer<? super E> action)
+               -> spliterator()
+
+
+     -> Important Rule
+
+          -> SortedSet = Set + SequencedSet + Sorting
+
+          -> Unique Elements
+          -> Defined Encounter Order
+          -> Sorted Order
+          -> No Index-Based Access
+
+=> NavigableSet Interface Methods
+
+     -> NavigableSet (I)
+          -> extends SortedSet (I)
+
+     -> Lower Element Search
+          -> lower(E e)
+
+     -> Floor Element Search
+          -> floor(E e)
+
+     -> Ceiling Element Search
+          -> ceiling(E e)
+
+     -> Higher Element Search
+          -> higher(E e)
+
+     -> Poll Boundary Operations
+          -> pollFirst()
+          -> pollLast()
+
+     -> Descending Order Operations
+          -> descendingSet()
+          -> descendingIterator()
+
+     -> Advanced Range Operations
+
+          -> subSet(
+               E fromElement,
+               boolean fromInclusive,
+               E toElement,
+               boolean toInclusive
+             )
+
+          -> headSet(
+               E toElement,
+               boolean inclusive
+             )
+
+          -> tailSet(
+               E fromElement,
+               boolean inclusive
+             )
+
+     -> Important Meaning
+
+          -> lower(e)
+               -> Greatest element strictly less than e
+
+          -> floor(e)
+               -> Greatest element less than or equal to e
+
+          -> ceiling(e)
+               -> Smallest element greater than or equal to e
+
+          -> higher(e)
+               -> Smallest element strictly greater than e
+
+=> NavigableSet Interface Methods
+   (All Methods Available Because NavigableSet Is Child of SortedSet)
+
+     -> NavigableSet (I)
+          -> extends SortedSet (I)
+
+     -> SortedSet extends SequencedSet (I)
+
+     -> Therefore NavigableSet Reference Can Access:
+
+
+          -> NavigableSet-Specific Methods
+
+               -> Relative Search Operation
+                    -> lower(E e)
+                    -> floor(E e)
+                    -> ceiling(E e)
+                    -> higher(E e)
+
+               -> Poll Operation
+                    -> pollFirst()
+                    -> pollLast()
+
+               -> Descending View Operation
+                    -> descendingSet()
+                    -> descendingIterator()
+
+               -> Advanced Range Operation
+                    -> subSet(
+                         E fromElement,
+                         boolean fromInclusive,
+                         E toElement,
+                         boolean toInclusive
+                       )
+
+                    -> headSet(
+                         E toElement,
+                         boolean inclusive
+                       )
+
+                    -> tailSet(
+                         E fromElement,
+                         boolean inclusive
+                       )
+
+
+          -> SortedSet Methods
+
+               -> comparator()
+
+               -> subSet(E fromElement, E toElement)
+               -> headSet(E toElement)
+               -> tailSet(E fromElement)
+
+               -> first()
+               -> last()
+
+
+          -> SequencedCollection Methods
+
+               -> getFirst()
+               -> getLast()
+
+               -> addFirst(E e)
+               -> addLast(E e)
+
+               -> removeFirst()
+               -> removeLast()
+
+               -> reversed()
+
+
+          -> Set Behavior
+
+               -> Duplicate elements are not allowed.
+
+
+          -> Collection Methods
+
+               -> add(E e)
+               -> addAll(Collection<? extends E> c)
+
+               -> remove(Object o)
+               -> removeAll(Collection<?> c)
+               -> removeIf(Predicate<? super E> filter)
+               -> retainAll(Collection<?> c)
+               -> clear()
+
+               -> contains(Object o)
+               -> containsAll(Collection<?> c)
+
+               -> size()
+               -> isEmpty()
+
+               -> iterator()
+               -> spliterator()
+
+               -> toArray()
+               -> toArray(T[] a)
+               -> toArray(IntFunction<T[]> generator)
+
+               -> stream()
+               -> parallelStream()
+
+               -> equals(Object o)
+               -> hashCode()
+
+
+          -> Iterable Methods
+
+               -> iterator()
+               -> forEach(Consumer<? super E> action)
+               -> spliterator()
+
+
+     -> Important Rule
+
+          -> NavigableSet = SortedSet + Navigation Operations
+
+          -> Unique Elements
+          -> Sorted Order
+          -> Relative Search
+          -> Range Navigation
+          -> No Index-Based Access
+
+=> Queue Interface Methods
+
+     -> Queue (I)
+          -> extends Collection (I)
+
+     -> Insert Operation
+
+          -> add(E e)
+               -> Inserts element
+               -> Can throw exception if insertion fails
+
+          -> offer(E e)
+               -> Inserts element
+               -> Returns false if insertion fails
+
+
+     -> Remove Head Operation
+
+          -> remove()
+               -> Removes and returns head
+               -> Throws exception if queue is empty
+
+          -> poll()
+               -> Removes and returns head
+               -> Returns null if queue is empty
+
+
+     -> Examine Head Operation
+
+          -> element()
+               -> Returns head without removing
+               -> Throws exception if queue is empty
+
+          -> peek()
+               -> Returns head without removing
+               -> Returns null if queue is empty
+
+
+     -> Important Queue Method Pair
+
+          -> Insert
+               add()       vs offer()
+
+          -> Remove
+               remove()    vs poll()
+
+          -> Examine
+               element()   vs peek()
+
+=> Queue Interface Methods
+   (All Methods Available Because Queue Is Child of Collection)
+
+     -> Queue (I)
+          -> extends Collection (I)
+
+     -> Collection extends Iterable (I)
+
+     -> Therefore Queue Reference Can Access:
+
+
+          -> Queue-Specific Methods
+
+               -> Insert Operation
+
+                    -> add(E e)
+                    -> offer(E e)
+
+               -> Remove Head Operation
+
+                    -> remove()
+                    -> poll()
+
+               -> Examine Head Operation
+
+                    -> element()
+                    -> peek()
+
+
+          -> Collection Methods
+
+               -> Add Operation
+                    -> add(E e)
+                    -> addAll(Collection<? extends E> c)
+
+               -> Remove Operation
+                    -> remove(Object o)
+                    -> removeAll(Collection<?> c)
+                    -> removeIf(Predicate<? super E> filter)
+                    -> retainAll(Collection<?> c)
+                    -> clear()
+
+               -> Search / Check Operation
+                    -> contains(Object o)
+                    -> containsAll(Collection<?> c)
+
+               -> Size Operation
+                    -> size()
+                    -> isEmpty()
+
+               -> Conversion Operation
+                    -> toArray()
+                    -> toArray(T[] a)
+                    -> toArray(IntFunction<T[]> generator)
+
+               -> Stream Operation
+                    -> stream()
+                    -> parallelStream()
+
+               -> Iteration Operation
+                    -> iterator()
+                    -> spliterator()
+
+
+          -> Iterable Methods
+
+               -> iterator()
+               -> forEach(Consumer<? super E> action)
+               -> spliterator()
+
+
+     -> Important Rule
+
+          -> Queue normally follows:
+               FIFO
+               First In First Out
+
+          -> But FIFO is not mandatory for every Queue implementation.
+
+          -> Example:
+               PriorityQueue uses priority ordering.
+
+=> Deque Interface Methods
+
+     -> Deque (I)
+          -> extends Queue (I)
+          -> extends SequencedCollection (I)
+
+     -> Deque means:
+          Double Ended Queue
+
+     -> Elements can be inserted and removed
+        from both ends.
+
+
+     -> First-End Insert Operations
+
+          -> addFirst(E e)
+          -> offerFirst(E e)
+
+
+     -> Last-End Insert Operations
+
+          -> addLast(E e)
+          -> offerLast(E e)
+
+
+     -> First-End Remove Operations
+
+          -> removeFirst()
+          -> pollFirst()
+
+
+     -> Last-End Remove Operations
+
+          -> removeLast()
+          -> pollLast()
+
+
+     -> First-End Examine Operations
+
+          -> getFirst()
+          -> peekFirst()
+
+
+     -> Last-End Examine Operations
+
+          -> getLast()
+          -> peekLast()
+
+
+     -> Queue-Style Operations
+
+          -> add(E e)
+          -> offer(E e)
+
+          -> remove()
+          -> poll()
+
+          -> element()
+          -> peek()
+
+
+     -> Stack-Style Operations
+
+          -> push(E e)
+          -> pop()
+
+
+     -> Occurrence Removal Operations
+
+          -> removeFirstOccurrence(Object o)
+          -> removeLastOccurrence(Object o)
+
+
+     -> Reverse Iteration Operation
+
+          -> descendingIterator()
+
+=> Deque Interface Methods
+   (All Methods Available Because Deque Is Child of Queue + SequencedCollection)
+
+     -> Deque (I)
+          -> extends Queue (I)
+          -> extends SequencedCollection (I)
+
+     -> Queue extends Collection (I)
+     -> SequencedCollection extends Collection (I)
+     -> Collection extends Iterable (I)
+
+     -> Therefore Deque Reference Can Access:
+
+
+          -> Deque-Specific Methods
+
+               -> First-End Insert
+                    -> addFirst(E e)
+                    -> offerFirst(E e)
+
+               -> Last-End Insert
+                    -> addLast(E e)
+                    -> offerLast(E e)
+
+               -> First-End Remove
+                    -> removeFirst()
+                    -> pollFirst()
+
+               -> Last-End Remove
+                    -> removeLast()
+                    -> pollLast()
+
+               -> First-End Examine
+                    -> getFirst()
+                    -> peekFirst()
+
+               -> Last-End Examine
+                    -> getLast()
+                    -> peekLast()
+
+               -> Stack Operation
+                    -> push(E e)
+                    -> pop()
+
+               -> Occurrence Removal
+                    -> removeFirstOccurrence(Object o)
+                    -> removeLastOccurrence(Object o)
+
+               -> Reverse Iteration
+                    -> descendingIterator()
+
+
+          -> Queue Methods
+
+               -> Insert
+                    -> add(E e)
+                    -> offer(E e)
+
+               -> Remove Head
+                    -> remove()
+                    -> poll()
+
+               -> Examine Head
+                    -> element()
+                    -> peek()
+
+
+          -> SequencedCollection Methods
+
+               -> First / Last Access
+                    -> getFirst()
+                    -> getLast()
+
+               -> First / Last Insert
+                    -> addFirst(E e)
+                    -> addLast(E e)
+
+               -> First / Last Remove
+                    -> removeFirst()
+                    -> removeLast()
+
+               -> Reverse View
+                    -> reversed()
+
+
+          -> Collection Methods
+
+               -> Add
+                    -> add(E e)
+                    -> addAll(Collection<? extends E> c)
+
+               -> Remove
+                    -> remove(Object o)
+                    -> removeAll(Collection<?> c)
+                    -> removeIf(Predicate<? super E> filter)
+                    -> retainAll(Collection<?> c)
+                    -> clear()
+
+               -> Search / Check
+                    -> contains(Object o)
+                    -> containsAll(Collection<?> c)
+
+               -> Size
+                    -> size()
+                    -> isEmpty()
+
+               -> Conversion
+                    -> toArray()
+                    -> toArray(T[] a)
+                    -> toArray(IntFunction<T[]> generator)
+
+               -> Stream
+                    -> stream()
+                    -> parallelStream()
+
+               -> Iteration
+                    -> iterator()
+                    -> spliterator()
+
+
+          -> Iterable Methods
+
+               -> iterator()
+               -> forEach(Consumer<? super E> action)
+               -> spliterator()
+
+
+     -> Important Rule
+
+          -> Deque = Queue + SequencedCollection + Two-End Operations
+
+          -> Supports operations at:
+               -> Front
+               -> Rear
+
+          -> Can be used as:
+               -> Queue
+               -> Deque
+               -> Stack
+
+=> Quick Relationship Revision
+
+     -> Set (I)
+          -> extends Collection (I)
+
+     -> SequencedSet (I)
+          -> extends Set (I)
+          -> extends SequencedCollection (I)
+
+     -> SortedSet (I)
+          -> extends SequencedSet (I)
+
+     -> NavigableSet (I)
+          -> extends SortedSet (I)
+
+
+     -> Queue (I)
+          -> extends Collection (I)
+
+     -> Deque (I)
+          -> extends Queue (I)
+          -> extends SequencedCollection (I)
+
+=> Easy Memory
+
+     -> Set
+          = Unique
+
+     -> SequencedSet
+          = Unique + Order
+
+     -> SortedSet
+          = Unique + Sorted Order
+
+     -> NavigableSet
+          = Unique + Sorted Order + Navigation
+
+     -> Queue
+          = Head-Based Processing
+
+     -> Deque
+          = Queue + Both-End Processing
+
