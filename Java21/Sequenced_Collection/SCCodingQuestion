@@ -1,0 +1,527 @@
+=> Java 21 Sequenced Collections - Complete Progressive Coding Practice
+
+
+=> Question 1 - Banking Transaction Processing
+
+     -> Start by creating a transaction list.
+
+     -> Initial transactions:
+
+          TXN103
+          TXN101
+          TXN105
+          TXN102
+          TXN104
+
+     -> Perform the following operations:
+
+          -> Display the oldest transaction.
+
+          -> Display the newest transaction.
+
+          -> Add urgent transaction:
+               TXN100
+             at the beginning.
+
+          -> Add normal transaction:
+               TXN106
+             at the end.
+
+          -> Remove the oldest transaction after processing.
+
+          -> Remove the newest transaction after cancellation.
+
+          -> Display the transaction history from newest to oldest.
+
+     -> Duplicates are allowed.
+
+     -> Decide which methods are suitable.
+
+
+
+=> Question 2 - Maintain Unique Transaction IDs
+
+     -> Continue in the SAME PROGRAM.
+
+     -> Now the bank wants another collection that stores
+        transaction IDs only once.
+
+     -> Use the following transaction IDs:
+
+          TXN103
+          TXN101
+          TXN105
+          TXN103
+          TXN102
+          TXN101
+          TXN104
+
+     -> Requirements:
+
+          -> Duplicate transaction IDs must not be stored.
+
+          -> The order in which a transaction ID first appeared
+             must be maintained.
+
+          -> Display the first transaction ID.
+
+          -> Display the last transaction ID.
+
+          -> Move:
+               TXN105
+             to the beginning.
+
+          -> Move:
+               TXN103
+             to the end.
+
+          -> Display all unique transaction IDs
+             from last to first.
+
+          -> Remove the transaction ID currently
+             appearing first.
+
+     -> Do not use indexes.
+
+     -> Decide:
+
+          -> Which interface should be used?
+
+          -> Which implementation should be used?
+
+          -> Which methods are suitable?
+
+
+
+=> Question 3 - Maintain Sorted Transaction Priority
+
+     -> Continue in the SAME PROGRAM.
+
+     -> Every transaction can also have a numeric priority.
+
+     -> Create another collection containing:
+
+          30
+          10
+          40
+          20
+          10
+          25
+
+     -> Requirements:
+
+          -> Duplicate priorities must not be stored.
+
+          -> Priorities must always remain in ascending order.
+
+          -> Display the smallest priority.
+
+          -> Display the largest priority.
+
+          -> Display all priorities in descending order.
+
+          -> Remove the smallest priority.
+
+          -> Remove the largest priority.
+
+     -> Then attempt to manually insert:
+
+          5
+
+        specifically at the beginning.
+
+     -> Investigate what happens.
+
+     -> Explain through your code whether the collection
+        allows manual first/last positioning or whether
+        ordering is controlled automatically.
+
+     -> Decide the appropriate:
+
+          -> Interface.
+
+          -> Implementation.
+
+          -> Methods.
+
+
+
+=> Question 4 - Transaction Status Directory
+
+     -> Continue in the SAME PROGRAM.
+
+     -> Now maintain:
+
+          Transaction ID -> Transaction Status
+
+     -> Add the following transactions in this order:
+
+          TXN103 -> "SUCCESS"
+          TXN101 -> "FAILED"
+          TXN105 -> "PENDING"
+          TXN102 -> "SUCCESS"
+          TXN104 -> "FAILED"
+
+     -> The registration / insertion order must be preserved.
+
+     -> Perform the following operations:
+
+          -> Display the first transaction/status entry.
+
+          -> Display the most recently added
+             transaction/status entry.
+
+          -> Add:
+
+               TXN100 -> "URGENT"
+
+             as the first entry.
+
+          -> Add:
+
+               TXN106 -> "PENDING"
+
+             as the last entry.
+
+          -> Remove and return the first entry.
+
+          -> Remove and return the last entry.
+
+          -> Display the remaining entries
+             in reverse encounter order.
+
+     -> Decide:
+
+          -> Which Map interface/reference is appropriate?
+
+          -> Which implementation should be used?
+
+          -> Which methods solve each requirement?
+
+
+
+=> Question 5 - Transaction Priority Update
+
+     -> Continue using the transaction/status map
+        created in Question 4.
+
+     -> Assume the map currently contains:
+
+          TXN101 -> "FAILED"
+          TXN105 -> "PENDING"
+          TXN102 -> "SUCCESS"
+          TXN104 -> "FAILED"
+
+     -> Perform the following business operations:
+
+          -> TXN102 becomes the highest-priority transaction.
+
+          -> Move TXN102 to the beginning.
+
+          -> At the same time, update its value from:
+
+               "SUCCESS"
+
+             to:
+
+               "RETRY_SUCCESS"
+
+          -> TXN101 later becomes the lowest-priority transaction.
+
+          -> Move TXN101 to the end.
+
+          -> Update its value from:
+
+               "FAILED"
+
+             to:
+
+               "RETRY_PENDING"
+
+     -> Important:
+
+          -> The same transaction ID must NOT appear twice.
+
+     -> After the updates:
+
+          -> Display the complete map.
+
+          -> Display the first entry.
+
+          -> Display the last entry.
+
+          -> Display the map in reverse order.
+
+     -> Pay attention to what happens when the key
+        already exists.
+
+     -> Decide the appropriate methods.
+
+
+
+=> Question 6 - Sorted Transaction Directory
+
+     -> Continue in the SAME PROGRAM.
+
+     -> The bank also wants a separate map where transactions
+        are automatically arranged according to a numeric
+        transaction sequence number.
+
+     -> Store:
+
+          305 -> "TXN305"
+          101 -> "TXN101"
+          250 -> "TXN250"
+          150 -> "TXN150"
+
+     -> Requirements:
+
+          -> Transaction sequence numbers must remain
+             automatically sorted.
+
+          -> Display the transaction with
+             the smallest sequence number.
+
+          -> Display the transaction with
+             the largest sequence number.
+
+          -> Display all transactions from
+             highest sequence number to lowest.
+
+          -> Remove the transaction having the smallest sequence number.
+
+     -> Then attempt to manually place:
+
+          50 -> "TXN050"
+
+        specifically at the first position.
+
+     -> Determine what happens.
+
+     -> Demonstrate whether ordering is controlled by:
+
+          -> Insertion position
+
+             OR
+
+          -> Key sorting
+
+     -> Decide:
+
+          -> Which Map interface should be used?
+
+          -> Which implementation should be used?
+
+          -> Which methods are suitable?
+
+
+
+=> Question 7 - Transaction Map Views
+
+     -> Continue using a sequenced transaction/status map.
+
+     -> Use the following data:
+
+          TXN101 -> "SUCCESS"
+          TXN102 -> "FAILED"
+          TXN103 -> "SUCCESS"
+          TXN104 -> "CLOSED"
+          TXN105 -> "SUCCESS"
+
+     -> Obtain three separate views:
+
+          -> All transaction IDs.
+
+          -> All transaction statuses.
+
+          -> All complete transaction/status entries.
+
+     -> The encounter order of the original map
+        must be preserved in all three views.
+
+     -> For each view:
+
+          -> Display the first element.
+
+          -> Display the last element.
+
+          -> Display the elements in reverse encounter order.
+
+     -> Then understand through your program:
+
+          -> Why can "SUCCESS" appear multiple times?
+
+          -> Why can TXN101 not appear multiple times
+             as separate keys?
+
+          -> Why does the key view behave like a set?
+
+          -> Why does the entry view behave like a set?
+
+          -> Why does the value view NOT behave like a set?
+
+     -> Decide the appropriate Java 21 methods.
+
+
+
+=> Question 8 - Complete Banking Transaction Management System
+
+     -> Initial Transactions:
+
+          T101 -> "SUCCESS"
+          T102 -> "FAILED"
+          T103 -> "SUCCESS"
+          T104 -> "PENDING"
+
+
+     -> Requirement 1 - Unique Transaction Order
+
+          -> Maintain transaction IDs in unique arrival order.
+
+          -> Store:
+
+               T101
+               T102
+               T103
+               T104
+
+
+     -> Requirement 2 - Transaction Status Map
+
+          -> Maintain:
+
+               Transaction ID -> Status
+
+          -> Preserve transaction arrival order.
+
+
+     -> Requirement 3 - First / Last Operations
+
+          -> Display:
+
+               -> First transaction ID.
+
+               -> Last transaction ID.
+
+               -> First transaction/status entry.
+
+               -> Last transaction/status entry.
+
+
+     -> Requirement 4 - Highest Priority Transaction
+
+          -> Transaction:
+
+               T103
+
+             becomes the highest-priority transaction.
+
+          -> Move it to the beginning.
+
+          -> Do not create a duplicate.
+
+
+     -> Requirement 5 - Lowest Priority Transaction
+
+          -> Add:
+
+               T105 -> "PENDING"
+
+          -> T105 must become the lowest-priority transaction.
+
+          -> Place it at the end.
+
+
+     -> Requirement 6 - Process Highest Priority
+
+          -> Process and remove the transaction currently appearing first.
+
+
+     -> Requirement 7 - Reverse Processing View
+
+          -> Display remaining transaction IDs
+             from last to first.
+
+          -> Display remaining transaction/status entries
+             from last to first.
+
+
+     -> Requirement 8 - Map Views
+
+          -> Obtain and display:
+
+               -> Ordered transaction IDs.
+
+               -> Ordered transaction statuses.
+
+               -> Ordered transaction/status entries.
+
+          -> For each view:
+
+               -> Display first.
+
+               -> Display last.
+
+               -> Display reversed view.
+
+
+     -> Requirement 9 - Sorted Transaction Priorities
+
+          -> Create another collection containing:
+
+               30
+               10
+               40
+               20
+               30
+
+          -> Requirements:
+
+               -> No duplicates.
+
+               -> Always sorted.
+
+               -> Display smallest priority.
+
+               -> Display largest priority.
+
+               -> Display priorities in descending order.
+
+               -> Remove smallest priority.
+
+               -> Remove largest priority.
+
+
+     -> Final Requirement
+
+          -> Your complete program should demonstrate:
+
+               -> List
+
+               -> SequencedCollection
+
+               -> Set
+
+               -> SequencedSet
+
+               -> SortedSet / NavigableSet
+
+               -> SequencedMap
+
+               -> SortedMap / NavigableMap
+
+               -> First / Last operations
+
+               -> Reverse views
+
+               -> Unique elements
+
+               -> Sorted elements
+
+               -> Key / Value / Entry views
+
+          -> Decide appropriate interfaces,
+             implementations and methods yourself.
+
+          -> Do NOT use indexes for requirements
+             involving first or last elements.
