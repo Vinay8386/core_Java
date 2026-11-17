@@ -27,6 +27,7 @@ public class StrinClass {
             Expected Output: 9
         */
        System.out.println(Arrays.stream(str.split(" ")).collect(Collectors.counting()));
+       System.out.println(Arrays.stream(str.split("\\s+")).count()); //\\s → matches any whitespace (space, tab \t, newline \n, etc.) and + → matches one or more whitespace characters 
 
        System.out.println("==========================================================");
        /*
@@ -49,9 +50,9 @@ public class StrinClass {
 
             Expected Output: Java
         */
-        Map<String,Long> FirstRepeatedWord=
+        Map<String,Long> wordMap=
         Arrays.stream(str.split(" ")).collect(Collectors.groupingBy(Function.identity(),LinkedHashMap::new, Collectors.counting()));
-        System.out.println(FirstRepeatedWord.entrySet()
+        System.out.println(wordMap.entrySet()
                             .stream()
                             .filter(e->e.getValue()>1)
                             .findFirst()  //findFirst() returns an Optional<Entry> rather than the entry itself.

@@ -22,7 +22,7 @@ public class GenerateEmployeeOL {
                 Welcome to ABC Company.
 
                 Department : %s
-                ID : %d             
+                ID : %d
                 Salary     : %.2f
                 """.formatted(name,dept,id,salary);
 

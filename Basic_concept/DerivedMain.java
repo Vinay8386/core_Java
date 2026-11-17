@@ -1,6 +1,8 @@
 package Basic_concept;
 
 public class DerivedMain {
+    // Access through an instance is intentional in this static-dispatch lesson.
+    @SuppressWarnings({"static", "static-access"})
     public static void main(String[] args) {
         Base obj = new DeriveFromBaseClass();
 

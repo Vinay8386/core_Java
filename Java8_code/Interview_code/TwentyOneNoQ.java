@@ -1,8 +1,6 @@
 package Java8_code.Interview_code;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 //Write a Java 8 program to first sort an array and then convert the sorted array into Stream and print it?
 public class TwentyOneNoQ {

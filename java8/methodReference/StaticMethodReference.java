@@ -4,17 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-class Person{
-	
-	private String name;
-	private int age;
-	Person(String name,int age){
-		 // This keyword refers to current instance itself
-		this.name=name;  this.age=age;
-	}	
-	public Integer getAge() {	return age;	}
-	public String getName() {	return name;}
-}
+
 public class StaticMethodReference {	
 	//create static method to compare with name
 	public static int compareByName(Person a, Person b) {

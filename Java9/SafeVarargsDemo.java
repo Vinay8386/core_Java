@@ -38,6 +38,8 @@ public class SafeVarargsDemo {
      * @param messages varargs array of Strings to print
      * @SafeVarargs annotation suppresses unsafe operation warnings
      */
+    // Retain the annotation to illustrate Java 9 private-method support.
+    @SuppressWarnings("varargs")
     @SafeVarargs
     private final void printAll(String... messages) {
         // Using stream to print each message

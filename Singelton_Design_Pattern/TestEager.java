@@ -1,10 +1,11 @@
-package LLD_DesignPattern.Creational_Design_Pattern.Singelton_Design_Pattern;
+package Singelton_Design_Pattern;
 
 public class TestEager {
     public static void main(String[] args) {
 
         LoggerEager loggerEager1 = LoggerEager.getInstance();
         LoggerEager loggerEager2 = LoggerEager.getInstance();
+        System.out.println(loggerEager1 == loggerEager2);
 
         LoggerLazy loggerLazy1 = LoggerLazy.getInstance();
         LoggerLazy loggerLazy2 = LoggerLazy.getInstance();

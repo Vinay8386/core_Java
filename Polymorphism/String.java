@@ -11,4 +11,8 @@ public class String {
         return false;
         //we have custom implemantation and it will compare content
     }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

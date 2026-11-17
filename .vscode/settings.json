@@ -3,5 +3,7 @@
         ".",
         "java8"
     ],
-    "java.project.referencedLibraries": []
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ]
 }
