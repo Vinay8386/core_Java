@@ -3,7 +3,6 @@ package Java8_code.Interview_code;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 //Given a list of integers, find the maximum value element present in it using Stream functions?
 public class FourteenthQ {

@@ -4,9 +4,9 @@ public class SealedClassVerification {
 
     public static void main(String[] args) {
 
-        Shape circle = new Circle();
-        Shape rectangle = new Square();
-        Shape triangle = new RightTriangle();
+        DrawingShape circle = new DrawingCircle();
+        DrawingShape rectangle = new DrawingSquare();
+        DrawingShape triangle = new DrawingRightTriangle();
 
         circle.draw();
         rectangle.draw();
@@ -19,8 +19,8 @@ public class SealedClassVerification {
 // Parent Sealed Class
 // =====================================================
 
-sealed abstract class Shape
-        permits Circle, Rectangle, Triangle {
+sealed abstract class DrawingShape
+        permits DrawingCircle, DrawingRectangle, DrawingTriangle {
 
     abstract void draw();
 }
@@ -31,7 +31,7 @@ sealed abstract class Shape
 // No further inheritance allowed
 // =====================================================
 
-final class Circle extends Shape {
+final class DrawingCircle extends DrawingShape {
 
     @Override
     void draw() {
@@ -43,10 +43,10 @@ final class Circle extends Shape {
 //---------------------------------------------------------
 //UNCOMMENT TO VERIFY COMPILATION ERROR
 /* 
-class SpecialCircle extends Circle {
+class SpecialDrawingCircle extends DrawingCircle {
 }*/
 
-//Error: cannot inherit from final Circle
+//Error: cannot inherit from final DrawingCircle
 //---------------------------------------------------------
 
 
@@ -56,8 +56,8 @@ class SpecialCircle extends Circle {
 // Further inheritance allowed only to permitted classes
 // =====================================================
 
-sealed class Rectangle extends Shape
-        permits Square {
+sealed class DrawingRectangle extends DrawingShape
+        permits DrawingSquare {
 
     @Override
     void draw() {
@@ -65,7 +65,7 @@ sealed class Rectangle extends Shape
     }
 }
 
-final class Square extends Rectangle {
+final class DrawingSquare extends DrawingRectangle {
 
     @Override
     void draw() {
@@ -77,13 +77,13 @@ final class Square extends Rectangle {
 ---------------------------------------------------------
 UNCOMMENT TO VERIFY COMPILATION ERROR */
 /* 
-class ColoredRectangle extends Rectangle {
+class ColoredDrawingRectangle extends DrawingRectangle {
 }*/
 
 /* 
-Error: class is not allowed to extend sealed class: Rectangle
+Error: class is not allowed to extend sealed class: DrawingRectangle
 
-Reason: Rectangle only permits Square
+Reason: DrawingRectangle only permits DrawingSquare
 ---------------------------------------------------------
 */
 
@@ -93,7 +93,7 @@ Reason: Rectangle only permits Square
 // Further inheritance completely unrestricted
 // =====================================================
 
-non-sealed class Triangle extends Shape {
+non-sealed class DrawingTriangle extends DrawingShape {
 
     @Override
     void draw() {
@@ -101,7 +101,7 @@ non-sealed class Triangle extends Shape {
     }
 }
 
-class RightTriangle extends Triangle {
+class DrawingRightTriangle extends DrawingTriangle {
 
     @Override
     void draw() {
@@ -109,7 +109,7 @@ class RightTriangle extends Triangle {
     }
 }
 
-class AdvancedRightTriangle extends RightTriangle {
+class DrawingAdvancedRightTriangle extends DrawingRightTriangle {
 
     @Override
     void draw() {

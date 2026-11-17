@@ -1,0 +1,1081 @@
+
+=> JavaParser Learning Roadmap (Basic to Advanced)
+
+    => Part 1: Java File Reading vs. JavaParser [COMPLETED]
+        -> FileReader
+        -> BufferedReader
+        -> Files.readString()
+        -> Limitations of Traditional File Reading
+        -> Introduction to JavaParser
+        -> Advantages of JavaParser for Source Code Analysis
+
+    => Part 2: JavaParser Internal Working and AST Fundamentals [COMPLETED]
+        -> Lexical Analysis
+        -> Syntax Analysis
+        -> Abstract Syntax Tree (AST)
+        -> Important AST Node Types
+        -> CompilationUnit and Multiple Class Declarations
+        -> Root, Parent, Child, and Descendant Nodes
+        -> Introduction to AST Navigation Methods
+        -> getChildNodes(), getParentNode(), findAll()
+
+    => Part 3: AST Navigation APIs in Depth [PENDING]
+        -> getChildNodes()
+        -> getParentNode()
+        -> findAll()
+        -> findFirst()
+        -> findAncestor()
+        -> findCompilationUnit()
+        -> Working with Optional<Node>
+        -> Practical AST Navigation Examples
+
+    => Part 4: JavaParser Configuration and Setup [PENDING]
+        -> JavaParser Dependencies and Maven Setup
+        -> StaticJavaParser vs. JavaParser
+        -> ParserConfiguration
+        -> Java Language Level Configuration
+        -> Parsing Java Files, Strings, and Streams
+        -> ParseResult and CompilationUnit
+        -> Basic Parser Error Handling
+
+    => Part 5: Major AST Node Types [PENDING]
+        -> CompilationUnit
+        -> ClassOrInterfaceDeclaration
+        -> EnumDeclaration and RecordDeclaration
+        -> FieldDeclaration and VariableDeclarator
+        -> MethodDeclaration
+        -> ConstructorDeclaration
+        -> Parameter and Type Nodes
+        -> Annotation Nodes
+        -> Statement Nodes
+        -> Expression Nodes
+        -> MethodCallExpr vs. MethodDeclaration
+        -> ObjectCreationExpr
+        -> Nested Classes and Interfaces
+
+    => Part 6: Visitor Pattern and AST Traversal [PENDING]
+        -> Introduction to Visitor Pattern
+        -> Why Visitor Pattern Is Used
+        -> VoidVisitorAdapter
+        -> GenericVisitorAdapter
+        -> Walking Through AST Nodes
+        -> Finding Methods and Annotations
+        -> Extracting Information from AST
+        -> Practical Visitor Pattern Examples
+
+    => Part 7: Symbol Solver and Semantic Analysis [PENDING]
+        -> Introduction to Semantic Analysis
+        -> Syntax Analysis vs. Semantic Analysis
+        -> Introduction to JavaSymbolSolver
+        -> Type Resolution
+        -> Symbol Resolution
+        -> Resolving Method Calls
+        -> Resolving Variables and Fields
+        -> Resolving Inheritance and Interfaces
+        -> Handling External Dependencies
+        -> CombinedTypeSolver and ReflectionTypeSolver
+        -> JavaParserTypeSolver and JarTypeSolver
+        -> Practical Symbol Resolution Examples
+
+    => Part 8: Scanning Multiple Java Files and Projects [PENDING]
+        -> Scanning a Single Java File
+        -> Scanning Multiple Java Files
+        -> Recursive Directory Scanning
+        -> Identifying Java Source Files
+        -> SourceRoot and ProjectRoot
+        -> Scanning Maven and Gradle Projects
+        -> Extracting Classes, Methods, and Annotations
+        -> Building a Source Code Analysis Pipeline
+        -> Storing and Processing Scan Results
+
+    => Part 9: Error Handling, Performance, and Advanced APIs [PENDING]
+        -> ParseException and ParseResult Problems
+        -> Handling Invalid Java Source Code
+        -> Java Language Version Compatibility
+        -> Performance Optimization
+        -> Memory Management
+        -> Processing Large Java Projects
+        -> Thread Safety and Parallel Processing
+        -> LexicalPreservingPrinter
+        -> AST Modification and Source Code Generation
+        -> Limitations and Best Practices
+
+    => Part 10: Complete Java Source Code Scanner Project [PENDING]
+        -> Project Requirements and Architecture
+        -> Maven Project Setup
+        -> Java Source File Discovery
+        -> JavaParser Integration
+        -> AST Traversal Implementation
+        -> Class and Interface Scanner
+        -> Method and Constructor Scanner
+        -> Annotation Scanner
+        -> Method Call Scanner
+        -> Symbol Solver Integration
+        -> Generating Structured Scan Results
+        -> Error Handling and Logging
+        -> Performance Optimization
+        -> Testing and Validation
+        -> Final Project Review
+
+======================================! Part 1: Java File Reading vs. JavaParser !======================================================
+=> JavaParser — Solution to Traditional File Reading Limitations
+
+    -> Definition:
+        -> JavaParser is an open-source Java library.
+        -> It parses Java source code into a structured representation called an Abstract Syntax Tree (AST).
+
+    -> Purpose:
+        -> Read and analyze Java source code.
+        -> Identify Java language constructs.
+        -> Navigate source-code structures.
+        -> Support source-code transformation.
+
+    -> JavaParser can identify:
+        -> Class declarations.
+        -> Interface declarations.
+        -> Method declarations.
+        -> Constructor declarations.
+        -> Field declarations.
+        -> Annotations.
+        -> Method calls.
+        -> Expressions and statements.
+
+    -> Basic Working Flow:
+
+        Java Source File (.java)
+                  |
+                  v
+              JavaParser
+                  |
+                  v
+          Lexical Analysis
+                  |
+                  v
+           Syntax Analysis
+                  |
+                  v
+         Abstract Syntax Tree
+                  |
+                  v
+           Inspect AST Nodes
+                  |
+                  v
+          Extract Information
+
+    -> Important:
+        -> JavaParser does not execute source code.
+        -> It does not require successful compilation to recognize syntactically valid Java structures.
+        -> Basic parsing does not guarantee semantic validity.
+        -> Symbol Solver can additionally resolve references when configured with the required type information.
+
+    -> Example: JavaParserExample.java
+
+    
+    -> Explanation:
+        -> StaticJavaParser.parse() parses the Java file.
+
+        -> CompilationUnit represents the parsed
+           Java source file.
+
+        -> findAll(ClassOrInterfaceDeclaration.class)
+           finds class and interface declarations.
+
+        -> findAll(MethodDeclaration.class)
+           finds method declarations.
+
+        -> getNameAsString() retrieves the declaration name.
+
+    -> Advantages for a Java Scanning Project:
+        -> Structured analysis instead of plain-text searching.
+        -> More reliable handling of Java syntax.
+        -> Supports complex and nested Java structures.
+        -> AST nodes can be navigated programmatically.
+        -> Reduces the need for custom parsing logic.
+
+======================================! Part 2: JavaParser Internal Working and AST Fundamentals !======================================================
+
+=> Internal Working of JavaParser
+
+    -> JavaParser is an open-source Java library that parses Java source code and creates a structured representation called an Abstract Syntax Tree (AST).
+
+    -> JavaParser does not compile or execute the Java source code.
+
+    -> JavaParser internally performs the following major operations:
+
+        1. Lexical Analysis
+        2. Syntax Analysis
+        3. AST(Abstract Syntax Tree) Creation
+
+    -> Overall Processing Flow:
+
+        Java Source File (.java)
+                 |
+                 v
+           Lexical Analysis
+                 |
+                 v
+               Tokens
+                 |
+                 v
+            Syntax Analysis
+                 |
+                 v
+             AST Creation
+                 |
+                 v
+        Abstract Syntax Tree
+                 |
+                 v
+        Access and Analyze Nodes
+
+    -> Note: This is a conceptual flow. Tokenization and parsing work together within the JavaParser implementation.
+
+=> Lexical Analysis
+
+    -> Definition:
+        -> Lexical Analysis is the process of breaking source code into smaller meaningful units called tokens.
+
+    -> The component responsible for identifying tokens is called a Lexer or Tokenizer.
+
+    -> Token:
+        -> A token is an individual lexical unit recognized in the source code.
+
+    -> Common Token Categories:
+        -> Keyword: public, private, class, int, double, void
+        -> Identifier: BankService, balance, deposit
+        -> Operator: =, +, -, *, /, ==
+        -> Literal: 100, 7.5, "Hello", true
+        -> Separator: ;, (, ), {, }, [, ]
+
+    -> Example:
+
+        double interest = 7.5;
+
+    -> Lexical Analysis Output:
+
+        double    -> Keyword
+        interest  -> Identifier
+        =         -> Assignment Operator
+        7.5       -> Floating-Point Literal
+        ;         -> Separator
+
+    -> Important:
+        -> double is a keyword representing a primitive data type.
+        -> interest is an identifier used as the variable name.
+        -> = performs assignment, whereas == performs equality comparison.
+        -> 7.5 is a double literal by default.
+        -> ; marks the end of the declaration statement.
+
+    -> Responsibilities:
+        -> Recognize keywords, identifiers, operators, literals, and separators.
+        -> Identify individual lexical elements from source code.
+        -> Provide tokens for syntax analysis.
+
+    -> Limitations:
+        -> Lexical Analysis does not determine whether tokens form a valid Java declaration.
+        -> It does not identify the complete relationship between classes, methods, and fields.
+
+=> Syntax Analysis
+
+    -> Definition:
+        -> Syntax Analysis checks whether tokens are arranged according to the grammatical rules of the Java language.
+
+    -> The component responsible for syntax analysis is called a Parser.
+
+    -> Input:
+        -> Tokens identified during lexical analysis.
+
+    -> Responsibilities:
+        -> Validate the grammatical structure of Java source code.
+        -> Recognize declarations, statements, and expressions.
+        -> Determine how individual tokens form larger Java constructs.
+        -> Report syntax problems when code violates grammar rules.
+
+    -> Example 1: Syntactically Valid Code
+
+        int balance = 5000;
+
+        -> int represents the data type.
+        -> balance represents the variable name.
+        -> = represents assignment.
+        -> 5000 represents the assigned integer value.
+        -> ; terminates the statement.
+
+        -> The token arrangement follows Java grammar.
+
+    -> Example 2: Syntactically Invalid Code
+
+        int = balance 5000;
+
+        -> The individual tokens can be recognized.
+        -> Their arrangement violates Java grammar.
+        -> The parser reports a syntax problem.
+
+    -> Important Difference:
+
+        Lexical Analysis:
+            -> What are the individual tokens?
+
+        Syntax Analysis:
+            -> Are those tokens arranged according to Java grammar?
+
+    -> Important:
+        -> Syntax Analysis does not necessarily verify whether a referenced variable or method actually exists.
+
+    -> Example:
+
+        public void deposit() {
+            balance = balance + 1000;
+        }
+
+        -> The method declaration and assignment statement are syntactically valid.
+        -> However, balance may not be declared anywhere.
+        -> Checking whether balance refers to a valid declaration belongs to semantic analysis.
+
+=> Abstract Syntax Tree (AST)
+
+    -> Full Form:
+        -> Abstract Syntax Tree
+
+    -> Definition:
+        -> AST is a tree-like representation of the syntactic structure of source code.
+
+    -> JavaParser creates an AST after parsing Java source code.
+
+    -> Every element in the AST is represented using objects called Nodes.
+
+    -> Nodes represent Java language constructs such as:
+        -> Classes
+        -> Interfaces
+        -> Fields
+        -> Methods
+        -> Constructors
+        -> Statements
+        -> Expressions
+
+    -> Why is it called Abstract?
+        -> The tree focuses on the meaningful syntactic structure rather than simply reproducing every source character.
+        -> JavaParser can also preserve information such as comments, source positions, and tokens.
+
+    -> Example Java Code:
+
+        public class BankService {
+            int balance = 5000;
+        }
+
+    -> Simplified AST:
+
+        CompilationUnit
+              |
+              +-- ClassOrInterfaceDeclaration
+                       |
+                       +-- FieldDeclaration
+                                  |
+                                  +-- VariableDeclarator
+                                           |
+                                           +-- Type: int
+                                           +-- Name: balance
+                                           +-- Value: 5000
+
+    -> Explanation:
+        -> CompilationUnit represents the entire parsed Java source file.
+        -> ClassOrInterfaceDeclaration represents the BankService class.
+        -> FieldDeclaration represents the field declaration.
+        -> VariableDeclarator represents the variable and its initializer.
+
+    -> Important:
+        -> This diagram is simplified for understanding.
+        -> The actual AST contains additional nodes representing identifiers, types, modifiers, and expressions.
+
+=> Important AST Node Types
+
+    -> CompilationUnit:
+        -> Represents an entire parsed Java source file.
+        -> Acts as the root node when parsing a complete Java source file.
+
+    -> ClassOrInterfaceDeclaration:
+        -> Represents a class or interface declaration.
+        -> Example: public class BankService {}
+
+    -> FieldDeclaration:
+        -> Represents a field declaration inside a class.
+        -> Example: private int balance = 5000;
+
+    -> VariableDeclarator:
+        -> Represents an individual variable declaration with its type, name, and optional initializer.
+        -> Example: balance = 5000 within the field declaration.
+
+    -> MethodDeclaration:
+        -> Represents a method definition.
+        -> Example: public void deposit() {}
+
+    -> ConstructorDeclaration:
+        -> Represents a constructor definition.
+        -> Example: public BankService() {}
+
+    -> MethodCallExpr:
+        -> Represents an expression that calls a method.
+        -> Example: account.deposit(1000);
+
+    -> BlockStmt:
+        -> Represents a block of statements enclosed in curly braces.
+        -> Example: { balance = 1000; }
+
+    -> ExpressionStmt:
+        -> Represents an expression used as a statement.
+        -> Example: balance = 1000;
+
+    -> Important:
+        -> MethodDeclaration, ConstructorDeclaration, and MethodCallExpr are different AST node types.
+        -> JavaParser distinguishes declarations from method calls using Java grammar.
+
+=> CompilationUnit and Multiple Class Declarations
+
+    -> A CompilationUnit represents the complete parsed Java source file.
+
+    -> A single Java file can contain multiple top-level classes.
+
+    -> Example:
+
+        public class PaymentService {
+        }
+
+        class PaymentValidator {
+        }
+
+        class PaymentRepository {
+        }
+
+    -> Simplified AST:
+
+        CompilationUnit
+             |
+             +-- ClassOrInterfaceDeclaration
+             |          Name: PaymentService
+             |
+             +-- ClassOrInterfaceDeclaration
+             |          Name: PaymentValidator
+             |
+             +-- ClassOrInterfaceDeclaration
+                        Name: PaymentRepository
+
+    -> Total CompilationUnit Nodes: 1
+    -> Total ClassOrInterfaceDeclaration Nodes: 3
+
+    -> Important:
+        -> CompilationUnit is not the same as ClassOrInterfaceDeclaration.
+        -> CompilationUnit represents the complete parsed source file.
+        -> ClassOrInterfaceDeclaration represents an individual class or interface.
+
+=> AST Node Relationships
+
+    -> AST nodes are connected through parent-child relationships.
+
+    -> Root Node:
+        -> The topmost node of a tree.
+        -> CompilationUnit is the root when parsing a complete Java file.
+
+    -> Parent Node:
+        -> A node immediately above another node.
+
+    -> Child Node:
+        -> A node immediately below another node.
+
+    -> Direct Child:
+        -> A node connected immediately below its parent.
+
+    -> Descendant:
+        -> Any node below another node, either directly or indirectly.
+
+    -> Example Simplified AST:
+
+        CompilationUnit
+             |
+             +-- ClassOrInterfaceDeclaration
+                          |
+                          +-- MethodDeclaration
+                                      |
+                                      +-- BlockStmt
+                                             |
+                                             +-- ExpressionStmt
+
+    -> Explanation:
+        -> CompilationUnit is the root node.
+        -> ClassOrInterfaceDeclaration is a direct child of CompilationUnit.
+        -> MethodDeclaration is a direct child of ClassOrInterfaceDeclaration.
+        -> BlockStmt is a direct child of MethodDeclaration in this simplified diagram.
+        -> BlockStmt is an indirect descendant of ClassOrInterfaceDeclaration.
+
+    -> Key Difference:
+        -> Child refers to the immediate relationship.
+        -> Descendant includes both direct and indirect relationships.
+
+    -> Important:
+        -> Every non-root AST node has a parent in a connected AST.
+        -> The root CompilationUnit has no parent.
+
+=> AST Navigation Methods
+
+    -> JavaParser provides APIs to navigate AST nodes.
+
+    -> getChildNodes():
+        -> Retrieves all immediate child nodes of the current node.
+        -> Does not recursively retrieve every descendant.
+
+    -> getParentNode():
+        -> Retrieves the immediate parent of the current node.
+        -> Returns Optional<Node> because a parent may not exist.
+
+    -> findAll(NodeType.class):
+        -> Searches the current node and its descendants for matching node types.
+        -> Useful for finding all methods, classes, constructors, or method calls in a subtree.
+
+    -> Key Difference:
+
+        getChildNodes()
+            -> Immediate children only.
+
+        getParentNode()
+            -> Immediate parent only.
+
+        findAll()
+            -> Matching nodes throughout the subtree, including the starting node if it matches.
+
+    -> Example: ASTExample 
+
+    
+    -> Explanation:
+        -> StaticJavaParser.parse() parses the Java source code.
+        -> CompilationUnit represents the parsed source.
+        -> getChildNodes() returns the immediate children of CompilationUnit.
+        -> Both class declarations are direct children of CompilationUnit.
+        -> Method declarations are not returned because they are located deeper in the AST.
+
+    -> Important:
+        -> The result depends on which AST node is used to invoke getChildNodes().
+        -> Actual child lists can also include nodes for package declarations, imports, names, and other syntax.
+
+=> JavaParser Internal Working — Quick Revision
+
+    -> Lexical Analysis:
+        -> Breaks source code into tokens.
+        -> Performed by a Lexer.
+
+    -> Syntax Analysis:
+        -> Checks whether tokens follow Java grammar.
+        -> Performed by a Parser.
+
+    -> AST Creation:
+        -> Represents parsed Java code as a tree of objects.
+        -> Provides structural information for source-code analysis.
+
+    -> CompilationUnit:
+        -> Represents the complete parsed Java source file.
+
+    -> ClassOrInterfaceDeclaration:
+        -> Represents an individual class or interface.
+
+    -> FieldDeclaration:
+        -> Represents a field declaration.
+
+    -> VariableDeclarator:
+        -> Represents an individual variable declaration.
+
+    -> MethodDeclaration:
+        -> Represents a method definition.
+
+    -> ConstructorDeclaration:
+        -> Represents a constructor definition.
+
+    -> MethodCallExpr:
+        -> Represents a method invocation expression.
+
+    -> Root:
+        -> Topmost AST node.
+
+    -> Parent:
+        -> Node immediately above another node.
+
+    -> Child:
+        -> Node immediately below another node.
+
+    -> Descendant:
+        -> Any node located below another node.
+
+    -> getChildNodes():
+        -> Retrieves immediate children.
+
+    -> getParentNode():
+        -> Retrieves the optional immediate parent.
+
+    -> findAll():
+        -> Finds matching nodes recursively within a subtree.
+
+    -> Final Concept:
+        -> JavaParser converts Java source code into structured AST nodes.
+        -> These AST nodes allow developers to inspect Java code without executing it.
+        -> AST navigation is a fundamental building block for Java source-code scanning projects.
+
+======================================! Part 5 — Major AST Node Types !======================================================
+
+
+=> CompilationUnit
+
+    -> Package: com.github.javaparser.ast
+
+    -> Definition:
+        -> CompilationUnit is an AST node representing an entire parsed Java source file.
+        -> It acts as the root node when JavaParser parses a complete Java source file.
+
+    -> Purpose:
+        -> Represents the overall structure of a Java source file.
+        -> Organizes package declarations, imports, classes, interfaces, and other top-level type declarations.
+        -> Provides the starting point for analyzing the structure of a Java source file.
+
+    -> Important Characteristics:
+        -> One complete Java source file produces one CompilationUnit when parsed successfully.
+        -> A CompilationUnit can contain multiple class or interface declarations.
+        -> CompilationUnit represents a Java source file, not an entire Java project.
+        -> CompilationUnit is the root node of the AST created when parsing an entire Java file.
+        -> The root CompilationUnit has no parent node.
+
+
+    => Example: Single Java Source File
+
+        -> File Name: BankService.java
+
+        -> Source Code:
+
+            package com.bank.service;
+
+            import java.util.List;
+
+            public class BankService {
+
+                private int balance = 5000;
+
+                public void deposit() {
+                }
+            }
+
+            class PaymentService {
+            }
+
+        -> JavaParser creates one CompilationUnit containing:
+            -> One PackageDeclaration
+            -> One ImportDeclaration
+            -> Two ClassOrInterfaceDeclaration nodes
+
+        -> Simplified AST Hierarchy:
+
+            CompilationUnit
+                |
+                +-- PackageDeclaration
+                |       |
+                |       +-- Name (com.bank.service)
+                |
+                +-- ImportDeclaration
+                |       |
+                |       +-- Name (java.util.List)
+                |
+                +-- ClassOrInterfaceDeclaration
+                |       |
+                |       +-- SimpleName (BankService)
+                |       |
+                |       +-- FieldDeclaration
+                |       |       |
+                |       |       +-- Modifier (private)
+                |       |       |
+                |       |       +-- VariableDeclarator
+                |       |                |
+                |       |                +-- PrimitiveType (int)
+                |       |                +-- SimpleName (balance)
+                |       |                +-- IntegerLiteralExpr (5000)
+                |       |
+                |       +-- MethodDeclaration
+                |               |
+                |               +-- Modifier (public)
+                |               +-- VoidType (void)
+                |               +-- SimpleName (deposit)
+                |               +-- BlockStmt
+                |
+                +-- ClassOrInterfaceDeclaration
+                        |
+                        +-- SimpleName (PaymentService)
+
+        -> Note: This hierarchy is simplified to show the primary structural relationships.
+
+        -> Explanation:
+            -> CompilationUnit represents BankService.java.
+            -> PackageDeclaration represents the package statement.
+            -> ImportDeclaration represents the import statement.
+            -> First ClassOrInterfaceDeclaration represents BankService.
+            -> Second ClassOrInterfaceDeclaration represents PaymentService.
+            -> FieldDeclaration represents the balance field.
+            -> MethodDeclaration represents the deposit method.
+
+        -> Result:
+            -> Total CompilationUnit Nodes: 1
+            -> Total ClassOrInterfaceDeclaration Nodes: 2
+            -> Total Direct Children of CompilationUnit: 4
+
+
+    => Example: Multiple Java Source Files
+
+        -> Project Structure:
+
+            BankingProject
+                |
+                +-- src
+                    |
+                    +-- BankService.java
+                    |
+                    +-- PaymentService.java
+                    |
+                    +-- AccountService.java
+
+        -> Each file is parsed separately by JavaParser.
+
+        -> AST Structure:
+
+            BankingProject
+                |
+                +-- BankService.java
+                |       |
+                |       +-- CompilationUnit
+                |               |
+                |               +-- ClassOrInterfaceDeclaration
+                |                       |
+                |                       +-- BankService
+                |
+                +-- PaymentService.java
+                |       |
+                |       +-- CompilationUnit
+                |               |
+                |               +-- ClassOrInterfaceDeclaration
+                |                       |
+                |                       +-- PaymentService
+                |
+                +-- AccountService.java
+                        |
+                        +-- CompilationUnit
+                                |
+                                +-- ClassOrInterfaceDeclaration
+                                        |
+                                        +-- AccountService
+
+        -> Note: BankingProject is a filesystem directory, not an AST node.
+
+        -> Result:
+            -> Total Java Source Files: 3
+            -> Total CompilationUnit Nodes: 3
+            -> Total ClassOrInterfaceDeclaration Nodes: 3
+
+        -> Important:
+            -> JavaParser does not automatically create one CompilationUnit for the entire project.
+            -> Each separately parsed Java source file has its own CompilationUnit.
+
+
+    => JavaParser Implementation
+
+        -> Example 1: Parsing a Java Source File
+
+            File file = new File("BankService.java");
+
+            CompilationUnit cu = StaticJavaParser.parse(file);
+
+        -> Explanation:
+            -> File represents the location of BankService.java.
+            -> StaticJavaParser.parse() parses the source code.
+            -> CompilationUnit stores the resulting AST root.
+
+        -> Example 2: Parsing Java Source Code from a String
+
+            String sourceCode = "public class BankService {}";
+
+            CompilationUnit cu = StaticJavaParser.parse(sourceCode);
+
+        -> Explanation:
+            -> JavaParser can parse source code directly from a String.
+            -> A physical .java file is not always required.
+            -> The returned CompilationUnit represents the supplied source code.
+
+
+    => CompilationUnit vs. ClassOrInterfaceDeclaration
+
+        -> CompilationUnit:
+            -> Represents the complete parsed Java source file.
+            -> May contain package declarations, imports, and multiple type declarations.
+            -> Acts as the root node for a complete Java source file.
+
+        -> ClassOrInterfaceDeclaration:
+            -> Represents an individual class or interface declaration.
+            -> Contains structural information about that class or interface.
+            -> May be a direct child of CompilationUnit or nested within another type.
+
+
+    => Important Points for Java Source Code Scanning
+
+        -> CompilationUnit is generally the starting point for analyzing an entire Java source file.
+        -> A scanner can obtain a CompilationUnit for each successfully parsed .java file.
+        -> The scanner can inspect class, method, field, and annotation nodes within the AST.
+        -> Multiple CompilationUnits can be processed to analyze an entire Java project.
+        -> Parsing a Java file does not execute its source code.
+        -> A valid AST can be produced even when some variables or methods cannot be resolved.
+
+
+    => Quick Revision
+
+        -> CompilationUnit = Root node of a complete parsed Java source file.
+        -> One Java file = One CompilationUnit per successful complete-file parse.
+        -> One CompilationUnit can contain multiple classes.
+        -> Three separately parsed Java files = Three CompilationUnits.
+        -> CompilationUnit can contain package, import, and type declaration nodes.
+        -> CompilationUnit does not represent an entire project.
+        -> JavaParser provides a CompilationUnit object through its complete-file parsing APIs.
+
+
+=> ClassOrInterfaceDeclaration
+
+    -> Package:
+        -> com.github.javaparser.ast.body.ClassOrInterfaceDeclaration
+
+    -> Definition:
+        -> ClassOrInterfaceDeclaration is an AST node representing a Java class or interface declaration.
+        -> The same AST node type is used for both classes and interfaces.
+        -> It extends TypeDeclaration<ClassOrInterfaceDeclaration>.
+
+    -> Purpose:
+        -> Represents the structure of a Java class or interface.
+        -> Provides access to its name, modifiers, annotations, fields, methods, constructors, and nested types.
+        -> Helps source-code scanners inspect individual classes and interfaces.
+
+    -> Important Characteristics:
+        -> A class and an interface are both represented using ClassOrInterfaceDeclaration.
+        -> isInterface() distinguishes an interface from a class.
+        -> A source file can contain multiple ClassOrInterfaceDeclaration nodes.
+        -> A ClassOrInterfaceDeclaration may be a child of CompilationUnit or another type declaration.
+        -> Classes and interfaces can contain different combinations of child nodes.
+
+    -> Common Direct Child Node Types:
+
+        -> Modifier:
+            -> Represents explicitly declared modifiers.
+            -> Examples: public, private, abstract, final.
+            -> Multiple modifiers can produce multiple Modifier nodes.
+
+        -> SimpleName:
+            -> Represents the class or interface name.
+            -> Example: BankService.
+
+        -> FieldDeclaration:
+            -> Represents fields declared inside a class.
+            -> Example: private int balance = 5000;
+
+        -> MethodDeclaration:
+            -> Represents methods declared inside a class or interface.
+            -> Example: public void deposit() {}
+
+        -> ConstructorDeclaration:
+            -> Represents an explicitly declared constructor.
+            -> Example: public BankService() {}
+
+        -> Other Possible Children:
+            -> AnnotationExpr: Represents an annotation.
+            -> TypeParameter: Represents a generic type parameter.
+            -> ClassOrInterfaceType: Represents extended or implemented types.
+            -> Nested type declarations: Represent types declared inside another type.
+
+    -> Practical Example: Class Declaration
+
+        File: PaymentService.java
+
+        class PaymentService {
+
+            private int amount = 1000;
+
+            void processPayment() {
+            }
+
+            void validatePayment() {
+            }
+        }
+
+    -> Simplified AST Hierarchy:
+
+        CompilationUnit
+            |
+            +-- ClassOrInterfaceDeclaration (PaymentService)
+                    |
+                    +-- SimpleName (PaymentService)
+                    |
+                    +-- FieldDeclaration
+                    |       |
+                    |       +-- Modifier (private)
+                    |       |
+                    |       +-- VariableDeclarator
+                    |               |
+                    |               +-- PrimitiveType (int)
+                    |               +-- SimpleName (amount)
+                    |               +-- IntegerLiteralExpr (1000)
+                    |
+                    +-- MethodDeclaration (processPayment)
+                    |       |
+                    |       +-- VoidType (void)
+                    |       +-- SimpleName (processPayment)
+                    |       +-- BlockStmt
+                    |
+                    +-- MethodDeclaration (validatePayment)
+                            |
+                            +-- VoidType (void)
+                            +-- SimpleName (validatePayment)
+                            +-- BlockStmt
+
+    -> Explanation:
+        -> CompilationUnit represents the complete Java source file.
+        -> ClassOrInterfaceDeclaration represents PaymentService.
+        -> SimpleName represents the class name.
+        -> FieldDeclaration represents the amount field.
+        -> Each MethodDeclaration represents one declared method.
+        -> PrimitiveType, IntegerLiteralExpr, and BlockStmt are deeper descendants of the class node.
+
+    -> Direct Child Count:
+
+        cls.getChildNodes().size();
+
+        Output: 4
+
+        -> SimpleName: 1
+        -> FieldDeclaration: 1
+        -> MethodDeclaration: 2
+        -> Total Direct Children: 4
+
+        -> No class-level Modifier node exists because PaymentService has no explicitly declared class modifier.
+
+    -> Practical Example: Interface Declaration
+
+        public interface PaymentProcessor {
+
+            void processPayment();
+
+        }
+
+    -> Simplified AST Hierarchy:
+
+        CompilationUnit
+            |
+            +-- ClassOrInterfaceDeclaration (PaymentProcessor)
+                    |
+                    +-- Modifier (public)
+                    |
+                    +-- SimpleName (PaymentProcessor)
+                    |
+                    +-- MethodDeclaration (processPayment)
+                            |
+                            +-- VoidType (void)
+                            +-- SimpleName (processPayment)
+
+    -> Important:
+        -> JavaParser uses ClassOrInterfaceDeclaration for both examples.
+        -> A class and an interface have different Java language rules.
+        -> Interface methods without bodies do not have BlockStmt nodes.
+        -> Implicit interface method modifiers are not necessarily represented as explicitly written Modifier nodes.
+
+    -> JavaParser Implementation:
+
+        import com.github.javaparser.StaticJavaParser;
+        import com.github.javaparser.ast.CompilationUnit;
+        import com.github.javaparser.ast.Node;
+        import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+
+        public class JavaParserExample {
+
+            public static void main(String[] args) {
+
+                String sourceCode = """
+                    class PaymentService {
+                        private int amount = 1000;
+
+                        void processPayment() {}
+                        void validatePayment() {}
+                    }
+                    """;
+
+                CompilationUnit cu =
+                    StaticJavaParser.parse(sourceCode);
+
+                ClassOrInterfaceDeclaration cls =
+                    cu.getClassByName("PaymentService").orElseThrow();
+
+                System.out.println("Class: " + cls.getNameAsString());
+                System.out.println("Is Interface: " + cls.isInterface());
+                System.out.println("Direct Children: " + cls.getChildNodes().size());
+
+                for (Node node : cls.getChildNodes()) {
+                    System.out.println(node.getClass().getSimpleName());
+                }
+            }
+        }
+
+    -> Output:
+
+        Class: PaymentService
+        Is Interface: false
+        Direct Children: 4
+        SimpleName
+        FieldDeclaration
+        MethodDeclaration
+        MethodDeclaration
+
+    -> Explanation of Important APIs:
+
+        -> getNameAsString():
+            -> Retrieves the class or interface name as a String.
+
+        -> isInterface():
+            -> Returns true for an interface and false for a class.
+
+        -> getChildNodes():
+            -> Retrieves all immediate AST child nodes.
+
+        -> getFields():
+            -> Retrieves field declarations directly belonging to the class or interface.
+
+        -> getMethods():
+            -> Retrieves methods directly declared in the class or interface.
+
+        -> getConstructors():
+            -> Retrieves explicitly declared constructors of the class.
+
+        -> getMembers():
+            -> Retrieves direct body members such as fields, methods, constructors, and nested types.
+
+    -> CompilationUnit vs. ClassOrInterfaceDeclaration:
+
+        -> CompilationUnit:
+            -> Represents the complete parsed Java source file.
+            -> May contain multiple top-level type declarations.
+
+        -> ClassOrInterfaceDeclaration:
+            -> Represents one class or interface declaration.
+            -> Contains structural information about its members.
+
+    -> Important Points for Java Scanning Projects:
+        -> Used to identify classes and interfaces in Java source files.
+        -> Useful for extracting class names, methods, fields, and annotations.
+        -> Nested classes can also be identified as ClassOrInterfaceDeclaration nodes.
+        -> The number of direct children depends on the actual declared structure.
+        -> getChildNodes() retrieves AST nodes, not lexical tokens.
+        -> Implicit or compiler-generated members are not automatically added as ordinary source declarations.
+
+    -> Quick Revision:
+        -> ClassOrInterfaceDeclaration = Java class or interface declaration.
+        -> SimpleName = Class or interface name.
+        -> FieldDeclaration = Field definition.
+        -> MethodDeclaration = Method definition.
+        -> ConstructorDeclaration = Explicit constructor definition.
+        -> Modifier = Explicitly declared modifier.
+        -> isInterface() = Distinguishes interface from class.
+        -> getChildNodes() = Returns immediate children only.
+        -> getMembers() = Returns direct body declarations.
+

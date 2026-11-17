@@ -1,6 +1,6 @@
 package Java9;
 
-/**
+/*
  * ============================================================
  * Java 9 Enhancement:
  * - In Java 9, the diamond operator can now be used with anonymous
@@ -31,7 +31,7 @@ public class DiamondAnonymousJava9 {
     }
 }
 
-/**
+/*
  * ===================== Summary =====================
  * 1. Java 7:
  *    - Diamond <> allowed for normal generic instance creation

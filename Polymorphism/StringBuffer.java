@@ -7,4 +7,8 @@ public class StringBuffer {
         return super.equals(obj);
         //no custom implementation (so it will compare reference like object class)
     }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

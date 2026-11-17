@@ -1,7 +1,6 @@
 package Java8_code.Interview_code;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 public class Test {
     public static void main(String[] args) {
         String str="abcabdb";
-        char[] arr=str.toCharArray();
+
         List<String> list=
         Arrays.stream(str.split(""))
                 .collect(Collectors.groupingBy(Function.identity(),Collectors.counting()))

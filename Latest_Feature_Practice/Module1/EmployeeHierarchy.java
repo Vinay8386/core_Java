@@ -69,21 +69,3 @@ public sealed class EmployeeHierarchy permits PermanentEmployee, ContractEmploye
         return true;
     }
 }
-
-final class PermanentEmployee extends EmployeeHierarchy{
-    public PermanentEmployee(String name, String department, int id, double salary){
-        super(name, department, id, salary);
-    }
-}
-
-final class ContractEmployee extends EmployeeHierarchy{
-    public ContractEmployee(String name, String department, int id, double salary){
-        super(name, department, id, salary);
-    }
-}
-
-final class Intern extends EmployeeHierarchy{
-    public Intern(String name, String department, int id, double salary){
-        super(name, department, id, salary);
-    }
-}

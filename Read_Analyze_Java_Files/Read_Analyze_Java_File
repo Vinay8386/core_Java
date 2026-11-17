@@ -1,0 +1,283 @@
+=> Ways to Read Java Files
+
+    -> Java provides multiple built-in APIs to read files.
+
+    -> Common approaches:
+        1. FileReader
+        2. BufferedReader
+        3. Files.readString()
+
+    -> All three belong to the standard Java API.
+
+    -> They can read the contents of a .java file without compiling or executing its source code.
+
+    -> Important:
+        -> Reading Java source code and understanding Java source code are two different operations.
+
+        -> Reading:
+            -> Retrieves file contents as characters or text.
+
+        -> Analyzing:
+            -> Identifies classes, methods, fields, annotations, and other Java structures.
+
+
+=> FileReader
+
+    -> Package:
+        -> java.io.FileReader
+
+    -> Definition:
+        -> FileReader is a Java class used to read character data from a file.
+
+    -> Working:
+        -> Opens a file.
+        -> Reads characters using read().
+        -> read() returns the next character as an integer.
+        -> Returns -1 when the end of the file is reached.
+
+    -> Characteristics:
+        -> Suitable for reading text files.
+        -> Can read one character at a time.
+        -> Does not understand Java syntax.
+        -> IOException must be handled or declared.
+        -> try-with-resources automatically closes the reader.
+
+    -> Example: FileReaderExample.java
+
+    
+    -> Explanation:
+        -> FileReader opens BankService.java.
+        -> read() retrieves characters sequentially.
+        -> (char) converts the returned integer into a character.
+        -> System.out.print() displays each character.
+        -> When read() returns -1, reading stops.
+
+    -> Limitations:
+        -> Reading character by character is inconvenient
+           for processing complete lines.
+        -> Does not identify class or method declarations.
+        -> Does not identify field names or annotations.
+        -> Does not create an AST.
+
+
+=> BufferedReader
+
+    -> Package:
+        -> java.io.BufferedReader
+
+    -> Definition:
+        -> BufferedReader reads character data efficiently by using an internal buffer.
+
+    -> Working:
+        -> Reads data from another Reader.
+        -> Uses a buffer to reduce underlying read operations.
+        -> Provides readLine() for reading complete lines.
+        -> readLine() returns null at the end of the file.
+
+    -> Characteristics:
+        -> Suitable for line-by-line processing.
+        -> Usually more convenient than FileReader alone.
+        -> Buffer size can be configured.
+        -> Does not understand Java syntax.
+
+    -> Example: BufferReaderExample.java
+
+    
+    -> Explanation:
+        -> FileReader reads character data from the file.
+        -> BufferedReader buffers that character data.
+        -> readLine() retrieves one complete line at a time.
+        -> Each line is stored in a String variable.
+        -> The loop continues until readLine() returns null.
+
+    -> Limitations:
+        -> Understands lines, not Java declarations.
+        -> Cannot inherently distinguish a method declaration from a method call.
+        -> Cannot automatically identify annotations.
+        -> Cannot create an AST.
+
+    -> Important:
+        -> BufferedReader improves text-reading convenience and efficiency.
+        -> It does not provide Java language awareness.
+
+
+=> Files.readString()
+
+    -> Package:
+        -> java.nio.file.Files
+
+    -> Introduced:
+        -> Java 11
+
+    -> Definition:
+        -> Files.readString() is a utility method that reads a complete file into a String.
+
+    -> Working:
+        -> Accepts a Path representing the file.
+        -> Reads the file contents.
+        -> Converts the contents into a String.
+        -> Returns the complete text.
+
+    -> Characteristics:
+        -> Short and readable implementation.
+        -> No explicit Reader object required.
+        -> Uses UTF-8 by default.
+        -> Suitable for reasonably sized text files.
+        -> Loads the complete file content into memory.
+
+    -> Example: FilesReadStringExample.java
+
+    
+    -> Explanation:
+        -> Path.of() represents the file path.
+        -> Files.readString() reads the complete file.
+        -> The file content is stored in sourceCode.
+        -> System.out.println() prints the source code.
+
+    -> Limitations:
+        -> Entire file content is loaded into memory.
+        -> May be unsuitable for very large files.
+        -> Returns plain text, not structured Java nodes.
+        -> Does not identify classes, methods, or annotations.
+        -> Does not create an AST.
+
+
+
+=> Limitations of Traditional File Reading
+
+    -> FileReader, BufferedReader, and Files.readString() are designed to read file contents.
+
+    -> They do not automatically parse Java grammar.
+
+    -> Problem 1: Class Identification
+        -> Cannot directly identify which text represents a Java class declaration.
+
+    -> Problem 2: Method Identification
+        -> Cannot directly distinguish between:
+            -> MethodDeclaration
+            -> MethodCallExpr
+            -> ConstructorDeclaration
+
+    -> Problem 3: Annotation Identification
+        -> Cannot directly associate annotations with
+           their corresponding Java declarations.
+
+    -> Problem 4: Nested Code Structure
+        -> Cannot automatically determine whether a method
+           belongs to a class, nested class, or another type.
+
+    -> Problem 5: Comments and String Literals
+        -> Simple text searches may mistake code written
+           inside comments or strings for actual Java code.
+
+    -> Problem 6: Manual Parsing Complexity
+        -> Developers would have to implement custom logic.
+        -> Such logic must handle Java syntax variations.
+        -> Regular expressions alone are not a reliable
+           replacement for a complete Java parser.
+
+    -> Important:
+        -> These APIs can still be used as part of a scanner.
+        -> Their limitation is that they do not provide
+           language-aware analysis automatically.
+
+
+=> JavaParser — Solution to Traditional File Reading Limitations
+
+    -> Definition:
+        -> JavaParser is an open-source Java library.
+        -> It parses Java source code into a structured representation called an Abstract Syntax Tree (AST).
+
+    -> Purpose:
+        -> Read and analyze Java source code.
+        -> Identify Java language constructs.
+        -> Navigate source-code structures.
+        -> Support source-code transformation.
+
+    -> JavaParser can identify:
+        -> Class declarations.
+        -> Interface declarations.
+        -> Method declarations.
+        -> Constructor declarations.
+        -> Field declarations.
+        -> Annotations.
+        -> Method calls.
+        -> Expressions and statements.
+
+    -> Basic Working Flow:
+
+        Java Source File (.java)
+                  |
+                  v
+              JavaParser
+                  |
+                  v
+          Lexical Analysis
+                  |
+                  v
+           Syntax Analysis
+                  |
+                  v
+         Abstract Syntax Tree
+                  |
+                  v
+           Inspect AST Nodes
+                  |
+                  v
+          Extract Information
+
+    -> Important:
+        -> JavaParser does not execute source code.
+        -> It does not require successful compilation to recognize syntactically valid Java structures.
+        -> Basic parsing does not guarantee semantic validity.
+        -> Symbol Solver can additionally resolve references when configured with the required type information.
+
+    -> Example: JavaParserExample.java
+
+    
+    -> Explanation:
+        -> StaticJavaParser.parse() parses the Java file.
+
+        -> CompilationUnit represents the parsed
+           Java source file.
+
+        -> findAll(ClassOrInterfaceDeclaration.class)
+           finds class and interface declarations.
+
+        -> findAll(MethodDeclaration.class)
+           finds method declarations.
+
+        -> getNameAsString() retrieves the declaration name.
+
+    -> Advantages for a Java Scanning Project:
+        -> Structured analysis instead of plain-text searching.
+        -> More reliable handling of Java syntax.
+        -> Supports complex and nested Java structures.
+        -> AST nodes can be navigated programmatically.
+        -> Reduces the need for custom parsing logic.
+
+
+=> Final Conclusion
+
+    -> FileReader:
+        -> Used for character-based file reading.
+
+    -> BufferedReader:
+        -> Used for efficient buffered text reading, especially line-by-line processing.
+
+    -> Files.readString():
+        -> Used to read an entire text file into a String.
+
+    -> JavaParser:
+        -> Used to parse and structurally analyze Java code.
+
+    -> Key Concept:
+        -> Traditional Java file-reading APIs provide text.
+        -> JavaParser provides a structured representation
+           of Java source code.
+
+    -> For Our Java Scanning Project:
+        -> Reading files is only the starting point.
+        -> JavaParser helps us understand their structure.
+        -> AST navigation helps us extract required information.
+

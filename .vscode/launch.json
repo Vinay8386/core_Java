@@ -1,0 +1,40 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "ASTExample",
+            "request": "launch",
+            "mainClass": "Read_Analyze_Java_Files.ASTExample",
+            "projectName": "core_Java_9615a86a"
+        },
+        {
+            "type": "java",
+            "name": "JavaParserExample",
+            "request": "launch",
+            "mainClass": "Read_Analyze_Java_Files.JavaParserExample",
+            "projectName": "core_Java_9615a86a"
+        },
+        {
+            "type": "java",
+            "name": "FilesReadStringExample",
+            "request": "launch",
+            "mainClass": "Read_Analyze_Java_Files.FilesReadStringExample",
+            "projectName": "core_Java_9615a86a"
+        },
+        {
+            "type": "java",
+            "name": "FileReaderExample",
+            "request": "launch",
+            "mainClass": "Read_Analyze_Java_Files.FileReaderExample",
+            "projectName": "core_Java_9615a86a"
+        },
+        {
+            "type": "java",
+            "name": "BufferedReaderExample",
+            "request": "launch",
+            "mainClass": "Read_Analyze_Java_Files.BufferedReaderExample",
+            "projectName": "core_Java_9615a86a"
+        }
+    ]
+}

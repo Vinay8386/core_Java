@@ -1,18 +1,18 @@
 package Java17;
 
 // Sealed Interface
-sealed interface Shape
-        permits Circle, Rectangle, Square {
+sealed interface AreaShape
+        permits AreaCircle, AreaRectangle, AreaSquare {
 
     double area();
 }
 
-// Circle Class
-final class Circle implements Shape {
+// AreaCircle Class
+final class AreaCircle implements AreaShape {
 
     private double radius;
 
-    public Circle(double radius) {
+    public AreaCircle(double radius) {
         this.radius = radius;
     }
 
@@ -22,13 +22,13 @@ final class Circle implements Shape {
     }
 }
 
-// Rectangle Class
-final class Rectangle implements Shape {
+// AreaRectangle Class
+final class AreaRectangle implements AreaShape {
 
     private double length;
     private double width;
 
-    public Rectangle(double length, double width) {
+    public AreaRectangle(double length, double width) {
         this.length = length;
         this.width = width;
     }
@@ -39,12 +39,12 @@ final class Rectangle implements Shape {
     }
 }
 
-// Square Class
-final class Square implements Shape {
+// AreaSquare Class
+final class AreaSquare implements AreaShape {
 
     private double side;
 
-    public Square(double side) {
+    public AreaSquare(double side) {
         this.side = side;
     }
 
@@ -59,9 +59,9 @@ public class ShapeAreaCalculator {
 
     public static void main(String[] args) {
 
-        Shape s1 = new Circle(5);
-        Shape s2 = new Rectangle(10, 4);
-        Shape s3 = new Square(6);
+        AreaShape s1 = new AreaCircle(5);
+        AreaShape s2 = new AreaRectangle(10, 4);
+        AreaShape s3 = new AreaSquare(6);
 
         System.out.println("Circle Area: " + s1.area());
         System.out.println("Rectangle Area: " + s2.area());

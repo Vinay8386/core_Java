@@ -1,7 +1,6 @@
 package Java8_code.Interview_code;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 //How to convert a List of objects into a Map by considering duplicated keys and store them in sorted order?
 public class TwentyThreeNoQ {

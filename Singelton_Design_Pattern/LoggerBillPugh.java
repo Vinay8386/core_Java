@@ -1,4 +1,4 @@
-package LLD_DesignPattern.Creational_Design_Pattern.Singelton_Design_Pattern;
+package Singelton_Design_Pattern;
 
 public class LoggerBillPugh {
 

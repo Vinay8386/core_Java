@@ -1,7 +1,6 @@
 package Java21.Sequenced_Collection;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BankingSystem {
     public static void main(String[] args){

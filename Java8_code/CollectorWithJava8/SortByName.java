@@ -3,7 +3,6 @@ package Java8_code.CollectorWithJava8;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 //Sort employees based on salary in both ascending and descending order
